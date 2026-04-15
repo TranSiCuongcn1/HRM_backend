@@ -2,8 +2,10 @@ package com.hrm.backend.service.impl;
 
 import com.hrm.backend.dto.EmployeeRequest;
 import com.hrm.backend.dto.EmployeeResponse;
+import com.hrm.backend.entity.Department;
 import com.hrm.backend.entity.Employee;
 import com.hrm.backend.entity.User;
+import com.hrm.backend.repository.DepartmentRepository;
 import com.hrm.backend.repository.EmployeeRepository;
 import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.service.EmployeeService;
@@ -15,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,6 +26,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final DepartmentRepository departmentRepository;
     private final PasswordEncoder passwordEncoder;
 
     private static final String DEFAULT_PASSWORD = "Hrm@123456";
@@ -31,6 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     // ========================================
 
     @Override
+    @Transactional(readOnly = true)
     public Page<EmployeeResponse> getAllEmployees(String keyword, String status, Pageable pageable) {
         Page<Employee> employeePage = employeeRepository.searchEmployees(keyword, status, pageable);
         return employeePage.map(this::mapToResponse);
@@ -41,6 +47,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     // ========================================
 
     @Override
+    @Transactional(readOnly = true)
     public EmployeeResponse getEmployeeById(Integer id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên với ID: " + id));
@@ -64,6 +71,13 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new IllegalArgumentException("Email '" + request.getEmail() + "' đã được sử dụng");
         }
 
+        // Tìm phòng ban
+        Department department = null;
+        if (request.getDepartmentId() != null) {
+            department = departmentRepository.findById(request.getDepartmentId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng ban với ID: " + request.getDepartmentId()));
+        }
+
         // --- Bước 1: Tạo Employee ---
         Employee employee = Employee.builder()
                 .code(request.getCode())
@@ -74,7 +88,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .birthday(request.getBirthday())
                 .address(request.getAddress())
                 .joinDate(request.getJoinDate())
-                .departmentId(request.getDepartmentId())
+                .department(department)
                 .status("ACTIVE")
                 .build();
 
@@ -132,6 +146,13 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new IllegalArgumentException("Mã nhân viên '" + request.getCode() + "' đã tồn tại");
         }
 
+        // Tìm phòng ban mới
+        Department department = null;
+        if (request.getDepartmentId() != null) {
+            department = departmentRepository.findById(request.getDepartmentId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng ban với ID: " + request.getDepartmentId()));
+        }
+
         // Cập nhật thông tin Employee
         employee.setCode(request.getCode());
         employee.setName(request.getName());
@@ -140,7 +161,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setBirthday(request.getBirthday());
         employee.setAddress(request.getAddress());
         employee.setJoinDate(request.getJoinDate());
-        employee.setDepartmentId(request.getDepartmentId());
+        employee.setDepartment(department);
 
         // Nếu email thay đổi → cập nhật cả bên bảng User
         if (!employee.getEmail().equals(request.getEmail())) {
@@ -177,6 +198,16 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.save(employee);
         log.info("Đã cập nhật trạng thái nghỉ việc cho nhân viên: {}", employee.getCode());
 
+        // Nếu nhân viên là trưởng phòng của bất kỳ phòng ban nào, hãy gỡ bỏ gán manager
+        List<Department> managedDepartments = departmentRepository.findByManager_Id(id);
+        if (!managedDepartments.isEmpty()) {
+            for (Department dept : managedDepartments) {
+                dept.setManager(null);
+                departmentRepository.save(dept);
+                log.info("Đã gỡ chức vụ trưởng phòng của {} tại phòng ban {}", employee.getName(), dept.getName());
+            }
+        }
+
         // Khóa tài khoản đăng nhập tương ứng
         userRepository.findByUsername(employee.getCode()).ifPresent(user -> {
             user.setIsActive(false);
@@ -200,7 +231,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .birthday(employee.getBirthday())
                 .address(employee.getAddress())
                 .joinDate(employee.getJoinDate())
-                .departmentId(employee.getDepartmentId())
+                .departmentId(employee.getDepartment() != null ? employee.getDepartment().getId() : null)
+                .departmentName(employee.getDepartment() != null ? employee.getDepartment().getName() : null)
                 .status(employee.getStatus())
                 .resignationDate(employee.getResignationDate())
                 .createdAt(employee.getCreatedAt())

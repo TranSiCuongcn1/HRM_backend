@@ -2,7 +2,9 @@ package com.hrm.backend.config;
 
 import com.hrm.backend.entity.Employee;
 import com.hrm.backend.entity.User;
+import com.hrm.backend.entity.Department;
 import com.hrm.backend.repository.UserRepository;
+import com.hrm.backend.repository.DepartmentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
@@ -10,8 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.hrm.backend.repository.EmployeeRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
@@ -21,44 +22,68 @@ public class DataInitializer {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final DepartmentRepository departmentRepository;
+    private final EmployeeRepository employeeRepository;
 
     /**
-     * Tạo tài khoản Admin mặc định khi khởi động ứng dụng lần đầu.
-     * Username: admin
-     * Password: admin123
+     * Tạo dữ liệu mẫu khi khởi động ứng dụng.
      */
     @Bean
     public CommandLineRunner initData() {
         return args -> {
             if (!userRepository.existsByUsername("admin")) {
-                createAdminUser();
-                log.info("=== Tài khoản Admin mặc định đã được tạo ===");
-                log.info("Username: admin");
-                log.info("Password: admin123");
+                initDepartmentsAndAdmin();
+                log.info("=== Dữ liệu mẫu đã được khởi tạo ===");
+                log.info("Admin Username: admin / Password: admin123");
                 log.info("============================================");
             } else {
-                log.info("Tài khoản Admin đã tồn tại, bỏ qua khởi tạo.");
+                log.info("Dữ liệu đã tồn tại, bỏ qua khởi tạo.");
             }
         };
     }
 
     @Transactional
-    protected void createAdminUser() {
-        // Tạo Employee trước (vì User liên kết 1-1 với Employee)
-        Employee adminEmployee = Employee.builder()
-                .code("EMP001")
-                .name("System Administrator")
-                .email("admin@hrm.com")
-                .joinDate(java.time.LocalDate.now())
-                .status("ACTIVE")
-                .build();
-        entityManager.persist(adminEmployee);
-        entityManager.flush();
+    protected void initDepartmentsAndAdmin() {
+        // 1. Tạo các phòng ban mẫu (kiểm tra trước khi tạo để tránh lỗi trùng lặp khi chạy lại)
+        Department boardOfDirectors = departmentRepository.findByCode("BOD")
+                .orElseGet(() -> departmentRepository.save(Department.builder()
+                        .code("BOD")
+                        .name("Ban Giám Đốc")
+                        .description("Cấp quản lý cao nhất của công ty")
+                        .build()));
 
-        // Tạo User Admin
+        Department itDept = departmentRepository.findByCode("IT")
+                .orElseGet(() -> departmentRepository.save(Department.builder()
+                        .code("IT")
+                        .name("Phòng Công nghệ thông tin")
+                        .description("Quản lý hệ thống và phần mềm")
+                        .parent(boardOfDirectors)
+                        .build()));
+
+        Department hrDept = departmentRepository.findByCode("HR")
+                .orElseGet(() -> departmentRepository.save(Department.builder()
+                        .code("HR")
+                        .name("Phòng Hành chính nhân sự")
+                        .description("Quản lý con người và chế độ")
+                        .parent(boardOfDirectors)
+                        .build()));
+
+        // 2. Tạo Employee Admin (thuộc Ban Giám Đốc)
+        Employee adminEmployee = employeeRepository.findByCode("EMP001")
+                .orElseGet(() -> employeeRepository.save(Employee.builder()
+                        .code("EMP001")
+                        .name("System Administrator")
+                        .email("admin@hrm.com")
+                        .joinDate(java.time.LocalDate.now())
+                        .status("ACTIVE")
+                        .department(boardOfDirectors)
+                        .build()));
+
+        // 3. Gán Admin làm trưởng phòng BOD
+        boardOfDirectors.setManager(adminEmployee);
+        departmentRepository.save(boardOfDirectors);
+
+        // 4. Tạo User Admin
         User adminUser = User.builder()
                 .employee(adminEmployee)
                 .username("admin")

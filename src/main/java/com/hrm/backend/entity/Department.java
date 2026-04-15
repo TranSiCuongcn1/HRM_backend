@@ -5,55 +5,41 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
-@Table(name = "employees")
+@Table(name = "departments")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Employee {
+public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(length = 20, unique = true, nullable = false)
+    @Column(length = 50, unique = true, nullable = false)
     private String code;
 
     @Column(length = 100, nullable = false)
     private String name;
 
-    @Column(length = 255)
-    private String avatar;
-
-    @Column(length = 100, unique = true, nullable = false)
-    private String email;
-
-    @Column(length = 20)
-    private String phone;
-
-    private LocalDate birthday;
-
     @Column(columnDefinition = "TEXT")
-    private String address;
-
-    @Column(name = "join_date", nullable = false)
-    private LocalDate joinDate;
+    private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id")
-    private Department department;
+    @JoinColumn(name = "manager_id")
+    private Employee manager; // Trưởng phòng
 
-    @Column(length = 50)
-    @Builder.Default
-    private String status = "ACTIVE";
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id")
+    private Department parent; // Phòng ban cha (cấu trúc cây)
 
-    @Column(name = "resignation_date")
-    private LocalDate resignationDate;
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    private List<Department> children;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

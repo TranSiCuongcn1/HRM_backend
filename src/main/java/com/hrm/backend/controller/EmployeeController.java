@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -70,6 +72,7 @@ public class EmployeeController {
      * POST /api/v1/employees
      */
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Thêm nhân viên", description = "Thêm mới nhân viên và tự động tạo tài khoản đăng nhập (username = mã nhân viên, mật khẩu mặc định)")
     public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(
             @Valid @RequestBody EmployeeRequest request) {
@@ -85,6 +88,7 @@ public class EmployeeController {
      * PUT /api/v1/employees/{id}
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cập nhật nhân viên", description = "Cập nhật thông tin hồ sơ nhân viên. Nếu đổi email sẽ tự động đồng bộ email đăng nhập.")
     public ResponseEntity<ApiResponse<EmployeeResponse>> updateEmployee(
             @PathVariable Integer id,
@@ -101,6 +105,7 @@ public class EmployeeController {
      * PUT /api/v1/employees/{id}/resign
      */
     @PutMapping("/{id}/resign")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cho nhân viên nghỉ việc", description = "Cập nhật trạng thái thành RESIGNED, thêm ngày nghỉ việc, và tự động khóa tài khoản đăng nhập")
     public ResponseEntity<ApiResponse<Void>> resignEmployee(
             @PathVariable Integer id,

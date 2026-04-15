@@ -40,5 +40,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     /**
      * Đếm số nhân viên thuộc một phòng ban
      */
-    long countByDepartmentId(Integer departmentId);
+    long countByDepartment_Id(Integer departmentId);
 }
