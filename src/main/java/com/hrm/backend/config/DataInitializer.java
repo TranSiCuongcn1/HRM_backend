@@ -1,18 +1,19 @@
 package com.hrm.backend.config;
 
-import com.hrm.backend.entity.Employee;
-import com.hrm.backend.entity.User;
 import com.hrm.backend.entity.Department;
-import com.hrm.backend.repository.UserRepository;
+import com.hrm.backend.entity.Employee;
+import com.hrm.backend.entity.LeaveType;
+import com.hrm.backend.entity.User;
 import com.hrm.backend.repository.DepartmentRepository;
+import com.hrm.backend.repository.EmployeeRepository;
+import com.hrm.backend.repository.LeaveTypeRepository;
+import com.hrm.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import com.hrm.backend.repository.EmployeeRepository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
@@ -24,6 +25,7 @@ public class DataInitializer {
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
     private final EmployeeRepository employeeRepository;
+    private final LeaveTypeRepository leaveTypeRepository;
 
     /**
      * Tạo dữ liệu mẫu khi khởi động ứng dụng.
@@ -39,6 +41,9 @@ public class DataInitializer {
             } else {
                 log.info("Dữ liệu đã tồn tại, bỏ qua khởi tạo.");
             }
+
+            // Luôn seed leave types (idempotent - kiểm tra trước khi tạo)
+            initLeaveTypes();
         };
     }
 
@@ -92,5 +97,38 @@ public class DataInitializer {
                 .role("ADMIN")
                 .build();
         userRepository.save(adminUser);
+    }
+
+    /**
+     * Khởi tạo 6 loại phép mặc định.
+     * Idempotent: kiểm tra code trước khi tạo, chạy lại không bị trùng.
+     */
+    @Transactional
+    protected void initLeaveTypes() {
+        createLeaveTypeIfNotExists("ANNUAL", "Phép năm", true,
+                "Nghỉ phép năm theo Luật Lao Động (12 ngày/năm)");
+        createLeaveTypeIfNotExists("SICK", "Nghỉ bệnh", true,
+                "Nghỉ ốm có lương (tối đa 30 ngày/năm, cần giấy bác sĩ)");
+        createLeaveTypeIfNotExists("UNPAID", "Nghỉ không lương", false,
+                "Nghỉ việc riêng không hưởng lương");
+        createLeaveTypeIfNotExists("MATERNITY", "Nghỉ thai sản", true,
+                "Nghỉ thai sản theo quy định pháp luật");
+        createLeaveTypeIfNotExists("WEDDING", "Nghỉ cưới", true,
+                "Nghỉ kết hôn (3 ngày có lương)");
+        createLeaveTypeIfNotExists("BEREAVEMENT", "Nghỉ tang", true,
+                "Nghỉ tang lễ người thân (3 ngày có lương)");
+
+        log.info("Đã khởi tạo danh mục loại phép (6 loại)");
+    }
+
+    private void createLeaveTypeIfNotExists(String code, String name, boolean isPaid, String description) {
+        if (!leaveTypeRepository.existsByCode(code)) {
+            leaveTypeRepository.save(LeaveType.builder()
+                    .code(code)
+                    .name(name)
+                    .isPaid(isPaid)
+                    .description(description)
+                    .build());
+        }
     }
 }
