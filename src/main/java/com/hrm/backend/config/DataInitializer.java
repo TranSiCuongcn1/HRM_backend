@@ -44,6 +44,9 @@ public class DataInitializer {
 
             // Luôn seed leave types (idempotent - kiểm tra trước khi tạo)
             initLeaveTypes();
+
+            // Seed tài khoản Kế toán + Giám đốc (idempotent)
+            initTestAccounts();
         };
     }
 
@@ -129,6 +132,70 @@ public class DataInitializer {
                     .isPaid(isPaid)
                     .description(description)
                     .build());
+        }
+    }
+
+    /**
+     * Tạo tài khoản Kế toán và Giám đốc để test quy trình Payroll.
+     * Idempotent: kiểm tra username trước khi tạo.
+     */
+    @Transactional
+    protected void initTestAccounts() {
+        // Tạo phòng Kế toán (nếu chưa có)
+        Department accountingDept = departmentRepository.findByCode("ACC")
+                .orElseGet(() -> departmentRepository.save(Department.builder()
+                        .code("ACC")
+                        .name("Phòng Kế toán")
+                        .description("Quản lý tài chính và tính lương")
+                        .build()));
+
+        // --- Tài khoản Kế toán ---
+        if (!userRepository.existsByUsername("ketoan")) {
+            Employee accEmployee = employeeRepository.findByCode("EMP002")
+                    .orElseGet(() -> employeeRepository.save(Employee.builder()
+                            .code("EMP002")
+                            .name("Nguyễn Văn Kế Toán")
+                            .email("ketoan@hrm.com")
+                            .joinDate(java.time.LocalDate.now())
+                            .status("ACTIVE")
+                            .department(accountingDept)
+                            .build()));
+
+            userRepository.save(User.builder()
+                    .employee(accEmployee)
+                    .username("ketoan")
+                    .email("ketoan@hrm.com")
+                    .passwordHash(passwordEncoder.encode("ketoan123"))
+                    .role("ACCOUNTANT")
+                    .build());
+
+            log.info("Đã tạo tài khoản: ketoan / ketoan123 (ACCOUNTANT)");
+        }
+
+        // --- Tài khoản Giám đốc ---
+        if (!userRepository.existsByUsername("giamdoc")) {
+            Department bod = departmentRepository.findByCode("BOD")
+                    .orElse(null);
+
+            Employee mgrEmployee = employeeRepository.findByCode("EMP003")
+                    .orElseGet(() -> employeeRepository.save(Employee.builder()
+                            .code("EMP003")
+                            .name("Trần Văn Giám Đốc")
+                            .email("giamdoc@hrm.com")
+                            .joinDate(java.time.LocalDate.now())
+                            .status("ACTIVE")
+                            .department(bod)
+                            .build()));
+
+            userRepository.save(User.builder()
+                    .employee(mgrEmployee)
+                    .username("giamdoc")
+                    .email("giamdoc@hrm.com")
+                    .passwordHash(passwordEncoder.encode("giamdoc123"))
+                    .role("MANAGER")
+                    .build());
+
+            log.info("Đã tạo tài khoản: giamdoc / giamdoc123 (MANAGER)");
         }
     }
 }

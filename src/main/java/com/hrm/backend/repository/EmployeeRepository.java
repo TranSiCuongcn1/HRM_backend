@@ -8,10 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
+
+    /**
+     * Lấy danh sách NV theo trạng thái (Payroll dùng findByStatus("ACTIVE"))
+     */
+    List<Employee> findByStatus(String status);
 
     Optional<Employee> findByCode(String code);
 
