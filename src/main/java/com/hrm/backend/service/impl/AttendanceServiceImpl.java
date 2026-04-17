@@ -11,6 +11,8 @@ import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -138,9 +140,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AttendanceResponse> getMyRecords(String username, LocalDate from, LocalDate to) {
+    public Page<AttendanceResponse> getMyRecords(String username, LocalDate from, LocalDate to, String status, Pageable pageable) {
         Employee employee = getEmployeeByUsername(username);
-        return getRecordsByEmployee(employee.getId(), from, to);
+        return getRecordsByEmployee(employee.getId(), from, to, status, pageable);
     }
 
     // ========================================
@@ -223,15 +225,18 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AttendanceResponse> getRecordsByEmployee(Integer employeeId, LocalDate from, LocalDate to) {
+    public Page<AttendanceResponse> getRecordsByEmployee(
+            Integer employeeId,
+            LocalDate from,
+            LocalDate to,
+            String status,
+            Pageable pageable) {
         if (!employeeRepository.existsById(employeeId)) {
             throw new RuntimeException("Không tìm thấy nhân viên ID: " + employeeId);
         }
-
-        List<AttendanceRecord> records = attendanceRepository
-                .findByEmployeeIdAndDateBetweenOrderByDateDesc(employeeId, from, to);
-
-        return records.stream().map(this::mapToResponse).collect(Collectors.toList());
+        return attendanceRepository
+                .searchByEmployeeAndDateRange(employeeId, from, to, status, pageable)
+                .map(this::mapToResponse);
     }
 
     // ========================================
@@ -240,9 +245,14 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AttendanceResponse> getRecordsByDate(LocalDate date) {
-        List<AttendanceRecord> records = attendanceRepository.findByDateOrderByEmployeeCodeAsc(date);
-        return records.stream().map(this::mapToResponse).collect(Collectors.toList());
+    public Page<AttendanceResponse> getRecordsByDate(
+            LocalDate date,
+            String status,
+            String keyword,
+            Boolean hasOvertime,
+            Pageable pageable) {
+        return attendanceRepository.searchByDate(date, status, Boolean.TRUE.equals(hasOvertime), keyword, pageable)
+                .map(this::mapToResponse);
     }
 
     // ========================================

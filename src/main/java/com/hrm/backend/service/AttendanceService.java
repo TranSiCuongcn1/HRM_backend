@@ -2,9 +2,10 @@ package com.hrm.backend.service;
 
 import com.hrm.backend.dto.AttendanceRequest;
 import com.hrm.backend.dto.AttendanceResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public interface AttendanceService {
 
@@ -32,7 +33,7 @@ public interface AttendanceService {
     /**
      * Nhân viên xem lịch sử chấm công của mình theo khoảng ngày
      */
-    List<AttendanceResponse> getMyRecords(String username, LocalDate from, LocalDate to);
+    Page<AttendanceResponse> getMyRecords(String username, LocalDate from, LocalDate to, String status, Pageable pageable);
 
     // ==========================================
     // APIs cho Admin (quản lý & sửa lỗi)
@@ -52,12 +53,17 @@ public interface AttendanceService {
     /**
      * Lấy lịch sử chấm công của 1 nhân viên theo khoảng ngày
      */
-    List<AttendanceResponse> getRecordsByEmployee(Integer employeeId, LocalDate from, LocalDate to);
+    Page<AttendanceResponse> getRecordsByEmployee(Integer employeeId, LocalDate from, LocalDate to, String status, Pageable pageable);
 
     /**
      * Bảng chấm công toàn công ty theo 1 ngày
      */
-    List<AttendanceResponse> getRecordsByDate(LocalDate date);
+        Page<AttendanceResponse> getRecordsByDate(
+            LocalDate date,
+            String status,
+            String keyword,
+            Boolean hasOvertime,
+            Pageable pageable);
 
     /**
      * Thống kê chấm công tháng của 1 nhân viên.

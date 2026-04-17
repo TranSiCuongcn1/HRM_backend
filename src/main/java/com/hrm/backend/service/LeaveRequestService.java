@@ -2,9 +2,10 @@ package com.hrm.backend.service;
 
 import com.hrm.backend.dto.LeaveRequestDTO;
 import com.hrm.backend.dto.LeaveRequestResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 public interface LeaveRequestService {
 
@@ -31,17 +32,22 @@ public interface LeaveRequestService {
     /**
      * NV xem danh sách đơn của mình
      */
-    List<LeaveRequestResponse> getMyRequests(String username);
+        Page<LeaveRequestResponse> getMyRequests(
+            String username,
+            String status,
+            Integer leaveTypeId,
+            String keyword,
+            Pageable pageable);
 
     /**
      * Admin xem tất cả đơn đang chờ duyệt
      */
-    List<LeaveRequestResponse> getPendingRequests();
+    Page<LeaveRequestResponse> getPendingRequests(Pageable pageable);
 
     /**
      * Admin xem tất cả đơn (có lọc theo status)
      */
-    List<LeaveRequestResponse> getAllRequests(String status);
+    Page<LeaveRequestResponse> getAllRequests(String status, Integer leaveTypeId, String keyword, Pageable pageable);
 
     /**
      * Payroll gọi: tổng ngày nghỉ có lương đã duyệt trong tháng

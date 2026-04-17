@@ -2,6 +2,8 @@ package com.hrm.backend.service;
 
 import com.hrm.backend.dto.PayrollResponse;
 import com.hrm.backend.dto.PayrollUpdateRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -53,12 +55,12 @@ public interface PayrollService {
     /**
      * Bảng lương toàn công ty theo tháng
      */
-    List<PayrollResponse> getPayrollsByMonth(String month);
+    Page<PayrollResponse> getPayrollsByMonth(String month, String status, String keyword, Integer departmentId, Pageable pageable);
 
     /**
      * Lịch sử lương của NV
      */
-    List<PayrollResponse> getPayrollsByEmployee(Integer employeeId);
+    Page<PayrollResponse> getPayrollsByEmployee(Integer employeeId, String status, Pageable pageable);
 
     /**
      * Chi tiết 1 phiếu lương

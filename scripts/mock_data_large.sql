@@ -362,3 +362,14 @@ UNION ALL SELECT 'leave_balances', COUNT(*) FROM leave_balances
 UNION ALL SELECT 'leave_requests', COUNT(*) FROM leave_requests
 UNION ALL SELECT 'payroll', COUNT(*) FROM payroll
 ORDER BY table_name;
+
+-- Verify admin salary seed (contract + payroll rows)
+SELECT
+  e.code AS admin_code,
+  c.basic_salary AS admin_basic_salary,
+  COUNT(p.id) AS payroll_rows
+FROM employees e
+LEFT JOIN contracts c ON c.employee_id = e.id AND c.status = 'ACTIVE'
+LEFT JOIN payroll p ON p.employee_id = e.id
+WHERE e.code = 'ADM001'
+GROUP BY e.code, c.basic_salary;

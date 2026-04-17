@@ -35,6 +35,7 @@ public class EmployeeController {
     public ResponseEntity<ApiResponse<Page<EmployeeResponse>>> getAllEmployees(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) String status,
+            @RequestParam(required = false) Integer departmentId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -46,7 +47,7 @@ public class EmployeeController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<EmployeeResponse> employees = employeeService.getAllEmployees(keyword, status, pageable);
+        Page<EmployeeResponse> employees = employeeService.getAllEmployees(keyword, status, departmentId, pageable);
 
         return ResponseEntity.ok(
                 ApiResponse.success("Lấy danh sách nhân viên thành công", employees)

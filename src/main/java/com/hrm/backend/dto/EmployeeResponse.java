@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -27,6 +28,9 @@ public class EmployeeResponse {
     private String departmentName;
     private String status;
     private LocalDate resignationDate;
+    private BigDecimal currentSalary;
+    private BigDecimal latestNetSalary;
+    private String lastPayrollMonth;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

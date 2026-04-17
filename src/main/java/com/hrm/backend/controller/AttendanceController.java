@@ -7,6 +7,10 @@ import com.hrm.backend.service.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -79,13 +83,23 @@ public class AttendanceController {
     @GetMapping("/my-records")
     @Operation(summary = "Lịch sử chấm công",
             description = "Xem lịch sử chấm công của bạn theo khoảng ngày.")
-    public ResponseEntity<ApiResponse<List<AttendanceResponse>>> getMyRecords(
+    public ResponseEntity<ApiResponse<Page<AttendanceResponse>>> getMyRecords(
             Authentication authentication,
             @RequestParam LocalDate from,
-            @RequestParam LocalDate to) {
+            @RequestParam LocalDate to,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
 
         String username = authentication.getName();
-        List<AttendanceResponse> records = attendanceService.getMyRecords(username, from, to);
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<AttendanceResponse> records = attendanceService.getMyRecords(username, from, to, status, pageable);
         return ResponseEntity.ok(
                 ApiResponse.success("Lịch sử chấm công", records)
         );
@@ -137,12 +151,22 @@ public class AttendanceController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Chấm công theo nhân viên",
             description = "Xem lịch sử chấm công của 1 nhân viên trong khoảng ngày.")
-    public ResponseEntity<ApiResponse<List<AttendanceResponse>>> getRecordsByEmployee(
+    public ResponseEntity<ApiResponse<Page<AttendanceResponse>>> getRecordsByEmployee(
             @PathVariable Integer employeeId,
             @RequestParam LocalDate from,
-            @RequestParam LocalDate to) {
+            @RequestParam LocalDate to,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
 
-        List<AttendanceResponse> records = attendanceService.getRecordsByEmployee(employeeId, from, to);
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<AttendanceResponse> records = attendanceService.getRecordsByEmployee(employeeId, from, to, status, pageable);
         return ResponseEntity.ok(
                 ApiResponse.success("Lịch sử chấm công nhân viên", records)
         );
@@ -155,10 +179,22 @@ public class AttendanceController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Chấm công theo ngày",
             description = "Bảng chấm công toàn công ty trong 1 ngày cụ thể.")
-    public ResponseEntity<ApiResponse<List<AttendanceResponse>>> getRecordsByDate(
-            @RequestParam LocalDate date) {
+    public ResponseEntity<ApiResponse<Page<AttendanceResponse>>> getRecordsByDate(
+            @RequestParam LocalDate date,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "false") boolean hasOvertime,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "employee.code") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
 
-        List<AttendanceResponse> records = attendanceService.getRecordsByDate(date);
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<AttendanceResponse> records = attendanceService.getRecordsByDate(date, status, keyword, hasOvertime, pageable);
         return ResponseEntity.ok(
                 ApiResponse.success("Bảng chấm công ngày " + date, records)
         );

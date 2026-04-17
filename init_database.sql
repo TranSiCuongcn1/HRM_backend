@@ -1,157 +1,153 @@
-// ==========================================
-// 1. ĐỊNH NGHĨA CÁC BẢNG (TABLES)
-// ==========================================
+-- ==========================================
+-- 1. TẠO BẢNG (TABLES)
+-- ==========================================
 
-Table departments {
-  id integer [pk, increment]
-  code varchar(20) [unique, not null]
-  name varchar(100) [not null]
-  description text
-  manager_id integer
-  created_at timestamp [default: `now()`]
-}
+CREATE TABLE departments (
+  id SERIAL PRIMARY KEY,
+  code VARCHAR(20) UNIQUE NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  description TEXT,
+  manager_id INTEGER,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-Table employees {
-  id integer [pk, increment]
-  department_id integer
-  code varchar(20) [unique, not null]
-  name varchar(100) [not null]
-  avatar varchar(255)
-  email varchar(100) [unique, not null]
-  phone varchar(20)
-  birthday date
-  address text
-  join_date date [not null]
-  status varchar [default: 'ACTIVE', note: 'ACTIVE, INACTIVE, RESIGNED']
-  resignation_date date
-  created_at timestamp [default: `now()`]
-  updated_at timestamp [default: `now()`]
-}
+CREATE TABLE employees (
+  id SERIAL PRIMARY KEY,
+  department_id INTEGER,
+  code VARCHAR(20) UNIQUE NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  avatar VARCHAR(255),
+  email VARCHAR(100) UNIQUE NOT NULL,
+  phone VARCHAR(20),
+  birthday DATE,
+  address TEXT,
+  join_date DATE NOT NULL,
+  status VARCHAR DEFAULT 'ACTIVE', -- Note: 'ACTIVE, INACTIVE, RESIGNED'
+  resignation_date DATE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-Table contracts {
-  id integer [pk, increment]
-  employee_id integer [not null]
-  contract_type varchar(50) [not null, note: 'PROBATION, DEFINITE_1YR, INDEFINITE']
-  start_date date [not null]
-  end_date date
-  basic_salary decimal(12,2) [not null]
-  status varchar(50) [default: 'ACTIVE', note: 'DRAFT, ACTIVE, EXPIRED, TERMINATED']
-  created_at timestamp [default: `now()`]
-  updated_at timestamp [default: `now()`]
-}
+CREATE TABLE contracts (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL,
+  contract_type VARCHAR(50) NOT NULL, -- Note: 'PROBATION, DEFINITE_1YR, INDEFINITE'
+  start_date DATE NOT NULL,
+  end_date DATE, -- Null cho hợp đồng vô thời hạn
+  basic_salary DECIMAL(12, 2) NOT NULL,
+  status VARCHAR(50) DEFAULT 'ACTIVE', -- Note: 'DRAFT, ACTIVE, EXPIRED, TERMINATED'
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-Table users {
-  id integer [pk, increment]
-  employee_id integer [unique]
-  username varchar(50) [unique, not null]
-  email varchar(100) [unique, not null]
-  password_hash varchar(255) [not null]
-  role varchar [default: 'EMPLOYEE', note: 'ADMIN, EMPLOYEE']
-  created_at timestamp [default: `now()`]
-  updated_at timestamp [default: `now()`]
-}
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER UNIQUE,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role VARCHAR DEFAULT 'EMPLOYEE', -- Note: 'ADMIN, EMPLOYEE'
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-Table attendance_records {
-  id integer [pk, increment]
-  employee_id integer [not null]
-  date date [not null]
-  check_in time
-  check_out time
-  status varchar [note: 'ON_TIME, LATE, EARLY_LEAVE, ABSENT, HALF_DAY']
-  overtime_hours decimal(4,2) [default: 0]
-  work_hours decimal(4,2) [default: 0]
-  note text
-  created_at timestamp [default: `now()`]
+CREATE TABLE attendance_records (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL,
+  date DATE NOT NULL,
+  check_in TIME,
+  check_out TIME,
+  status VARCHAR, -- Note: 'ON_TIME, LATE, EARLY_LEAVE, ABSENT, HALF_DAY'
+  overtime_hours DECIMAL(4, 2) DEFAULT 0,
+  work_hours DECIMAL(4, 2) DEFAULT 0,
+  note TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-  indexes {
-    (employee_id, date) [unique]
-  }
-}
+CREATE TABLE leave_types (
+  id SERIAL PRIMARY KEY,
+  code VARCHAR(20) UNIQUE NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  is_paid BOOLEAN DEFAULT true,
+  description TEXT
+);
 
-Table leave_types {
-  id integer [pk, increment]
-  code varchar(20) [unique, not null]
-  name varchar(100) [not null]
-  is_paid boolean [default: true]
-  description text
-}
+CREATE TABLE leave_balances (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL,
+  leave_type_id INTEGER NOT NULL,
+  year INTEGER NOT NULL,
+  total_days DECIMAL(4, 1) DEFAULT 0,
+  used_days DECIMAL(4, 1) DEFAULT 0,
+  carry_over_days DECIMAL(4, 1) DEFAULT 0
+);
 
-Table leave_balances {
-  id integer [pk, increment]
-  employee_id integer [not null]
-  leave_type_id integer [not null]
-  year integer [not null]
-  total_days decimal(4,1) [default: 0]
-  used_days decimal(4,1) [default: 0]
-  carry_over_days decimal(4,1) [default: 0]
+CREATE TABLE leave_requests (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL,
+  leave_type_id INTEGER NOT NULL,
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  days DECIMAL(4, 1) NOT NULL,
+  reason TEXT NOT NULL,
+  attachment_url VARCHAR(255),
+  status VARCHAR DEFAULT 'PENDING', -- Note: 'PENDING, APPROVED, REJECTED, CANCELLED'
+  approved_by INTEGER,
+  approved_at TIMESTAMP,
+  rejection_reason TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-  indexes {
-    (employee_id, leave_type_id, year) [unique]
-  }
-}
+CREATE TABLE payroll (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL,
+  month VARCHAR(7) NOT NULL, -- Note: 'YYYY-MM'
+  basic_salary DECIMAL(12, 2) NOT NULL,
+  allowances JSONB,
+  total_allowances DECIMAL(12, 2) DEFAULT 0,
+  overtime_pay DECIMAL(12, 2) DEFAULT 0,
+  gross_salary DECIMAL(12, 2) NOT NULL,
+  deductions JSONB,
+  total_deductions DECIMAL(12, 2) DEFAULT 0,
+  net_salary DECIMAL(12, 2) NOT NULL,
+  work_days DECIMAL(4, 1),
+  actual_days DECIMAL(4, 1),
+  status VARCHAR DEFAULT 'DRAFT', -- Note: 'DRAFT, CALCULATED, APPROVED, PAID'
+  approved_by INTEGER,
+  approved_at TIMESTAMP,
+  paid_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-Table leave_requests {
-  id integer [pk, increment]
-  employee_id integer [not null]
-  leave_type_id integer [not null]
-  start_date date [not null]
-  end_date date [not null]
-  days decimal(4,1) [not null]
-  reason text [not null]
-  attachment_url varchar(255)
-  status varchar [default: 'PENDING', note: 'PENDING, APPROVED, REJECTED, CANCELLED']
-  approved_by integer
-  approved_at timestamp
-  rejection_reason text
-  created_at timestamp [default: `now()`]
-  updated_at timestamp [default: `now()`]
-}
+-- ==========================================
+-- 2. TẠO INDEXES & UNIQUE CONSTRAINTS
+-- ==========================================
 
-Table payroll {
-  id integer [pk, increment]
-  employee_id integer [not null]
-  month varchar(7) [not null, note: 'YYYY-MM']
-  basic_salary decimal(12,2) [not null]
-  allowances jsonb
-  total_allowances decimal(12,2) [default: 0]
-  overtime_pay decimal(12,2) [default: 0]
-  gross_salary decimal(12,2) [not null]
-  deductions jsonb
-  total_deductions decimal(12,2) [default: 0]
-  net_salary decimal(12,2) [not null]
-  work_days decimal(4,1)
-  actual_days decimal(4,1)
-  status varchar [default: 'DRAFT', note: 'DRAFT, CALCULATED, APPROVED, PAID']
-  approved_by integer
-  approved_at timestamp
-  paid_at timestamp
-  created_at timestamp [default: `now()`]
-  updated_at timestamp [default: `now()`]
+ALTER TABLE attendance_records ADD CONSTRAINT unique_employee_date UNIQUE (employee_id, date);
+ALTER TABLE leave_balances ADD CONSTRAINT unique_employee_leave_year UNIQUE (employee_id, leave_type_id, year);
+ALTER TABLE payroll ADD CONSTRAINT unique_employee_month UNIQUE (employee_id, month);
 
-  indexes {
-    (employee_id, month) [unique]
-  }
-}
+-- ==========================================
+-- 3. TẠO FOREIGN KEYS (RELATIONSHIPS)
+-- ==========================================
 
-// ==========================================
-// 2. THIẾT LẬP MỐI QUAN HỆ (RELATIONSHIPS)
-// ==========================================
+ALTER TABLE departments ADD CONSTRAINT fk_departments_manager FOREIGN KEY (manager_id) REFERENCES employees(id);
+ALTER TABLE employees ADD CONSTRAINT fk_employees_department FOREIGN KEY (department_id) REFERENCES departments(id);
 
-Ref: departments.manager_id > employees.id // Many-to-one (Một nhân viên quản lý nhiều phòng ban - thực tế thường là 1-1 nhưng để > cho linh hoạt)
-Ref: employees.department_id > departments.id
+ALTER TABLE contracts ADD CONSTRAINT fk_contracts_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
 
-Ref: contracts.employee_id > employees.id [delete: cascade]
+ALTER TABLE users ADD CONSTRAINT fk_users_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
 
-Ref: users.employee_id - employees.id [delete: cascade] // Quan hệ 1-1
+ALTER TABLE attendance_records ADD CONSTRAINT fk_attendance_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
 
-Ref: attendance_records.employee_id > employees.id [delete: cascade]
+ALTER TABLE leave_balances ADD CONSTRAINT fk_leave_balances_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
+ALTER TABLE leave_balances ADD CONSTRAINT fk_leave_balances_leave_type FOREIGN KEY (leave_type_id) REFERENCES leave_types(id);
 
-Ref: leave_balances.employee_id > employees.id [delete: cascade]
-Ref: leave_balances.leave_type_id > leave_types.id
+ALTER TABLE leave_requests ADD CONSTRAINT fk_leave_requests_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
+ALTER TABLE leave_requests ADD CONSTRAINT fk_leave_requests_leave_type FOREIGN KEY (leave_type_id) REFERENCES leave_types(id);
+ALTER TABLE leave_requests ADD CONSTRAINT fk_leave_requests_approver FOREIGN KEY (approved_by) REFERENCES employees(id) ON DELETE SET NULL;
 
-Ref: leave_requests.employee_id > employees.id [delete: cascade]
-Ref: leave_requests.leave_type_id > leave_types.id
-Ref: leave_requests.approved_by > employees.id [delete: set null]
-
-Ref: payroll.employee_id > employees.id [delete: cascade]
-Ref: payroll.approved_by > employees.id [delete: set null]
+ALTER TABLE payroll ADD CONSTRAINT fk_payroll_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
+ALTER TABLE payroll ADD CONSTRAINT fk_payroll_approver FOREIGN KEY (approved_by) REFERENCES employees(id) ON DELETE SET NULL;

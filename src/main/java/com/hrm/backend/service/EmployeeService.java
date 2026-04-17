@@ -13,7 +13,7 @@ public interface EmployeeService {
      * @param status Lọc theo trạng thái (ACTIVE, RESIGNED,...)
      * @param pageable Thông tin phân trang
      */
-    Page<EmployeeResponse> getAllEmployees(String keyword, String status, Pageable pageable);
+    Page<EmployeeResponse> getAllEmployees(String keyword, String status, Integer departmentId, Pageable pageable);
 
     /**
      * Xem chi tiết hồ sơ nhân viên

@@ -4,12 +4,15 @@ import com.hrm.backend.dto.EmployeeRequest;
 import com.hrm.backend.dto.EmployeeResponse;
 import com.hrm.backend.entity.Department;
 import com.hrm.backend.entity.Employee;
+import com.hrm.backend.entity.Payroll;
 import com.hrm.backend.entity.User;
 import com.hrm.backend.repository.AttendanceRepository;
+import com.hrm.backend.repository.ContractRepository;
 import com.hrm.backend.repository.DepartmentRepository;
 import com.hrm.backend.repository.EmployeeRepository;
 import com.hrm.backend.repository.LeaveBalanceRepository;
 import com.hrm.backend.repository.LeaveRequestRepository;
+import com.hrm.backend.repository.PayrollRepository;
 import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +36,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final AttendanceRepository attendanceRepository;
     private final LeaveRequestRepository leaveRequestRepository;
     private final LeaveBalanceRepository leaveBalanceRepository;
+    private final ContractRepository contractRepository;
+    private final PayrollRepository payrollRepository;
     private final PasswordEncoder passwordEncoder;
 
     private static final String DEFAULT_PASSWORD = "Hrm@123456";
@@ -43,8 +48,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<EmployeeResponse> getAllEmployees(String keyword, String status, Pageable pageable) {
-        Page<Employee> employeePage = employeeRepository.searchEmployees(keyword, status, pageable);
+    public Page<EmployeeResponse> getAllEmployees(String keyword, String status, Integer departmentId, Pageable pageable) {
+        Page<Employee> employeePage = employeeRepository.searchEmployees(keyword, status, departmentId, pageable);
         return employeePage.map(this::mapToResponse);
     }
 
@@ -252,6 +257,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     // ========================================
 
     private EmployeeResponse mapToResponse(Employee employee) {
+        var activeContract = contractRepository.findByEmployeeIdAndStatus(employee.getId(), "ACTIVE");
+        List<Payroll> payrollHistory = payrollRepository.findByEmployeeIdOrderByMonthDesc(employee.getId());
+        Payroll latestPayroll = payrollHistory.isEmpty() ? null : payrollHistory.get(0);
+
         return EmployeeResponse.builder()
                 .id(employee.getId())
                 .code(employee.getCode())
@@ -266,6 +275,9 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .departmentName(employee.getDepartment() != null ? employee.getDepartment().getName() : null)
                 .status(employee.getStatus())
                 .resignationDate(employee.getResignationDate())
+                .currentSalary(activeContract.map(contract -> contract.getBasicSalary()).orElse(null))
+                .latestNetSalary(latestPayroll != null ? latestPayroll.getNetSalary() : null)
+                .lastPayrollMonth(latestPayroll != null ? latestPayroll.getMonth() : null)
                 .createdAt(employee.getCreatedAt())
                 .updatedAt(employee.getUpdatedAt())
                 .build();

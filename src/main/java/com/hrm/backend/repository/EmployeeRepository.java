@@ -36,10 +36,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
             "LOWER(e.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(e.code) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(e.email) LIKE LOWER(CONCAT('%', :keyword, '%')))" +
-            " AND (:status IS NULL OR :status = '' OR e.status = :status)")
+            " AND (:status IS NULL OR :status = '' OR e.status = :status)" +
+            " AND (:departmentId IS NULL OR e.department.id = :departmentId)")
     Page<Employee> searchEmployees(
             @Param("keyword") String keyword,
             @Param("status") String status,
+            @Param("departmentId") Integer departmentId,
             Pageable pageable
     );
 

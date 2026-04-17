@@ -16,6 +16,8 @@ import com.hrm.backend.service.LeaveRequestService;
 import com.hrm.backend.service.PayrollService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,7 +25,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -325,19 +326,23 @@ public class PayrollServiceImpl implements PayrollService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<PayrollResponse> getPayrollsByMonth(String month) {
-        return payrollRepository.findByMonthOrderByEmployeeCodeAsc(month)
-                .stream().map(this::mapToResponse).collect(Collectors.toList());
+    public Page<PayrollResponse> getPayrollsByMonth(String month, String status, String keyword, Integer departmentId, Pageable pageable) {
+        return payrollRepository.searchPayrollsByMonth(month, status, keyword, departmentId, pageable)
+                .map(this::mapToResponse);
     }
 
     @Override
     @Transactional(readOnly = true)
-    public List<PayrollResponse> getPayrollsByEmployee(Integer employeeId) {
+    public Page<PayrollResponse> getPayrollsByEmployee(Integer employeeId, String status, Pageable pageable) {
         if (!employeeRepository.existsById(employeeId)) {
             throw new RuntimeException("Không tìm thấy nhân viên ID: " + employeeId);
         }
-        return payrollRepository.findByEmployeeIdOrderByMonthDesc(employeeId)
-                .stream().map(this::mapToResponse).collect(Collectors.toList());
+        if (status != null && !status.isBlank()) {
+            return payrollRepository.findByEmployeeIdAndStatus(employeeId, status, pageable)
+                    .map(this::mapToResponse);
+        }
+        return payrollRepository.findByEmployeeId(employeeId, pageable)
+                .map(this::mapToResponse);
     }
 
     @Override

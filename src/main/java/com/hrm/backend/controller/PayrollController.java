@@ -7,6 +7,10 @@ import com.hrm.backend.service.PayrollService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -153,10 +157,22 @@ public class PayrollController {
     @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Bảng lương theo tháng",
             description = "Xem bảng lương toàn công ty theo tháng (format: 2026-04)")
-    public ResponseEntity<ApiResponse<List<PayrollResponse>>> getPayrollsByMonth(
-            @RequestParam String month) {
+    public ResponseEntity<ApiResponse<Page<PayrollResponse>>> getPayrollsByMonth(
+            @RequestParam String month,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) Integer departmentId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "employee.code") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
 
-        List<PayrollResponse> responses = payrollService.getPayrollsByMonth(month);
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<PayrollResponse> responses = payrollService.getPayrollsByMonth(month, status, keyword, departmentId, pageable);
         return ResponseEntity.ok(
                 ApiResponse.success("Bảng lương tháng " + month, responses)
         );
@@ -178,10 +194,20 @@ public class PayrollController {
     @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT', 'MANAGER', 'EMPLOYEE')")
     @Operation(summary = "Lịch sử lương nhân viên",
             description = "Xem lịch sử lương của nhân viên (NV chỉ xem được của mình)")
-    public ResponseEntity<ApiResponse<List<PayrollResponse>>> getPayrollsByEmployee(
-            @PathVariable Integer employeeId) {
+    public ResponseEntity<ApiResponse<Page<PayrollResponse>>> getPayrollsByEmployee(
+            @PathVariable Integer employeeId,
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "month") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
 
-        List<PayrollResponse> responses = payrollService.getPayrollsByEmployee(employeeId);
+        Sort sort = sortDir.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<PayrollResponse> responses = payrollService.getPayrollsByEmployee(employeeId, status, pageable);
         return ResponseEntity.ok(
                 ApiResponse.success("Lịch sử lương nhân viên", responses)
         );
