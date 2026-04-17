@@ -26,11 +26,11 @@ public class PayrollController {
     private final PayrollService payrollService;
 
     // ========================================
-    // KẾ TOÁN: TẠO BẢNG LƯƠNG
+    // NHÂN VIÊN/ADMIN: TẠO BẢNG LƯƠNG
     // ========================================
 
     @PostMapping("/generate")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Tạo bảng lương tháng",
             description = "Tự động tạo bảng lương DRAFT cho tất cả NV ACTIVE. " +
                     "Có thể đính kèm phụ cấp/khấu trừ mặc định áp dụng cho toàn bộ NV.")
@@ -59,11 +59,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // KẾ TOÁN: SỬA PHIẾU LƯƠNG
+    // NHÂN VIÊN/ADMIN: SỬA PHIẾU LƯƠNG
     // ========================================
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Sửa phiếu lương",
             description = "Kế toán sửa phụ cấp, khấu trừ, ngày công. Chỉ sửa khi phiếu ở trạng thái DRAFT.")
     public ResponseEntity<ApiResponse<PayrollResponse>> updatePayroll(
@@ -77,11 +77,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // KẾ TOÁN: CẬP NHẬT HÀNG LOẠT
+    // NHÂN VIÊN/ADMIN: CẬP NHẬT HÀNG LOẠT
     // ========================================
 
     @PutMapping("/bulk-update")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Cập nhật hàng loạt",
             description = "Áp dụng phụ cấp/khấu trừ cho nhiều phiếu lương cùng lúc (chỉ DRAFT). " +
                     "Phụ cấp/khấu trừ mới sẽ merge vào danh sách hiện có.")
@@ -95,11 +95,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // KẾ TOÁN: CHỐT LƯƠNG
+    // NHÂN VIÊN/ADMIN: CHỐT LƯƠNG
     // ========================================
 
     @PutMapping("/{id}/submit")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Chốt lương",
             description = "Kế toán chốt phiếu lương. Sau khi chốt không thể sửa được nữa (CALCULATED).")
     public ResponseEntity<ApiResponse<PayrollResponse>> submitPayroll(@PathVariable Integer id) {
@@ -111,11 +111,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // GIÁM ĐỐC: DUYỆT LƯƠNG
+    // ADMIN: DUYỆT LƯƠNG
     // ========================================
 
     @PutMapping("/{id}/approve")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Duyệt lương",
             description = "Giám đốc duyệt phiếu lương đã chốt (CALCULATED → APPROVED).")
     public ResponseEntity<ApiResponse<PayrollResponse>> approvePayroll(
@@ -130,11 +130,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // KẾ TOÁN: THANH TOÁN
+    // NHÂN VIÊN/ADMIN: THANH TOÁN
     // ========================================
 
     @PutMapping("/{id}/pay")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Đánh dấu đã thanh toán",
             description = "Đánh dấu phiếu lương đã được thanh toán (APPROVED → PAID).")
     public ResponseEntity<ApiResponse<PayrollResponse>> markAsPaid(@PathVariable Integer id) {
@@ -150,7 +150,7 @@ public class PayrollController {
     // ========================================
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Bảng lương theo tháng",
             description = "Xem bảng lương toàn công ty theo tháng (format: 2026-04)")
     public ResponseEntity<ApiResponse<List<PayrollResponse>>> getPayrollsByMonth(
@@ -163,7 +163,7 @@ public class PayrollController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT', 'MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Chi tiết phiếu lương",
             description = "Xem chi tiết 1 phiếu lương")
     public ResponseEntity<ApiResponse<PayrollResponse>> getPayrollById(@PathVariable Integer id) {

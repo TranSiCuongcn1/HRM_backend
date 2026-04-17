@@ -64,6 +64,15 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Xử lý lỗi cấm truy cập (vượt quyền)
+     */
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDenied(org.springframework.security.access.AccessDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(ApiResponse.error("Từ chối truy cập: Bạn không có quyền thực hiện hành động này."));
+    }
+
+    /**
      * Xử lý lỗi chung (fallback)
      */
     @ExceptionHandler(Exception.class)
