@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,4 +115,18 @@ public class EmployeeController {
                 ApiResponse.success("Đã hoàn tất thủ tục nghỉ việc và khóa tài khoản cho nhân viên")
         );
     }
+
+        /**
+         * Xóa nhân viên (chỉ khi chưa phát sinh dữ liệu nghiệp vụ)
+         * DELETE /api/v1/employees/{id}
+         */
+        @DeleteMapping("/{id}")
+        @PreAuthorize("hasRole('ADMIN')")
+        @Operation(summary = "Xóa nhân viên", description = "Xóa hồ sơ nhân viên khi chưa phát sinh dữ liệu chấm công/nghỉ phép")
+        public ResponseEntity<ApiResponse<Void>> deleteEmployee(@PathVariable Integer id) {
+                employeeService.deleteEmployee(id);
+                return ResponseEntity.ok(
+                                ApiResponse.success("Xóa nhân viên thành công")
+                );
+        }
 }

@@ -5,8 +5,11 @@ import com.hrm.backend.dto.EmployeeResponse;
 import com.hrm.backend.entity.Department;
 import com.hrm.backend.entity.Employee;
 import com.hrm.backend.entity.User;
+import com.hrm.backend.repository.AttendanceRepository;
 import com.hrm.backend.repository.DepartmentRepository;
 import com.hrm.backend.repository.EmployeeRepository;
+import com.hrm.backend.repository.LeaveBalanceRepository;
+import com.hrm.backend.repository.LeaveRequestRepository;
 import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +30,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final DepartmentRepository departmentRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final LeaveRequestRepository leaveRequestRepository;
+    private final LeaveBalanceRepository leaveBalanceRepository;
     private final PasswordEncoder passwordEncoder;
 
     private static final String DEFAULT_PASSWORD = "Hrm@123456";
@@ -214,6 +220,31 @@ public class EmployeeServiceImpl implements EmployeeService {
             userRepository.save(user);
             log.info("Đã khóa tài khoản đăng nhập: {}", user.getUsername());
         });
+    }
+
+    @Override
+    @Transactional
+    public void deleteEmployee(Integer id) {
+        Employee employee = employeeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy nhân viên với ID: " + id));
+
+        if (attendanceRepository.existsByEmployeeId(id)
+                || leaveRequestRepository.existsByEmployeeId(id)
+                || leaveBalanceRepository.existsByEmployeeId(id)) {
+            throw new IllegalStateException(
+                    "Không thể xóa nhân viên vì đã phát sinh dữ liệu chấm công hoặc nghỉ phép. Vui lòng dùng chức năng nghỉ việc.");
+        }
+
+        List<Department> managedDepartments = departmentRepository.findByManager_Id(id);
+        for (Department dept : managedDepartments) {
+            dept.setManager(null);
+            departmentRepository.save(dept);
+        }
+
+        userRepository.findByEmployee_Id(id).ifPresent(userRepository::delete);
+        employeeRepository.delete(employee);
+
+        log.info("Đã xóa nhân viên {} - {}", employee.getCode(), employee.getName());
     }
 
     // ========================================

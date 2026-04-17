@@ -10,6 +10,8 @@ import java.util.Optional;
 @Repository
 public interface LeaveBalanceRepository extends JpaRepository<LeaveBalance, Integer> {
 
+        boolean existsByEmployeeId(Integer employeeId);
+
     /**
      * Lấy số dư phép của NV theo loại phép và năm
      */

@@ -13,6 +13,8 @@ import java.util.List;
 @Repository
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Integer> {
 
+        boolean existsByEmployeeId(Integer employeeId);
+
     /**
      * Danh sách đơn của nhân viên (mới nhất trước)
      */

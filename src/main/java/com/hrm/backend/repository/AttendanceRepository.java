@@ -21,6 +21,8 @@ public interface AttendanceRepository extends JpaRepository<AttendanceRecord, In
      */
     boolean existsByEmployeeIdAndDate(Integer employeeId, LocalDate date);
 
+        boolean existsByEmployeeId(Integer employeeId);
+
     /**
      * Lấy toàn bộ bản ghi chấm công trong khoảng ngày của 1 nhân viên
      */

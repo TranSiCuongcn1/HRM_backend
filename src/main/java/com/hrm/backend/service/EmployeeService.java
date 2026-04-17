@@ -34,4 +34,9 @@ public interface EmployeeService {
      * Cho nhân viên nghỉ việc (Cập nhật trạng thái và khóa tài khoản)
      */
     void resignEmployee(Integer id, java.time.LocalDate resignationDate);
+
+    /**
+     * Xóa nhân viên khi chưa phát sinh dữ liệu nghiệp vụ liên quan
+     */
+    void deleteEmployee(Integer id);
 }
