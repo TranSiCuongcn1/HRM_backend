@@ -4,9 +4,11 @@ import com.hrm.backend.dto.AttendanceRequest;
 import com.hrm.backend.dto.AttendanceResponse;
 import com.hrm.backend.entity.AttendanceRecord;
 import com.hrm.backend.entity.Employee;
+import com.hrm.backend.entity.Shift;
 import com.hrm.backend.entity.User;
 import com.hrm.backend.repository.AttendanceRepository;
 import com.hrm.backend.repository.EmployeeRepository;
+import com.hrm.backend.repository.ShiftRepository;
 import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +35,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final ShiftRepository shiftRepository;
 
-    // Giờ làm chuẩn (cố định)
-    private static final LocalTime STANDARD_CHECK_IN = LocalTime.of(8, 0);   // 08:00
-    private static final LocalTime STANDARD_CHECK_OUT = LocalTime.of(17, 0);  // 17:00
     private static final BigDecimal STANDARD_WORK_HOURS = new BigDecimal("8.00");
 
     // ========================================
@@ -56,14 +56,22 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         LocalTime now = LocalTime.now();
 
-        // Tự động xác định trạng thái
-        String status = now.isAfter(STANDARD_CHECK_IN) ? "LATE" : "ON_TIME";
+        // Lấy ca làm việc mặc định
+        Shift defaultShift = shiftRepository.findByIsDefaultTrue().orElse(null);
+        String status = "ON_TIME";
+        int lateMinutes = 0;
+
+        if (defaultShift != null && now.isAfter(defaultShift.getStartTime())) {
+            status = "LATE";
+            lateMinutes = (int) Duration.between(defaultShift.getStartTime(), now).toMinutes();
+        }
 
         AttendanceRecord record = AttendanceRecord.builder()
                 .employee(employee)
                 .date(today)
                 .checkIn(now)
                 .status(status)
+                .lateMinutes(lateMinutes)
                 .build();
 
         AttendanceRecord saved = attendanceRepository.save(record);
@@ -93,12 +101,19 @@ public class AttendanceServiceImpl implements AttendanceService {
         LocalTime now = LocalTime.now();
         record.setCheckOut(now);
 
-        // Tính workHours và overtimeHours
-        calculateHours(record);
+        Shift defaultShift = shiftRepository.findByIsDefaultTrue().orElse(null);
+        int earlyLeaveMinutes = 0;
 
-        // Nếu về trước giờ chuẩn → đánh EARLY_LEAVE (trừ khi đã bị đánh LATE)
-        if (now.isBefore(STANDARD_CHECK_OUT) && !"LATE".equals(record.getStatus())) {
-            record.setStatus("EARLY_LEAVE");
+        // Tính workHours và overtimeHours
+        calculateHours(record, defaultShift);
+
+        // Nếu về trước giờ chuẩn → đánh EARLY_LEAVE
+        if (defaultShift != null && now.isBefore(defaultShift.getEndTime())) {
+            earlyLeaveMinutes = (int) Duration.between(now, defaultShift.getEndTime()).toMinutes();
+            record.setEarlyLeaveMinutes(earlyLeaveMinutes);
+            if (!"LATE".equals(record.getStatus())) {
+                record.setStatus("EARLY_LEAVE");
+            }
         }
 
         AttendanceRecord saved = attendanceRepository.save(record);
@@ -171,7 +186,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         // Tính lại workHours và overtimeHours nếu có đủ giờ vào/ra
         if (record.getCheckIn() != null && record.getCheckOut() != null) {
-            calculateHours(record);
+            Shift defaultShift = shiftRepository.findByIsDefaultTrue().orElse(null);
+            calculateHours(record, defaultShift);
         }
 
         AttendanceRecord updated = attendanceRepository.save(record);
@@ -316,13 +332,20 @@ public class AttendanceServiceImpl implements AttendanceService {
     // HELPER: Tính workHours và overtimeHours
     // ========================================
 
-    private void calculateHours(AttendanceRecord record) {
+    private void calculateHours(AttendanceRecord record, Shift shift) {
         if (record.getCheckIn() == null || record.getCheckOut() == null) {
             return;
         }
 
         Duration duration = Duration.between(record.getCheckIn(), record.getCheckOut());
         long totalMinutes = duration.toMinutes();
+        
+        if (shift != null && shift.getBreakStartTime() != null && shift.getBreakEndTime() != null) {
+            long breakMinutes = Duration.between(shift.getBreakStartTime(), shift.getBreakEndTime()).toMinutes();
+            if (record.getCheckIn().isBefore(shift.getBreakStartTime()) && record.getCheckOut().isAfter(shift.getBreakEndTime())) {
+                totalMinutes -= breakMinutes;
+            }
+        }
 
         // workHours = tổng thời gian làm việc (đơn vị: giờ, làm tròn 2 chữ số)
         BigDecimal workHours = BigDecimal.valueOf(totalMinutes)
@@ -350,6 +373,8 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .status(record.getStatus())
                 .overtimeHours(record.getOvertimeHours())
                 .workHours(record.getWorkHours())
+                .lateMinutes(record.getLateMinutes())
+                .earlyLeaveMinutes(record.getEarlyLeaveMinutes())
                 .note(record.getNote())
                 .createdAt(record.getCreatedAt())
                 .build();

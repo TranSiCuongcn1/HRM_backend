@@ -59,6 +59,14 @@ public class AttendanceRecord {
     @Column(columnDefinition = "TEXT")
     private String note;
 
+    @Column(name = "late_minutes")
+    @Builder.Default
+    private Integer lateMinutes = 0;
+
+    @Column(name = "early_leave_minutes")
+    @Builder.Default
+    private Integer earlyLeaveMinutes = 0;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

@@ -26,6 +26,8 @@ public class AttendanceResponse {
     private String status;
     private BigDecimal overtimeHours;
     private BigDecimal workHours;
+    private Integer lateMinutes;
+    private Integer earlyLeaveMinutes;
     private String note;
     private LocalDateTime createdAt;
 
