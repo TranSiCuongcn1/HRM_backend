@@ -4,11 +4,13 @@
 
 CREATE TABLE departments (
   id SERIAL PRIMARY KEY,
-  code VARCHAR(20) UNIQUE NOT NULL,
+  code VARCHAR(50) UNIQUE NOT NULL,
   name VARCHAR(100) NOT NULL,
   description TEXT,
+  parent_id INTEGER,
   manager_id INTEGER,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE employees (
@@ -24,6 +26,7 @@ CREATE TABLE employees (
   join_date DATE NOT NULL,
   status VARCHAR DEFAULT 'ACTIVE', -- Note: 'ACTIVE, INACTIVE, RESIGNED'
   resignation_date DATE,
+  dependent_count INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -52,6 +55,22 @@ CREATE TABLE users (
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE overtime_requests (
+  id SERIAL PRIMARY KEY,
+  employee_id INTEGER NOT NULL,
+  date DATE NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  hours DECIMAL(4, 2) NOT NULL,
+  reason TEXT NOT NULL,
+  status VARCHAR(20) DEFAULT 'PENDING', -- Note: 'PENDING, APPROVED, REJECTED, CANCELLED'
+  approved_by INTEGER,
+  approved_at TIMESTAMP,
+  rejection_reason TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE attendance_records (
   id SERIAL PRIMARY KEY,
   employee_id INTEGER NOT NULL,
@@ -62,7 +81,28 @@ CREATE TABLE attendance_records (
   overtime_hours DECIMAL(4, 2) DEFAULT 0,
   work_hours DECIMAL(4, 2) DEFAULT 0,
   note TEXT,
+  late_minutes INTEGER DEFAULT 0,
+  early_leave_minutes INTEGER DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE holidays (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  date DATE UNIQUE NOT NULL,
+  is_paid BOOLEAN DEFAULT true
+);
+
+CREATE TABLE shifts (
+  id SERIAL PRIMARY KEY,
+  code VARCHAR(20) UNIQUE NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  start_time TIME NOT NULL,
+  end_time TIME NOT NULL,
+  break_start_time TIME,
+  break_end_time TIME,
+  is_default BOOLEAN DEFAULT false,
+  is_active BOOLEAN DEFAULT true
 );
 
 CREATE TABLE leave_types (
@@ -105,11 +145,11 @@ CREATE TABLE payroll (
   employee_id INTEGER NOT NULL,
   month VARCHAR(7) NOT NULL, -- Note: 'YYYY-MM'
   basic_salary DECIMAL(12, 2) NOT NULL,
-  allowances JSONB,
+  allowances TEXT,
   total_allowances DECIMAL(12, 2) DEFAULT 0,
   overtime_pay DECIMAL(12, 2) DEFAULT 0,
   gross_salary DECIMAL(12, 2) NOT NULL,
-  deductions JSONB,
+  deductions TEXT,
   total_deductions DECIMAL(12, 2) DEFAULT 0,
   net_salary DECIMAL(12, 2) NOT NULL,
   work_days DECIMAL(4, 1),
@@ -135,6 +175,7 @@ ALTER TABLE payroll ADD CONSTRAINT unique_employee_month UNIQUE (employee_id, mo
 -- ==========================================
 
 ALTER TABLE departments ADD CONSTRAINT fk_departments_manager FOREIGN KEY (manager_id) REFERENCES employees(id);
+ALTER TABLE departments ADD CONSTRAINT fk_departments_parent FOREIGN KEY (parent_id) REFERENCES departments(id) ON DELETE SET NULL;
 ALTER TABLE employees ADD CONSTRAINT fk_employees_department FOREIGN KEY (department_id) REFERENCES departments(id);
 
 ALTER TABLE contracts ADD CONSTRAINT fk_contracts_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
@@ -142,6 +183,9 @@ ALTER TABLE contracts ADD CONSTRAINT fk_contracts_employee FOREIGN KEY (employee
 ALTER TABLE users ADD CONSTRAINT fk_users_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
 
 ALTER TABLE attendance_records ADD CONSTRAINT fk_attendance_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
+
+ALTER TABLE overtime_requests ADD CONSTRAINT fk_overtime_requests_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
+ALTER TABLE overtime_requests ADD CONSTRAINT fk_overtime_requests_approver FOREIGN KEY (approved_by) REFERENCES employees(id) ON DELETE SET NULL;
 
 ALTER TABLE leave_balances ADD CONSTRAINT fk_leave_balances_employee FOREIGN KEY (employee_id) REFERENCES employees(id) ON DELETE CASCADE;
 ALTER TABLE leave_balances ADD CONSTRAINT fk_leave_balances_leave_type FOREIGN KEY (leave_type_id) REFERENCES leave_types(id);
@@ -320,4 +364,323 @@ BEGIN
         END IF;
     END LOOP;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql;
+
+-- ==========================================
+-- 6. SEED MOCK DATA SO LUONG LON (FOR TEST)
+-- ==========================================
+
+-- 6.1 Seed leave types
+INSERT INTO leave_types (code, name, is_paid, description)
+VALUES
+  ('ANNUAL', 'Nghi phep nam', true, 'Nghi phep huong luong theo nam'),
+  ('SICK', 'Nghi om', true, 'Nghi om co giay xac nhan y te'),
+  ('PERSONAL', 'Nghi viec rieng', false, 'Nghi viec rieng khong huong luong'),
+  ('MATERNITY', 'Nghi thai san', true, 'Nghi thai san theo quy dinh')
+ON CONFLICT (code) DO NOTHING;
+
+-- 6.2 Seed departments
+INSERT INTO departments (code, name, description)
+SELECT
+  'PB' || LPAD(gs::text, 3, '0'),
+  'Phong ban ' || gs,
+  'Du lieu phong ban mock #' || gs
+FROM generate_series(1, 12) AS gs;
+
+-- 6.3 Seed employees (1200 records)
+INSERT INTO employees (
+  department_id,
+  code,
+  name,
+  email,
+  phone,
+  birthday,
+  address,
+  join_date,
+  status,
+  resignation_date
+)
+SELECT
+  ((gs - 1) % 12) + 1,
+  'EMP' || LPAD(gs::text, 5, '0'),
+  'Nhan vien ' || LPAD(gs::text, 5, '0'),
+  'employee' || LPAD(gs::text, 5, '0') || '@hrm.local',
+  '09' || LPAD((10000000 + gs)::text, 8, '0'),
+  CURRENT_DATE - ((22 * 365) + (gs % 2000)),
+  'Dia chi mock so ' || gs,
+  CURRENT_DATE - ((gs % 1460) + 30),
+  CASE
+    WHEN gs % 20 = 0 THEN 'RESIGNED'
+    WHEN gs % 9 = 0 THEN 'INACTIVE'
+    ELSE 'ACTIVE'
+  END,
+  CASE
+    WHEN gs % 20 = 0 THEN CURRENT_DATE - ((gs % 300) + 15)
+    ELSE NULL
+  END
+FROM generate_series(1, 1200) AS gs;
+
+-- 6.4 Gan manager cho tung phong ban
+UPDATE departments d
+SET manager_id = x.min_emp_id
+FROM (
+  SELECT department_id, MIN(id) AS min_emp_id
+  FROM employees
+  GROUP BY department_id
+) x
+WHERE d.id = x.department_id;
+
+-- 6.5 Seed users cho toan bo employees
+-- Password hash bcrypt duoi day la tai khoan mau cho mat khau: password
+INSERT INTO users (employee_id, username, email, password_hash, role)
+SELECT
+  e.id,
+  LOWER(e.code),
+  e.email,
+  '$2a$10$7EqJtq98hPqEX7fNZaFWoO5o9Pqj8VY5A1NVuMcZV8K4D4ew3Efr2',
+  CASE WHEN e.id <= 10 THEN 'ADMIN' ELSE 'EMPLOYEE' END
+FROM employees e;
+
+-- 6.6 Seed contracts
+INSERT INTO contracts (
+  employee_id,
+  contract_type,
+  start_date,
+  end_date,
+  basic_salary,
+  status
+)
+SELECT
+  e.id,
+  CASE
+    WHEN e.id % 5 = 0 THEN 'PROBATION'
+    WHEN e.id % 3 = 0 THEN 'DEFINITE_1YR'
+    ELSE 'INDEFINITE'
+  END,
+  e.join_date,
+  CASE
+    WHEN e.id % 3 = 0 THEN (e.join_date + INTERVAL '1 year')::date
+    ELSE NULL
+  END,
+  (8500000 + ((e.id % 45) * 250000))::DECIMAL(12, 2),
+  CASE WHEN e.status = 'RESIGNED' THEN 'TERMINATED' ELSE 'ACTIVE' END
+FROM employees e;
+
+-- 6.7 Seed leave balances cho 2 nam (nam hien tai va nam truoc)
+WITH years AS (
+  SELECT generate_series(EXTRACT(YEAR FROM CURRENT_DATE)::int - 1, EXTRACT(YEAR FROM CURRENT_DATE)::int) AS y
+)
+INSERT INTO leave_balances (
+  employee_id,
+  leave_type_id,
+  year,
+  total_days,
+  used_days,
+  carry_over_days
+)
+SELECT
+  e.id,
+  lt.id,
+  y.y,
+  CASE WHEN lt.is_paid THEN 12.0 ELSE 0.0 END,
+  CASE
+    WHEN lt.is_paid THEN ROUND((random() * 6)::numeric, 1)
+    ELSE 0.0
+  END,
+  CASE
+    WHEN y.y = EXTRACT(YEAR FROM CURRENT_DATE)::int AND lt.is_paid THEN ROUND((random() * 3)::numeric, 1)
+    ELSE 0.0
+  END
+FROM employees e
+CROSS JOIN leave_types lt
+CROSS JOIN years y;
+
+-- 6.8 Seed attendance records (du lieu 4 thang lam viec gan day)
+WITH work_dates AS (
+  SELECT d::date AS work_date
+  FROM generate_series(CURRENT_DATE - INTERVAL '120 day', CURRENT_DATE - INTERVAL '1 day', INTERVAL '1 day') d
+  WHERE EXTRACT(ISODOW FROM d) BETWEEN 1 AND 5
+)
+INSERT INTO attendance_records (
+  employee_id,
+  date,
+  check_in,
+  check_out,
+  status,
+  overtime_hours,
+  work_hours,
+  note
+)
+SELECT
+  e.id,
+  wd.work_date,
+  CASE
+    WHEN r.r1 < 0.04 THEN NULL
+    ELSE (TIME '08:00' + ((FLOOR(r.r2 * 31) - 10)::int || ' minutes')::interval)::time
+  END,
+  CASE
+    WHEN r.r1 < 0.04 THEN NULL
+    ELSE (TIME '17:30' + ((FLOOR(r.r3 * 121) - 30)::int || ' minutes')::interval)::time
+  END,
+  CASE
+    WHEN r.r1 < 0.04 THEN 'ABSENT'
+    WHEN r.r1 < 0.12 THEN 'LATE'
+    WHEN r.r1 < 0.18 THEN 'EARLY_LEAVE'
+    WHEN r.r1 < 0.25 THEN 'HALF_DAY'
+    ELSE 'ON_TIME'
+  END,
+  CASE
+    WHEN r.r1 < 0.70 THEN 0
+    ELSE ROUND((r.r3 * 4)::numeric, 2)
+  END,
+  CASE
+    WHEN r.r1 < 0.04 THEN 0
+    WHEN r.r1 < 0.25 THEN ROUND((4 + r.r2 * 3)::numeric, 2)
+    ELSE ROUND((8 + r.r3 * 2)::numeric, 2)
+  END,
+  'Attendance mock data'
+FROM employees e
+JOIN work_dates wd ON wd.work_date >= e.join_date
+CROSS JOIN LATERAL (SELECT random() AS r1, random() AS r2, random() AS r3) r
+WHERE e.status <> 'RESIGNED'
+   OR wd.work_date <= COALESCE(e.resignation_date, CURRENT_DATE);
+
+-- 6.9 Seed leave requests
+INSERT INTO leave_requests (
+  employee_id,
+  leave_type_id,
+  start_date,
+  end_date,
+  days,
+  reason,
+  status,
+  approved_by,
+  approved_at,
+  rejection_reason
+)
+SELECT
+  e.id,
+  lt.id,
+  req.start_date,
+  req.end_date,
+  req.days,
+  'Xin nghi mock data #' || n.seq,
+  req.status,
+  CASE WHEN req.status IN ('APPROVED', 'REJECTED') THEN COALESCE(d.manager_id, 1) ELSE NULL END,
+  CASE WHEN req.status = 'APPROVED' THEN (req.start_date - INTERVAL '2 day')::timestamp ELSE NULL END,
+  CASE WHEN req.status = 'REJECTED' THEN 'Khong du dieu kien duyet' ELSE NULL END
+FROM employees e
+JOIN departments d ON d.id = e.department_id
+CROSS JOIN generate_series(1, 3) AS n(seq)
+CROSS JOIN LATERAL (
+  SELECT id, is_paid
+  FROM leave_types
+  ORDER BY id
+  LIMIT 1
+  OFFSET ((e.id + n.seq) % 4)
+) lt
+CROSS JOIN LATERAL (
+  SELECT
+    (CURRENT_DATE - (((e.id * 7) + (n.seq * 13)) % 320 + 5))::date AS start_date,
+    (CURRENT_DATE - (((e.id * 7) + (n.seq * 13)) % 320 + 5) + ((e.id + n.seq) % 3))::date AS end_date,
+    ((e.id + n.seq) % 3 + 1)::DECIMAL(4, 1) AS days,
+    CASE
+      WHEN (e.id + n.seq) % 5 = 0 THEN 'PENDING'
+      WHEN (e.id + n.seq) % 6 = 0 THEN 'REJECTED'
+      ELSE 'APPROVED'
+    END AS status
+) req;
+
+-- 6.10 Seed overtime requests
+INSERT INTO overtime_requests (
+  employee_id,
+  date,
+  start_time,
+  end_time,
+  hours,
+  reason,
+  status,
+  approved_by,
+  approved_at,
+  rejection_reason
+)
+SELECT
+  e.id,
+  (CURRENT_DATE - (((e.id * 5) + (n.seq * 11)) % 120 + 2))::date,
+  (TIME '18:00' + ((n.seq % 3) || ' hours')::interval)::time,
+  (TIME '20:00' + ((n.seq % 3) || ' hours')::interval)::time,
+  (2 + (n.seq % 3))::DECIMAL(4,2),
+  'Tang ca mock data #' || n.seq,
+  CASE
+    WHEN (e.id + n.seq) % 7 = 0 THEN 'PENDING'
+    WHEN (e.id + n.seq) % 8 = 0 THEN 'REJECTED'
+    ELSE 'APPROVED'
+  END,
+  CASE
+    WHEN (e.id + n.seq) % 7 = 0 THEN NULL
+    ELSE COALESCE(d.manager_id, 1)
+  END,
+  CASE
+    WHEN (e.id + n.seq) % 7 = 0 THEN NULL
+    ELSE CURRENT_TIMESTAMP - ((n.seq + 1) || ' days')::interval
+  END,
+  CASE
+    WHEN (e.id + n.seq) % 8 = 0 THEN 'Khong phu hop ke hoach cong viec'
+    ELSE NULL
+  END
+FROM employees e
+JOIN departments d ON d.id = e.department_id
+CROSS JOIN generate_series(1, 2) AS n(seq)
+WHERE e.status = 'ACTIVE';
+
+-- 6.11 Seed payroll cho 6 thang gan nhat
+WITH month_ref AS (
+  SELECT
+    TO_CHAR(date_trunc('month', CURRENT_DATE) - (m || ' month')::interval, 'YYYY-MM') AS month_key,
+    (date_trunc('month', CURRENT_DATE) - (m || ' month')::interval)::date AS month_date,
+    m AS m_idx
+  FROM generate_series(0, 5) AS m
+)
+INSERT INTO payroll (
+  employee_id,
+  month,
+  basic_salary,
+  allowances,
+  total_allowances,
+  overtime_pay,
+  gross_salary,
+  deductions,
+  total_deductions,
+  net_salary,
+  work_days,
+  actual_days,
+  status,
+  approved_by,
+  approved_at,
+  paid_at
+)
+SELECT
+  e.id,
+  mr.month_key,
+  c.basic_salary,
+  jsonb_build_object('meal', 500000, 'phone', 300000, 'responsibility', 700000)::text,
+  1500000::DECIMAL(12,2),
+  ROUND((((e.id % 12) + mr.m_idx)::numeric * 85000), 2),
+  ROUND((c.basic_salary + 1500000 + (((e.id % 12) + mr.m_idx)::numeric * 85000)), 2),
+  jsonb_build_object('insurance', ROUND((c.basic_salary * 0.105)::numeric, 2), 'tax', ROUND((c.basic_salary * 0.03)::numeric, 2))::text,
+  ROUND((c.basic_salary * 0.135)::numeric, 2),
+  ROUND((c.basic_salary + 1500000 + (((e.id % 12) + mr.m_idx)::numeric * 85000) - (c.basic_salary * 0.135))::numeric, 2),
+  22.0,
+  LEAST(22.0, (18 + ((e.id + mr.m_idx) % 6))::numeric),
+  CASE
+    WHEN mr.m_idx = 0 THEN 'CALCULATED'
+    WHEN mr.m_idx = 1 THEN 'APPROVED'
+    ELSE 'PAID'
+  END,
+  1,
+  CASE WHEN mr.m_idx >= 1 THEN (mr.month_date + INTERVAL '25 day')::timestamp ELSE NULL END,
+  CASE WHEN mr.m_idx >= 2 THEN (mr.month_date + INTERVAL '28 day')::timestamp ELSE NULL END
+FROM employees e
+JOIN contracts c ON c.employee_id = e.id
+JOIN month_ref mr ON mr.month_date >= date_trunc('month', e.join_date)
+ON CONFLICT (employee_id, month) DO NOTHING;
