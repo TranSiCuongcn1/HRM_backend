@@ -14,6 +14,7 @@ import com.hrm.backend.service.AttendanceService;
 import com.hrm.backend.service.ContractService;
 import com.hrm.backend.service.LeaveRequestService;
 import com.hrm.backend.service.PayrollService;
+import com.hrm.backend.service.TaxAndInsuranceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,7 @@ public class PayrollServiceImpl implements PayrollService {
     private final ContractService contractService;
     private final AttendanceService attendanceService;
     private final LeaveRequestService leaveRequestService;
+    private final TaxAndInsuranceService taxAndInsuranceService;
     private final ObjectMapper objectMapper;
 
     // Hệ số OT: 150% lương giờ bình thường
@@ -121,8 +123,27 @@ public class PayrollServiceImpl implements PayrollService {
                     .add(overtimePay)
                     .setScale(2, RoundingMode.HALF_UP);
 
+            // Tính Bảo hiểm và Thuế TNCN
+            int dependentCount = employee.getDependentCount() != null ? employee.getDependentCount() : 0;
+            BigDecimal insuranceAmount = taxAndInsuranceService.calculateInsurance(basicSalary);
+            BigDecimal pitAmount = taxAndInsuranceService.calculatePIT(grossSalary, insuranceAmount, dependentCount);
+
+            Map<String, BigDecimal> personalDeductions = new LinkedHashMap<>();
+            if (defaultDeductions != null) {
+                personalDeductions.putAll(defaultDeductions);
+            }
+            if (insuranceAmount.compareTo(BigDecimal.ZERO) > 0) {
+                personalDeductions.put("BHXH_BHYT_BHTN (10.5%)", insuranceAmount);
+            }
+            if (pitAmount.compareTo(BigDecimal.ZERO) > 0) {
+                personalDeductions.put("Thuế TNCN (PIT)", pitAmount);
+            }
+
+            BigDecimal totalPersonalDeductions = sumMap(personalDeductions);
+            String personalDeductionsJson = toJson(personalDeductions);
+
             // g. Tính netSalary
-            BigDecimal netSalary = grossSalary.subtract(defaultTotalDeductions)
+            BigDecimal netSalary = grossSalary.subtract(totalPersonalDeductions)
                     .setScale(2, RoundingMode.HALF_UP);
 
             // h. Lưu phiếu lương
@@ -136,8 +157,8 @@ public class PayrollServiceImpl implements PayrollService {
                     .totalAllowances(defaultTotalAllowances)
                     .overtimePay(overtimePay)
                     .grossSalary(grossSalary)
-                    .deductions(defaultDeductionsJson)
-                    .totalDeductions(defaultTotalDeductions)
+                    .deductions(personalDeductionsJson)
+                    .totalDeductions(totalPersonalDeductions)
                     .netSalary(netSalary)
                     .status("DRAFT")
                     .build();

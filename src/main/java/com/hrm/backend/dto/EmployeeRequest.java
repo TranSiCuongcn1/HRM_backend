@@ -36,4 +36,6 @@ public class EmployeeRequest {
     private LocalDate joinDate;
 
     private Integer departmentId;
+
+    private Integer dependentCount;
 }

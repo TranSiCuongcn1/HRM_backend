@@ -28,6 +28,7 @@ public class EmployeeResponse {
     private String departmentName;
     private String status;
     private LocalDate resignationDate;
+    private Integer dependentCount;
     private BigDecimal currentSalary;
     private BigDecimal latestNetSalary;
     private String lastPayrollMonth;

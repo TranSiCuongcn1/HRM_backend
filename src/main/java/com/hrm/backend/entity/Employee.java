@@ -55,6 +55,10 @@ public class Employee {
     @Column(name = "resignation_date")
     private LocalDate resignationDate;
 
+    @Column(name = "dependent_count")
+    @Builder.Default
+    private Integer dependentCount = 0;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

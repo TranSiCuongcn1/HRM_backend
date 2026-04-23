@@ -101,6 +101,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .joinDate(request.getJoinDate())
                 .department(department)
                 .status("ACTIVE")
+                .dependentCount(request.getDependentCount() != null ? request.getDependentCount() : 0)
                 .build();
 
         Employee savedEmployee = employeeRepository.save(employee);
@@ -172,6 +173,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setBirthday(request.getBirthday());
         employee.setAddress(request.getAddress());
         employee.setJoinDate(request.getJoinDate());
+        employee.setDependentCount(request.getDependentCount() != null ? request.getDependentCount() : 0);
         employee.setDepartment(department);
 
         // Nếu email thay đổi → cập nhật cả bên bảng User
@@ -275,6 +277,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .departmentName(employee.getDepartment() != null ? employee.getDepartment().getName() : null)
                 .status(employee.getStatus())
                 .resignationDate(employee.getResignationDate())
+                .dependentCount(employee.getDependentCount())
                 .currentSalary(activeContract.map(contract -> contract.getBasicSalary()).orElse(null))
                 .latestNetSalary(latestPayroll != null ? latestPayroll.getNetSalary() : null)
                 .lastPayrollMonth(latestPayroll != null ? latestPayroll.getMonth() : null)
