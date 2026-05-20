@@ -27,11 +27,6 @@ import java.util.List;
 public class AttendanceController {
 
     private final AttendanceService attendanceService;
-
-    // ========================================
-    // APIs CHO NHÂN VIÊN (TỰ CHẤM CÔNG)
-    // ========================================
-
     /**
      * Nhân viên click button Check-in
      */
@@ -104,11 +99,7 @@ public class AttendanceController {
                 ApiResponse.success("Lịch sử chấm công", records)
         );
     }
-
-    // ========================================
-    // APIs CHO ADMIN (QUẢN LÝ & SỬA LỖI)
-    // ========================================
-
+    
     /**
      * Admin sửa bản ghi chấm công
      */

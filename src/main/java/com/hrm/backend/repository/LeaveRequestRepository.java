@@ -67,7 +67,7 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Inte
      * Logic: Lấy tổng field `days` từ các đơn APPROVED
      * mà loại phép có isPaid = true và khoảng ngày nằm trong tháng.
      */
-    @Query("SELECT COALESCE(SUM(lr.days), 0) FROM LeaveRequest lr " +
+    @Query("SELECT SUM(lr.days) FROM LeaveRequest lr " +
             "JOIN lr.leaveType lt " +
             "WHERE lr.employee.id = :empId " +
             "AND lr.status = 'APPROVED' " +

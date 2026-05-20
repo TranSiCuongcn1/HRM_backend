@@ -102,6 +102,9 @@ public class PayrollServiceImpl implements PayrollService {
             // c. Lấy ngày nghỉ có lương
             BigDecimal paidLeaveDays = leaveRequestService.getPaidLeaveDaysInMonth(
                     employee.getId(), month, year);
+            if (paidLeaveDays == null) {
+                paidLeaveDays = BigDecimal.ZERO;
+            }
 
             // d. Tính tổng ngày công thực tế
             BigDecimal totalPaidDays = actualWorkDays.add(paidLeaveDays);
