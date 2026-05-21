@@ -33,11 +33,6 @@ public interface AttendanceRepository extends JpaRepository<AttendanceRecord, In
     List<AttendanceRecord> findByEmployeeIdAndDateBetweenOrderByDateDesc(
             Integer employeeId, LocalDate from, LocalDate to);
 
-    /**
-     * Bảng chấm công toàn công ty theo 1 ngày
-     */
-    List<AttendanceRecord> findByDateOrderByEmployeeCodeAsc(LocalDate date);
-
     @Query("SELECT a FROM AttendanceRecord a WHERE a.date = :date " +
             "AND (:status IS NULL OR :status = '' OR a.status = :status) " +
             "AND (:hasOvertime = false OR COALESCE(a.overtimeHours, 0) > 0) " +

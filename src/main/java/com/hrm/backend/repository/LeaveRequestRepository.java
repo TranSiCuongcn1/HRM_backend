@@ -15,22 +15,7 @@ import java.util.List;
 @Repository
 public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Integer> {
 
-        boolean existsByEmployeeId(Integer employeeId);
-
-    /**
-     * Danh sách đơn của nhân viên (mới nhất trước)
-     */
-    List<LeaveRequest> findByEmployeeIdOrderByCreatedAtDesc(Integer employeeId);
-
-    /**
-     * Lọc đơn theo trạng thái (cho Admin xem hàng chờ duyệt)
-     */
-    List<LeaveRequest> findByStatusOrderByCreatedAtAsc(String status);
-
-    /**
-     * Lấy tất cả đơn (không lọc)
-     */
-    List<LeaveRequest> findAllByOrderByCreatedAtDesc();
+    boolean existsByEmployeeId(Integer employeeId);
 
     @Query("SELECT lr FROM LeaveRequest lr WHERE lr.employee.id = :employeeId " +
             "AND (:status IS NULL OR :status = '' OR lr.status = :status) " +

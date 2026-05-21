@@ -23,22 +23,7 @@ public interface ContractRepository extends JpaRepository<Contract, Integer> {
     List<Contract> findByEmployeeIdOrderByStartDateDesc(Integer employeeId);
 
     /**
-     * Kiểm tra nhân viên đã có hợp đồng ở trạng thái nào chưa (tránh trùng ACTIVE).
-     */
-    boolean existsByEmployeeIdAndStatus(Integer employeeId, String status);
-
-    /**
      * Danh sách hợp đồng sắp hết hạn trong khoảng thời gian (cảnh báo cho HR).
      */
     List<Contract> findByStatusAndEndDateBetween(String status, LocalDate from, LocalDate to);
-
-    /**
-     * Tìm tất cả hợp đồng theo trạng thái (phục vụ danh sách / lọc).
-     */
-    List<Contract> findByStatus(String status);
-
-    /**
-     * Tìm tất cả hợp đồng của 1 nhân viên theo trạng thái.
-     */
-    List<Contract> findByEmployeeIdAndStatusOrderByStartDateDesc(Integer employeeId, String status);
 }

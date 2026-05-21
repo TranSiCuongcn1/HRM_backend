@@ -9,7 +9,5 @@ import java.util.Optional;
 @Repository
 public interface LeaveTypeRepository extends JpaRepository<LeaveType, Integer> {
 
-    Optional<LeaveType> findByCode(String code);
-
     boolean existsByCode(String code);
 }
