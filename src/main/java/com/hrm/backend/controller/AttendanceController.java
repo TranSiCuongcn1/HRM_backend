@@ -33,10 +33,29 @@ public class AttendanceController {
     @PostMapping("/check-in")
     @Operation(summary = "Check-in",
             description = "Nhân viên click button chấm công vào. Hệ thống ghi nhận giờ hiện tại và tự động đánh giá đúng giờ/đi trễ.")
-    public ResponseEntity<ApiResponse<AttendanceResponse>> checkIn(Authentication authentication) {
+    public ResponseEntity<ApiResponse<AttendanceResponse>> checkIn(
+            Authentication authentication,
+            jakarta.servlet.http.HttpServletRequest httpRequest,
+            @RequestBody(required = false) com.hrm.backend.dto.CheckInRequest checkInRequest) {
 
         String username = authentication.getName();
-        AttendanceResponse response = attendanceService.checkIn(username);
+        
+        java.math.BigDecimal lat = null;
+        java.math.BigDecimal lng = null;
+        if (checkInRequest != null) {
+            lat = checkInRequest.getLatitude();
+            lng = checkInRequest.getLongitude();
+        }
+
+        String ipAddress = httpRequest.getHeader("X-Forwarded-For");
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = httpRequest.getRemoteAddr();
+        }
+        if (ipAddress != null && ipAddress.contains(",")) {
+            ipAddress = ipAddress.split(",")[0].trim();
+        }
+
+        AttendanceResponse response = attendanceService.checkIn(username, lat, lng, ipAddress);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.success("Check-in thành công", response)
         );
@@ -48,14 +67,34 @@ public class AttendanceController {
     @PostMapping("/check-out")
     @Operation(summary = "Check-out",
             description = "Nhân viên click button chấm công ra. Hệ thống tính giờ làm việc và giờ tăng ca.")
-    public ResponseEntity<ApiResponse<AttendanceResponse>> checkOut(Authentication authentication) {
+    public ResponseEntity<ApiResponse<AttendanceResponse>> checkOut(
+            Authentication authentication,
+            jakarta.servlet.http.HttpServletRequest httpRequest,
+            @RequestBody(required = false) com.hrm.backend.dto.CheckInRequest checkInRequest) {
 
         String username = authentication.getName();
-        AttendanceResponse response = attendanceService.checkOut(username);
+
+        java.math.BigDecimal lat = null;
+        java.math.BigDecimal lng = null;
+        if (checkInRequest != null) {
+            lat = checkInRequest.getLatitude();
+            lng = checkInRequest.getLongitude();
+        }
+
+        String ipAddress = httpRequest.getHeader("X-Forwarded-For");
+        if (ipAddress == null || ipAddress.isEmpty() || "unknown".equalsIgnoreCase(ipAddress)) {
+            ipAddress = httpRequest.getRemoteAddr();
+        }
+        if (ipAddress != null && ipAddress.contains(",")) {
+            ipAddress = ipAddress.split(",")[0].trim();
+        }
+
+        AttendanceResponse response = attendanceService.checkOut(username, lat, lng, ipAddress);
         return ResponseEntity.ok(
                 ApiResponse.success("Check-out thành công", response)
         );
     }
+
 
     /**
      * Xem trạng thái chấm công hôm nay

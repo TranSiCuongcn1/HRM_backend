@@ -17,13 +17,14 @@ public interface AttendanceService {
      * Nhân viên click button Check-in.
      * Xác định nhân viên qua username (lấy từ JWT token).
      */
-    AttendanceResponse checkIn(String username);
+    AttendanceResponse checkIn(String username, java.math.BigDecimal latitude, java.math.BigDecimal longitude, String ipAddress);
 
     /**
      * Nhân viên click button Check-out.
      * Xác định nhân viên qua username (lấy từ JWT token).
      */
-    AttendanceResponse checkOut(String username);
+    AttendanceResponse checkOut(String username, java.math.BigDecimal latitude, java.math.BigDecimal longitude, String ipAddress);
+
 
     /**
      * Nhân viên xem trạng thái chấm công ngày hôm nay

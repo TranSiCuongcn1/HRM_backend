@@ -22,3 +22,12 @@ app:
   jwt:
     secret: dGhpc0lzQVN1cGVyU2VjcmV0S2V5Rm9ySFJNU3lzdGVtSldUVG9rZW5HZW5lcmF0aW9uMjAyNg==
     expiration-ms: 86400000
+  attendance:
+    office-latitude: 10.848031  
+    office-longitude: 106.784944
+    allowed-radius-meters: 200.0
+    allowed-ips:
+      - "127.0.0.1"
+      - "0:0:0:0:0:0:0:1"
+      - "192.168.1.45"
+      - "123.21.246.223"

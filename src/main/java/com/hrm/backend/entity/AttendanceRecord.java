@@ -67,7 +67,38 @@ public class AttendanceRecord {
     @Builder.Default
     private Integer earlyLeaveMinutes = 0;
 
+    @Column(name = "check_in_ip", length = 50)
+    private String checkInIp;
+
+    @Column(name = "check_in_lat", precision = 10, scale = 8)
+    private BigDecimal checkInLat;
+
+    @Column(name = "check_in_lng", precision = 11, scale = 8)
+    private BigDecimal checkInLng;
+
+    @Column(name = "check_out_ip", length = 50)
+    private String checkOutIp;
+
+    @Column(name = "check_out_lat", precision = 10, scale = 8)
+    private BigDecimal checkOutLat;
+
+    @Column(name = "check_out_lng", precision = 11, scale = 8)
+    private BigDecimal checkOutLng;
+
+    @Column(name = "check_in_gps_valid")
+    private Boolean checkInGpsValid;
+
+    @Column(name = "check_in_ip_valid")
+    private Boolean checkInIpValid;
+
+    @Column(name = "check_out_gps_valid")
+    private Boolean checkOutGpsValid;
+
+    @Column(name = "check_out_ip_valid")
+    private Boolean checkOutIpValid;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 }
+

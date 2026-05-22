@@ -37,7 +37,129 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final UserRepository userRepository;
     private final ShiftRepository shiftRepository;
 
+    @org.springframework.beans.factory.annotation.Value("${app.attendance.office-latitude:21.028511}")
+    private double officeLatitude;
+
+    @org.springframework.beans.factory.annotation.Value("${app.attendance.office-longitude:105.804817}")
+    private double officeLongitude;
+
+    @org.springframework.beans.factory.annotation.Value("${app.attendance.allowed-radius-meters:200.0}")
+    private double allowedRadiusMeters;
+
+    @org.springframework.beans.factory.annotation.Value("${app.attendance.allowed-ips:127.0.0.1,0:0:0:0:0:0:0:1}")
+    private String allowedIpsConfig;
+
     private static final BigDecimal STANDARD_WORK_HOURS = new BigDecimal("8.00");
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double earthRadius = 6371000; // in meters
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLng = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                   Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                   Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadius * c;
+    }
+
+    private boolean isValidIpAddress(String clientIp) {
+        if (clientIp == null || clientIp.trim().isEmpty()) {
+            return false;
+        }
+
+        if (allowedIpsConfig == null || allowedIpsConfig.trim().isEmpty() || "*".equals(allowedIpsConfig.trim())) {
+            return true;
+        }
+        
+        String[] allowedList = allowedIpsConfig.split(",");
+        for (String allowed : allowedList) {
+            String trimmedAllowed = allowed.trim();
+            if (trimmedAllowed.isEmpty()) {
+                continue;
+            }
+            if (trimmedAllowed.equalsIgnoreCase(clientIp)) {
+                return true;
+            }
+            if (trimmedAllowed.contains("/")) {
+                try {
+                    if (matchIpSubnet(clientIp, trimmedAllowed)) {
+                        return true;
+                    }
+                } catch (Exception e) {
+                    log.warn("Lỗi phân tích CIDR subnet: {}", trimmedAllowed, e);
+                }
+            }
+        }
+        return false;
+    }
+
+    private VerificationResult verifyAttendanceLocation(
+            java.math.BigDecimal latitude,
+            java.math.BigDecimal longitude,
+            String ipAddress) {
+        if (latitude == null || longitude == null) {
+            throw new IllegalArgumentException("Vui long bat dinh vi GPS de cham cong");
+        }
+
+        double distance = calculateDistance(
+                latitude.doubleValue(),
+                longitude.doubleValue(),
+                officeLatitude,
+                officeLongitude);
+        boolean gpsValid = distance <= allowedRadiusMeters;
+        if (!gpsValid) {
+            throw new IllegalArgumentException(
+                    "GPS nam ngoai pham vi van phong (" + Math.round(distance) + "m/" + Math.round(allowedRadiusMeters) + "m)");
+        }
+
+        boolean ipValid = isValidIpAddress(ipAddress);
+        if (!ipValid) {
+            throw new IllegalArgumentException("IP hien tai khong nam trong mang van phong");
+        }
+
+        return new VerificationResult(gpsValid, ipValid);
+    }
+
+    private record VerificationResult(Boolean gpsValid, Boolean ipValid) {
+    }
+
+    private boolean matchIpSubnet(String clientIp, String cidr) {
+        String[] parts = cidr.split("/");
+        String subnetIp = parts[0];
+        int prefixLength = Integer.parseInt(parts[1]);
+
+        try {
+            java.net.InetAddress clientAddr = java.net.InetAddress.getByName(clientIp);
+            java.net.InetAddress subnetAddr = java.net.InetAddress.getByName(subnetIp);
+
+            byte[] clientBytes = clientAddr.getAddress();
+            byte[] subnetBytes = subnetAddr.getAddress();
+
+            if (clientBytes.length != subnetBytes.length) {
+                return false;
+            }
+
+            int bytesToCheck = prefixLength / 8;
+            int remainingBits = prefixLength % 8;
+
+            for (int i = 0; i < bytesToCheck; i++) {
+                if (clientBytes[i] != subnetBytes[i]) {
+                    return false;
+                }
+            }
+
+            if (remainingBits > 0) {
+                int mask = 0xFF00 >> remainingBits & 0xFF;
+                if ((clientBytes[bytesToCheck] & mask) != (subnetBytes[bytesToCheck] & mask)) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
 
     // ========================================
     // 1. NHÂN VIÊN CHECK-IN
@@ -45,7 +167,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     @Transactional
-    public AttendanceResponse checkIn(String username) {
+    public AttendanceResponse checkIn(String username, java.math.BigDecimal latitude, java.math.BigDecimal longitude, String ipAddress) {
         Employee employee = getEmployeeByUsername(username);
         LocalDate today = LocalDate.now();
 
@@ -66,16 +188,24 @@ public class AttendanceServiceImpl implements AttendanceService {
             lateMinutes = (int) Duration.between(defaultShift.getStartTime(), now).toMinutes();
         }
 
+        // Kiểm tra định vị GPS
+        VerificationResult verification = verifyAttendanceLocation(latitude, longitude, ipAddress);
+
         AttendanceRecord record = AttendanceRecord.builder()
                 .employee(employee)
                 .date(today)
                 .checkIn(now)
                 .status(status)
                 .lateMinutes(lateMinutes)
+                .checkInIp(ipAddress)
+                .checkInLat(latitude)
+                .checkInLng(longitude)
+                .checkInGpsValid(verification.gpsValid())
+                .checkInIpValid(verification.ipValid())
                 .build();
 
         AttendanceRecord saved = attendanceRepository.save(record);
-        log.info("Check-in: {} lúc {} - Trạng thái: {}", employee.getCode(), now, status);
+        log.info("Check-in: {} lúc {} - Trạng thái: {}, GPS Valid: {}, IP Valid: {}", employee.getCode(), now, status, verification.gpsValid(), verification.ipValid());
 
         return mapToResponse(saved);
     }
@@ -86,7 +216,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
     @Override
     @Transactional
-    public AttendanceResponse checkOut(String username) {
+    public AttendanceResponse checkOut(String username, java.math.BigDecimal latitude, java.math.BigDecimal longitude, String ipAddress) {
         Employee employee = getEmployeeByUsername(username);
         LocalDate today = LocalDate.now();
 
@@ -116,9 +246,18 @@ public class AttendanceServiceImpl implements AttendanceService {
             }
         }
 
+        // Kiểm tra định vị GPS
+        VerificationResult verification = verifyAttendanceLocation(latitude, longitude, ipAddress);
+
+        record.setCheckOutIp(ipAddress);
+        record.setCheckOutLat(latitude);
+        record.setCheckOutLng(longitude);
+        record.setCheckOutGpsValid(verification.gpsValid());
+        record.setCheckOutIpValid(verification.ipValid());
+
         AttendanceRecord saved = attendanceRepository.save(record);
-        log.info("Check-out: {} lúc {} - Giờ làm: {}h, OT: {}h",
-                employee.getCode(), now, saved.getWorkHours(), saved.getOvertimeHours());
+        log.info("Check-out: {} lúc {} - Giờ làm: {}h, OT: {}h, GPS Valid: {}, IP Valid: {}",
+                employee.getCode(), now, saved.getWorkHours(), saved.getOvertimeHours(), verification.gpsValid(), verification.ipValid());
 
         return mapToResponse(saved);
     }
@@ -388,6 +527,16 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .workHours(record.getWorkHours())
                 .lateMinutes(record.getLateMinutes())
                 .earlyLeaveMinutes(record.getEarlyLeaveMinutes())
+                .checkInIp(record.getCheckInIp())
+                .checkInLat(record.getCheckInLat())
+                .checkInLng(record.getCheckInLng())
+                .checkOutIp(record.getCheckOutIp())
+                .checkOutLat(record.getCheckOutLat())
+                .checkOutLng(record.getCheckOutLng())
+                .checkInGpsValid(record.getCheckInGpsValid())
+                .checkInIpValid(record.getCheckInIpValid())
+                .checkOutGpsValid(record.getCheckOutGpsValid())
+                .checkOutIpValid(record.getCheckOutIpValid())
                 .note(record.getNote())
                 .createdAt(record.getCreatedAt())
                 .build();

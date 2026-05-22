@@ -437,7 +437,7 @@ SELECT
   e.id,
   LOWER(e.code),
   e.email,
-  '$2a$10$7EqJtq98hPqEX7fNZaFWoO5o9Pqj8VY5A1NVuMcZV8K4D4ew3Efr2',
+  '$2a$10$3.vanjSR/276bNj6IQpwCOPnZcJ1rdUR4CYDhQ28nalAHLEGqzM3a',
   CASE WHEN e.id <= 10 THEN 'ADMIN' ELSE 'EMPLOYEE' END
 FROM employees e;
 

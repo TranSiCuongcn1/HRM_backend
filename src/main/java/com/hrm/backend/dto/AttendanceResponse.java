@@ -29,7 +29,18 @@ public class AttendanceResponse {
     private Integer lateMinutes;
     private Integer earlyLeaveMinutes;
     private String note;
+    private String checkInIp;
+    private BigDecimal checkInLat;
+    private BigDecimal checkInLng;
+    private String checkOutIp;
+    private BigDecimal checkOutLat;
+    private BigDecimal checkOutLng;
+    private Boolean checkInGpsValid;
+    private Boolean checkInIpValid;
+    private Boolean checkOutGpsValid;
+    private Boolean checkOutIpValid;
     private LocalDateTime createdAt;
+
 
     /**
      * DTO phụ: Thống kê chấm công theo tháng (cho Payroll sử dụng)
