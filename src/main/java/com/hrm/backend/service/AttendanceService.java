@@ -65,6 +65,15 @@ public interface AttendanceService {
             Boolean hasOvertime,
             Pageable pageable);
 
+     //Bảng chấm công toàn công ty theo khoảng thời gian
+             Page<AttendanceResponse> getRecordsByDateRange(
+            LocalDate fromDate,
+            LocalDate toDate,
+            String status,
+            String keyword,
+            Boolean hasOvertime,
+            Pageable pageable);
+
     /**
      * Thống kê chấm công tháng của 1 nhân viên.
      * Module Payroll sẽ gọi method này để lấy totalWorkDays, lateCount, totalOvertimeHours.

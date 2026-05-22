@@ -47,6 +47,21 @@ public interface AttendanceRepository extends JpaRepository<AttendanceRecord, In
             Pageable pageable
     );
 
+    @Query("SELECT a FROM AttendanceRecord a WHERE a.date BETWEEN :fromDate AND :toDate " +
+            "AND (:status IS NULL OR :status = '' OR a.status = :status) " +
+            "AND (:hasOvertime = false OR COALESCE(a.overtimeHours, 0) > 0) " +
+            "AND (:keyword IS NULL OR :keyword = '' OR " +
+            "LOWER(a.employee.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(a.employee.code) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<AttendanceRecord> searchByDateRange(
+            @Param("fromDate") LocalDate fromDate,
+            @Param("toDate") LocalDate toDate,
+            @Param("status") String status,
+            @Param("hasOvertime") boolean hasOvertime,
+            @Param("keyword") String keyword,
+            Pageable pageable
+    );
+
     @Query("SELECT a FROM AttendanceRecord a WHERE a.employee.id = :employeeId " +
             "AND a.date BETWEEN :from AND :to " +
             "AND (:status IS NULL OR :status = '' OR a.status = :status)")

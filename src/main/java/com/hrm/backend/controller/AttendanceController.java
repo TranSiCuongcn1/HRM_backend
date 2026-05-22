@@ -191,6 +191,32 @@ public class AttendanceController {
         );
     }
 
+    @GetMapping("/range")
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Chấm công theo khoảng thời gian",
+            description = "Bảng chấm công toàn công ty trong khoảng thời gian cụ thể.")
+    public ResponseEntity<ApiResponse<Page<AttendanceResponse>>> getRecordsByDateRange(
+            @RequestParam LocalDate fromDate,
+            @RequestParam LocalDate toDate,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String keyword,
+            @RequestParam(defaultValue = "false") boolean hasOvertime,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "employee.code") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<AttendanceResponse> records = attendanceService.getRecordsByDateRange(fromDate, toDate, status, keyword, hasOvertime, pageable);
+        return ResponseEntity.ok(
+                ApiResponse.success("Bảng chấm công từ " + fromDate + " đến " + toDate, records)
+        );
+    }
+
     /**
      * Thống kê chấm công tháng (Payroll sẽ dùng data này)
      */

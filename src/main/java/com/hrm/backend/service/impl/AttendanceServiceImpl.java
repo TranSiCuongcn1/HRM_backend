@@ -271,6 +271,19 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .map(this::mapToResponse);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Page<AttendanceResponse> getRecordsByDateRange(
+            LocalDate fromDate,
+            LocalDate toDate,
+            String status,
+            String keyword,
+            Boolean hasOvertime,
+            Pageable pageable) {
+        return attendanceRepository.searchByDateRange(fromDate, toDate, status, Boolean.TRUE.equals(hasOvertime), keyword, pageable)
+                .map(this::mapToResponse);
+    }
+
     // ========================================
     // 9. THỐNG KÊ THÁNG (CHO PAYROLL)
     // ========================================
