@@ -11,15 +11,15 @@ import com.hrm.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Component;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-@Configuration
+@Component
 @RequiredArgsConstructor
 @Slf4j
-public class DataInitializer {
+public class DataInitializer implements CommandLineRunner {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
@@ -30,23 +30,21 @@ public class DataInitializer {
     /**
      * Tạo dữ liệu mẫu khi khởi động ứng dụng.
      */
-    @Bean
-    public CommandLineRunner initData() {
-        return args -> {
-            if (!userRepository.existsByUsername("admin")) {
-                initDepartmentsAndAdmin();
-                log.info("=== Dữ liệu mẫu đã được khởi tạo ===");
-                log.info("Admin Username: admin / Password: admin123");
-                log.info("============================================");
-            } else {
-                log.info("Dữ liệu đã tồn tại, bỏ qua khởi tạo.");
-            }
+    @Override
+    public void run(String... args) throws Exception {
+        if (!userRepository.existsByUsername("admin")) {
+            initDepartmentsAndAdmin();
+            log.info("=== Dữ liệu mẫu đã được khởi tạo ===");
+            log.info("Admin Username: admin / Password: admin123");
+            log.info("============================================");
+        } else {
+            log.info("Dữ liệu đã tồn tại, bỏ qua khởi tạo.");
+        }
 
-            // Luôn seed leave types (idempotent - kiểm tra trước khi tạo)
-            initLeaveTypes();
+        // Luôn seed leave types (idempotent - kiểm tra trước khi tạo)
+        initLeaveTypes();
 
-            // Chỉ còn role ADMIN và EMPLOYEE, không cần tạo thêm tài khoản mẫu
-        };
+        // Chỉ còn role ADMIN và EMPLOYEE, không cần tạo thêm tài khoản mẫu
     }
 
     @Transactional

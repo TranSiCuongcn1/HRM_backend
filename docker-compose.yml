@@ -1,13 +1,13 @@
 services:
   postgres-db:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: hrm_postgres_db
     environment:
       POSTGRES_DB: HRM
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: "123456"
     ports:
-      - "5433:5432"
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: unless-stopped
