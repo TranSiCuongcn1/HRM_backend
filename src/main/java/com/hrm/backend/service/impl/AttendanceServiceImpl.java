@@ -10,6 +10,8 @@ import com.hrm.backend.repository.AttendanceRepository;
 import com.hrm.backend.repository.EmployeeRepository;
 import com.hrm.backend.repository.ShiftRepository;
 import com.hrm.backend.repository.UserRepository;
+import com.hrm.backend.repository.OvertimeRequestRepository;
+import com.hrm.backend.entity.OvertimeRequest;
 import com.hrm.backend.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +38,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final ShiftRepository shiftRepository;
+    private final OvertimeRequestRepository overtimeRequestRepository;
 
     @org.springframework.beans.factory.annotation.Value("${app.attendance.office-latitude:21.028511}")
     private double officeLatitude;
@@ -506,7 +509,25 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         // overtimeHours = max(0, workHours - 8)
         BigDecimal overtime = workHours.subtract(STANDARD_WORK_HOURS);
-        record.setOvertimeHours(overtime.compareTo(BigDecimal.ZERO) > 0 ? overtime : BigDecimal.ZERO);
+        BigDecimal actualOvertime = overtime.compareTo(BigDecimal.ZERO) > 0 ? overtime : BigDecimal.ZERO;
+
+        // Ràng buộc với Đơn đăng ký tăng ca đã duyệt (APPROVED) theo Phương án B
+        BigDecimal approvedOTHours = BigDecimal.ZERO;
+        if (record.getEmployee() != null && record.getDate() != null) {
+            List<OvertimeRequest> approvedRequests = overtimeRequestRepository
+                    .findByEmployeeIdAndDateAndStatus(record.getEmployee().getId(), record.getDate(), "APPROVED");
+            
+            if (approvedRequests != null && !approvedRequests.isEmpty()) {
+                approvedOTHours = approvedRequests.stream()
+                        .map(OvertimeRequest::getHours)
+                        .filter(h -> h != null)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+            }
+        }
+
+        // overtimeHours được duyệt thực tế = min(actualOvertime, approvedOTHours)
+        BigDecimal finalOvertime = actualOvertime.min(approvedOTHours);
+        record.setOvertimeHours(finalOvertime);
     }
 
     // ========================================

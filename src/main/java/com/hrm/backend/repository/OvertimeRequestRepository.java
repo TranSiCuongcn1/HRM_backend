@@ -35,4 +35,6 @@ public interface OvertimeRequestRepository extends JpaRepository<OvertimeRequest
             @Param("keyword") String keyword,
             Pageable pageable
     );
+
+    java.util.List<OvertimeRequest> findByEmployeeIdAndDateAndStatus(Integer employeeId, LocalDate date, String status);
 }
