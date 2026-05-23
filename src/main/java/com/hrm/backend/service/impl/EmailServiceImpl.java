@@ -21,7 +21,7 @@ public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
 
-    private static final String COMPANY_NAME = "EnglishMaster HRM";
+    private static final String COMPANY_NAME = "Hệ thống Quản lý Nhân sự HRM";
     private static final String BRAND_COLOR = "#3d6b59";
 
     @Async("mailExecutor")
