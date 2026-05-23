@@ -15,6 +15,7 @@ import com.hrm.backend.service.ContractService;
 import com.hrm.backend.service.LeaveRequestService;
 import com.hrm.backend.service.PayrollService;
 import com.hrm.backend.service.TaxAndInsuranceService;
+import com.hrm.backend.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,7 @@ public class PayrollServiceImpl implements PayrollService {
     private final LeaveRequestService leaveRequestService;
     private final TaxAndInsuranceService taxAndInsuranceService;
     private final ObjectMapper objectMapper;
+    private final EmailService emailService;
 
     // Hệ số OT: 150% lương giờ bình thường
     private static final BigDecimal OT_RATE = new BigDecimal("1.5");
@@ -315,6 +317,26 @@ public class PayrollServiceImpl implements PayrollService {
         Payroll saved = payrollRepository.save(payroll);
         log.info("Giám đốc {} duyệt phiếu #{} - NV: {}, Net: {}",
                 approver.getCode(), payrollId, payroll.getEmployee().getCode(), payroll.getNetSalary());
+
+        // Gửi email phiếu lương bất đồng bộ cho nhân viên
+        try {
+            Map<String, BigDecimal> deductionsMap = null;
+            if (saved.getDeductions() != null) {
+                deductionsMap = objectMapper.readValue(saved.getDeductions(), new TypeReference<Map<String, BigDecimal>>() {});
+            }
+            emailService.sendPayslipEmail(
+                    saved.getEmployee().getEmail(),
+                    saved.getEmployee().getName(),
+                    saved.getMonth(),
+                    saved.getBasicSalary(),
+                    saved.getTotalAllowances(),
+                    saved.getTotalDeductions(),
+                    saved.getNetSalary(),
+                    deductionsMap
+            );
+        } catch (Exception e) {
+            log.error("Failed to trigger payslip email for payroll #{}: {}", payrollId, e.getMessage());
+        }
 
         return mapToResponse(saved);
     }

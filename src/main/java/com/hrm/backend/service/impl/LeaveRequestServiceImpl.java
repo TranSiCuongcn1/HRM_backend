@@ -6,6 +6,7 @@ import com.hrm.backend.entity.*;
 import com.hrm.backend.repository.*;
 import com.hrm.backend.service.LeaveBalanceService;
 import com.hrm.backend.service.LeaveRequestService;
+import com.hrm.backend.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
     private final LeaveBalanceService leaveBalanceService;
+    private final EmailService emailService;
 
     // ========================================
     // 1. NV GỬI ĐƠN XIN PHÉP
@@ -155,6 +157,19 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 admin.getCode(), requestId, leaveRequest.getEmployee().getCode(),
                 leaveRequest.getLeaveType().getName(), leaveRequest.getDays());
 
+        try {
+            emailService.sendLeaveStatusEmail(
+                    saved.getEmployee().getEmail(),
+                    saved.getEmployee().getName(),
+                    saved.getStartDate().toString() + " -> " + saved.getEndDate().toString(),
+                    saved.getLeaveType().getName(),
+                    saved.getStatus(),
+                    null
+            );
+        } catch (Exception e) {
+            log.error("Failed to trigger leave status email: {}", e.getMessage());
+        }
+
         return mapToResponse(saved);
     }
 
@@ -183,6 +198,19 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
         log.info("Admin {} từ chối đơn #{} của NV {} - Lý do: {}",
                 admin.getCode(), requestId, leaveRequest.getEmployee().getCode(), reason);
+
+        try {
+            emailService.sendLeaveStatusEmail(
+                    saved.getEmployee().getEmail(),
+                    saved.getEmployee().getName(),
+                    saved.getStartDate().toString() + " -> " + saved.getEndDate().toString(),
+                    saved.getLeaveType().getName(),
+                    saved.getStatus(),
+                    saved.getRejectionReason()
+            );
+        } catch (Exception e) {
+            log.error("Failed to trigger leave status email: {}", e.getMessage());
+        }
 
         return mapToResponse(saved);
     }

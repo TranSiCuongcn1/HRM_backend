@@ -17,6 +17,17 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${SMTP_USERNAME:cuongtran.23092004@gmail.com}
+    password: ${SMTP_PASSWORD:hkya isfh eeoj uuvv}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 app:
   jwt:

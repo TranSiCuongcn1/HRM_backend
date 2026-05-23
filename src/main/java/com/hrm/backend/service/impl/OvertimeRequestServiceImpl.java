@@ -9,6 +9,7 @@ import com.hrm.backend.repository.EmployeeRepository;
 import com.hrm.backend.repository.OvertimeRequestRepository;
 import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.service.OvertimeRequestService;
+import com.hrm.backend.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ public class OvertimeRequestServiceImpl implements OvertimeRequestService {
     private final OvertimeRequestRepository overtimeRequestRepository;
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Override
     @Transactional
@@ -94,6 +96,19 @@ public class OvertimeRequestServiceImpl implements OvertimeRequestService {
         OvertimeRequest saved = overtimeRequestRepository.save(orq);
         log.info("Admin {} đã duyệt đơn tăng ca #{} của NV {}", admin.getCode(), requestId, orq.getEmployee().getCode());
 
+        try {
+            emailService.sendOvertimeStatusEmail(
+                    saved.getEmployee().getEmail(),
+                    saved.getEmployee().getName(),
+                    saved.getDate().toString(),
+                    saved.getHours(),
+                    saved.getStatus(),
+                    null
+            );
+        } catch (Exception e) {
+            log.error("Failed to trigger overtime status email: {}", e.getMessage());
+        }
+
         return mapToResponse(saved);
     }
 
@@ -116,6 +131,19 @@ public class OvertimeRequestServiceImpl implements OvertimeRequestService {
         OvertimeRequest saved = overtimeRequestRepository.save(orq);
         log.info("Admin {} đã từ chối đơn tăng ca #{} của NV {} - Lý do: {}", 
                 admin.getCode(), requestId, orq.getEmployee().getCode(), reason);
+
+        try {
+            emailService.sendOvertimeStatusEmail(
+                    saved.getEmployee().getEmail(),
+                    saved.getEmployee().getName(),
+                    saved.getDate().toString(),
+                    saved.getHours(),
+                    saved.getStatus(),
+                    saved.getRejectionReason()
+            );
+        } catch (Exception e) {
+            log.error("Failed to trigger overtime status email: {}", e.getMessage());
+        }
 
         return mapToResponse(saved);
     }
