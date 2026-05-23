@@ -33,7 +33,11 @@ public class SecurityConfig {
             )
             .authorizeHttpRequests(auth -> auth
                     // Cho phép truy cập không cần đăng nhập
-                    .requestMatchers("/api/v1/auth/login").permitAll()
+                    .requestMatchers(
+                            "/api/v1/auth/login",
+                            "/api/v1/auth/forgot-password",
+                            "/api/v1/auth/verify-forgot-password"
+                    ).permitAll()
                     // Swagger UI
                     .requestMatchers(
                             "/swagger-ui/**",

@@ -7,14 +7,24 @@ import com.hrm.backend.entity.User;
 import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.security.JwtTokenProvider;
 import com.hrm.backend.service.AuthService;
+import com.hrm.backend.dto.ForgotPasswordRequest;
+import com.hrm.backend.dto.VerifyForgotPasswordRequest;
+import com.hrm.backend.service.EmailService;
+import java.time.LocalDateTime;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +34,19 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+
+    private final Map<String, TempResetData> resetCache = new ConcurrentHashMap<>();
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    private static class TempResetData {
+        private String email;
+        private String newPasswordHash;
+        private String otpCode;
+        private LocalDateTime expiryTime;
+    }
 
     /**
      * Xác thực người dùng bằng username/password.
@@ -86,5 +109,55 @@ public class AuthServiceImpl implements AuthService {
         // Cập nhật mật khẩu mới (được mã hoá BCrypt)
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public void initiateForgotPassword(ForgotPasswordRequest request) {
+        String email = request.getEmail().trim().toLowerCase();
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new IllegalArgumentException("Email không tồn tại trong hệ thống"));
+
+        // Sinh mã OTP 6 chữ số ngẫu nhiên
+        String otpCode = String.format("%06d", new Random().nextInt(1000000));
+        String newPasswordHash = passwordEncoder.encode(request.getNewPassword());
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5);
+
+        // Lưu vào cache (sử dụng email đã được chuyển thành chữ thường làm key)
+        resetCache.put(email, new TempResetData(email, newPasswordHash, otpCode, expiryTime));
+
+        // Gửi email bất đồng bộ (sử dụng email chính thức của user từ DB để gửi)
+        String employeeName = user.getEmployee() != null ? user.getEmployee().getName() : user.getUsername();
+        emailService.sendForgotPasswordOtpEmail(user.getEmail(), employeeName, otpCode);
+    }
+
+    @Override
+    @Transactional
+    public void verifyForgotPassword(VerifyForgotPasswordRequest request) {
+        String email = request.getEmail().trim().toLowerCase();
+        TempResetData resetData = resetCache.get(email);
+
+        if (resetData == null) {
+            throw new IllegalArgumentException("Không tìm thấy yêu cầu khôi phục mật khẩu hoặc đã bị hủy");
+        }
+
+        if (resetData.getExpiryTime().isBefore(LocalDateTime.now())) {
+            resetCache.remove(email);
+            throw new IllegalArgumentException("Mã OTP đã hết hạn. Vui lòng gửi lại yêu cầu.");
+        }
+
+        if (!resetData.getOtpCode().equals(request.getOtpCode().trim())) {
+            throw new IllegalArgumentException("Mã OTP xác thực không chính xác");
+        }
+
+        // OTP hợp lệ -> Cập nhật mật khẩu mới vào DB
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng"));
+
+        user.setPasswordHash(resetData.getNewPasswordHash());
+        userRepository.save(user);
+
+        // Xóa khỏi cache
+        resetCache.remove(email);
     }
 }

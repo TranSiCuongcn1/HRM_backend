@@ -4,6 +4,8 @@ import com.hrm.backend.dto.ApiResponse;
 import com.hrm.backend.dto.ChangePasswordRequest;
 import com.hrm.backend.dto.LoginRequest;
 import com.hrm.backend.dto.LoginResponse;
+import com.hrm.backend.dto.ForgotPasswordRequest;
+import com.hrm.backend.dto.VerifyForgotPasswordRequest;
 import com.hrm.backend.entity.User;
 import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.service.AuthService;
@@ -75,6 +77,34 @@ public class AuthController {
         authService.changePassword(authentication.getName(), changePasswordRequest);
         return ResponseEntity.ok(
                 ApiResponse.success("Đổi mật khẩu thành công")
+        );
+    }
+
+    /**
+     * API Yêu cầu khôi phục mật khẩu (Quên mật khẩu)
+     * POST /api/v1/auth/forgot-password
+     */
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Yêu cầu khôi phục mật khẩu", description = "Nhận Email và Mật khẩu mới, sau đó gửi mã OTP xác minh qua Email")
+    public ResponseEntity<ApiResponse<Void>> forgotPassword(
+            @Valid @RequestBody ForgotPasswordRequest request) {
+        authService.initiateForgotPassword(request);
+        return ResponseEntity.ok(
+                ApiResponse.success("Mã OTP xác thực đã được gửi về email của bạn. Vui lòng kiểm tra hộp thư.")
+        );
+    }
+
+    /**
+     * API Xác thực OTP khôi phục mật khẩu
+     * POST /api/v1/auth/verify-forgot-password
+     */
+    @PostMapping("/verify-forgot-password")
+    @Operation(summary = "Xác nhận OTP khôi phục mật khẩu", description = "Xác nhận OTP và chính thức cập nhật mật khẩu mới")
+    public ResponseEntity<ApiResponse<Void>> verifyForgotPassword(
+            @Valid @RequestBody VerifyForgotPasswordRequest request) {
+        authService.verifyForgotPassword(request);
+        return ResponseEntity.ok(
+                ApiResponse.success("Mật khẩu đã được khôi phục thành công. Vui lòng đăng nhập với mật khẩu mới.")
         );
     }
 }

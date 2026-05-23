@@ -295,4 +295,66 @@ public class EmailServiceImpl implements EmailService {
             return String.format("%,.0f VNĐ", amount);
         }
     }
+
+    @Async("mailExecutor")
+    @Override
+    public void sendForgotPasswordOtpEmail(String toEmail, String employeeName, String otpCode) {
+        if (toEmail == null || toEmail.trim().isEmpty()) {
+            log.warn("Cannot send email: recipient address is empty.");
+            return;
+        }
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+            helper.setTo(toEmail);
+            helper.setSubject("🔑 Xác Nhận Khôi Phục Mật Khẩu - " + COMPANY_NAME);
+
+            StringBuilder htmlContent = new StringBuilder();
+            htmlContent.append("<!DOCTYPE html><html><head>")
+                    .append("<meta charset='UTF-8'>")
+                    .append("<style>")
+                    .append("body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #1e293b; }")
+                    .append("</style>")
+                    .append("</head><body>")
+                    .append("<div style='max-width:600px;margin:0 auto;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 10px 15px -3px rgba(0,0,0,0.1);border:1px solid #e2e8f0;'>")
+                    // Header
+                    .append("<div style='background-color:").append(BRAND_COLOR).append(";padding:30px;text-align:center;'>")
+                    .append("<h1 style='color:#ffffff;margin:0;font-size:24px;font-weight:700;text-transform:uppercase;letter-spacing:1px;'>Khôi Phục Mật Khẩu</h1>")
+                    .append("</div>")
+                    // Body
+                    .append("<div style='padding:30px 40px;'>")
+                    .append("<p style='font-size:16px;font-weight:700;margin-top:0;'>Xin chào ").append(employeeName != null ? employeeName : "Thành viên").append(",</p>")
+                    .append("<p style='font-size:15px;line-height:1.6;'>Chúng tôi nhận được yêu cầu thay đổi mật khẩu cho tài khoản đăng nhập liên kết với email này.</p>")
+                    .append("<p style='font-size:15px;line-height:1.6;'>Vui lòng sử dụng mã xác thực OTP dưới đây để hoàn tất việc thiết lập mật khẩu mới của bạn:</p>")
+                    
+                    // OTP Box
+                    .append("<div style='background-color:#f8fafc;border:2px dashed ").append(BRAND_COLOR).append(";border-radius:12px;padding:24px;text-align:center;margin:24px 0;'>")
+                    .append("<span style='font-size:36px;font-weight:800;letter-spacing:8px;color:").append(BRAND_COLOR).append(";font-family:monospace;'>").append(otpCode).append("</span>")
+                    .append("</div>")
+                    
+                    .append("<p style='font-size:14px;color:#c5221f;font-weight:600;background-color:#fdf2f2;padding:12px 16px;border-radius:8px;'>")
+                    .append("⚠️ Cảnh báo bảo mật: Mã OTP này có hiệu lực trong vòng <strong>5 phút</strong>. Tuyệt đối không chia sẻ mã này với bất kỳ ai để phòng tránh mất tài khoản.")
+                    .append("</p>")
+                    
+                    .append("<p style='font-size:15px;line-height:1.6;margin-top:20px;'>Nếu không phải bạn thực hiện yêu cầu này, vui lòng bỏ qua email này hoặc đổi mật khẩu ngay lập tức để giữ an toàn cho tài khoản.</p>")
+                    .append("<p style='font-size:15px;margin-top:30px;margin-bottom:0;'>Trân trọng,</p>")
+                    .append("<p style='font-size:15px;color:").append(BRAND_COLOR).append(";font-weight:700;margin-top:4px;'>Ban Quản Trị Nhân Sự</p>")
+                    .append("</div>")
+                    // Footer
+                    .append("<div style='background-color:#f8fafc;padding:20px;text-align:center;border-top:1px solid #e2e8f0;color:#94a3b8;font-size:12px;'>")
+                    .append("<p style='margin:0;'>Đây là email tự động gửi từ ").append(COMPANY_NAME).append(".</p>")
+                    .append("<p style='margin:4px 0 0 0;'>Vui lòng không phản hồi trực tiếp vào địa chỉ thư này.</p>")
+                    .append("</div>")
+                    .append("</div></body></html>");
+
+            helper.setText(htmlContent.toString(), true);
+            mailSender.send(message);
+            log.info("Forgot Password OTP Email successfully sent to {}", toEmail);
+
+        } catch (Exception e) {
+            log.error("Failed to send Forgot Password OTP Email to {}: {}", toEmail, e.getMessage(), e);
+        }
+    }
 }
