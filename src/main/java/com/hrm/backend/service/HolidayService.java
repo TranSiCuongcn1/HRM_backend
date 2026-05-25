@@ -8,4 +8,5 @@ public interface HolidayService {
     HolidayDto createHoliday(HolidayDto dto);
     HolidayDto updateHoliday(Integer id, HolidayDto dto);
     void deleteHoliday(Integer id);
+    List<HolidayDto> createHolidays(List<HolidayDto> dtos);
 }

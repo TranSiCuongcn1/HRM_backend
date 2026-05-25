@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,22 @@ public class HolidayServiceImpl implements HolidayService {
                 .isPaid(dto.getIsPaid() != null ? dto.getIsPaid() : true)
                 .build();
         return mapToDto(holidayRepository.save(holiday));
+    }
+
+    @Override
+    @Transactional
+    public List<HolidayDto> createHolidays(List<HolidayDto> dtos) {
+        List<Holiday> holidaysToSave = new ArrayList<>();
+        for (HolidayDto dto : dtos) {
+            if (!holidayRepository.existsByDate(dto.getDate())) {
+                holidaysToSave.add(Holiday.builder()
+                        .name(dto.getName())
+                        .date(dto.getDate())
+                        .isPaid(dto.getIsPaid() != null ? dto.getIsPaid() : true)
+                        .build());
+            }
+        }
+        return holidayRepository.saveAll(holidaysToSave).stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override

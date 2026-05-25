@@ -28,6 +28,11 @@ public class HolidayController {
         return ResponseEntity.ok(ApiResponse.success("Thêm mới ngày lễ thành công", holidayService.createHoliday(dto)));
     }
 
+    @PostMapping("/batch")
+    public ResponseEntity<ApiResponse<List<HolidayDto>>> createBatch(@RequestBody List<HolidayDto> dtos) {
+        return ResponseEntity.ok(ApiResponse.success("Thêm mới các ngày lễ thành công", holidayService.createHolidays(dtos)));
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<HolidayDto>> update(@PathVariable Integer id, @RequestBody HolidayDto dto) {
         return ResponseEntity.ok(ApiResponse.success("Cập nhật ngày lễ thành công", holidayService.updateHoliday(id, dto)));
