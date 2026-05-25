@@ -72,9 +72,19 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public EmployeeResponse createEmployee(EmployeeRequest request) {
-        // Kiểm tra trùng mã nhân viên
-        if (employeeRepository.existsByCode(request.getCode())) {
-            throw new IllegalArgumentException("Mã nhân viên '" + request.getCode() + "' đã tồn tại");
+        String code = request.getCode();
+        if (code == null || code.trim().isEmpty()) {
+            long count = employeeRepository.count();
+            code = String.format("EMP%04d", count + 1);
+            while (employeeRepository.existsByCode(code)) {
+                count++;
+                code = String.format("EMP%04d", count + 1);
+            }
+        } else {
+            // Kiểm tra trùng mã nhân viên
+            if (employeeRepository.existsByCode(code)) {
+                throw new IllegalArgumentException("Mã nhân viên '" + code + "' đã tồn tại");
+            }
         }
 
         // Kiểm tra trùng email
@@ -91,7 +101,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // --- Bước 1: Tạo Employee ---
         Employee employee = Employee.builder()
-                .code(request.getCode())
+                .code(code)
                 .name(request.getName())
                 .avatar(request.getAvatar())
                 .email(request.getEmail())
