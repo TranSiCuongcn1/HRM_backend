@@ -162,12 +162,6 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new IllegalArgumentException("Email '" + request.getEmail() + "' đã được sử dụng bởi nhân viên khác");
         }
 
-        // Kiểm tra nếu đổi mã nhân viên thì mã mới không được trùng
-        if (!employee.getCode().equals(request.getCode())
-                && employeeRepository.existsByCode(request.getCode())) {
-            throw new IllegalArgumentException("Mã nhân viên '" + request.getCode() + "' đã tồn tại");
-        }
-
         // Tìm phòng ban mới
         Department department = null;
         if (request.getDepartmentId() != null) {
@@ -176,7 +170,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         // Cập nhật thông tin Employee
-        employee.setCode(request.getCode());
         employee.setName(request.getName());
         employee.setAvatar(request.getAvatar());
         employee.setPhone(request.getPhone());

@@ -14,7 +14,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class EmployeeRequest {
 
-    @NotBlank(message = "Mã nhân viên không được để trống")
     private String code;
 
     @NotBlank(message = "Tên nhân viên không được để trống")
