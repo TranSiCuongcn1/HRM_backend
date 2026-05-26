@@ -489,6 +489,12 @@ public class PayrollServiceImpl implements PayrollService {
         return user.getEmployee();
     }
 
+    @Override
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản: " + username));
+    }
+
     // ========================================
     // HELPER: JSON ↔ Map conversion
     // ========================================

@@ -66,4 +66,6 @@ public interface PayrollService {
      * Chi tiết 1 phiếu lương
      */
     PayrollResponse getPayrollById(Integer id);
+
+    com.hrm.backend.entity.User getUserByUsername(String username);
 }
