@@ -43,8 +43,7 @@ public class SecurityConfig {
                             "/swagger-ui/**",
                             "/swagger-ui.html",
                             "/v3/api-docs/**",
-                            "/swagger-resources/**",
-                            "/api/v1/payrolls/**"
+                            "/swagger-resources/**"
                     ).permitAll()
                     // Tất cả các requests khác đều yêu cầu xác thực
                     .anyRequest().authenticated()
