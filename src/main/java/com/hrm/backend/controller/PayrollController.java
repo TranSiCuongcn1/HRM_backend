@@ -30,11 +30,11 @@ public class PayrollController {
     private final PayrollService payrollService;
 
     // ========================================
-    // NHÂN VIÊN/ADMIN: TẠO BẢNG LƯƠNG
+    // ADMIN: TẠO BẢNG LƯƠNG
     // ========================================
 
     @PostMapping("/generate")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Tạo bảng lương tháng",
             description = "Tự động tạo bảng lương DRAFT cho tất cả NV ACTIVE. " +
                     "Có thể đính kèm phụ cấp/khấu trừ mặc định áp dụng cho toàn bộ NV.")
@@ -63,11 +63,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // NHÂN VIÊN/ADMIN: SỬA PHIẾU LƯƠNG
+    // ADMIN: SỬA PHIẾU LƯƠNG
     // ========================================
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Sửa phiếu lương",
             description = "Kế toán sửa phụ cấp, khấu trừ, ngày công. Chỉ sửa khi phiếu ở trạng thái DRAFT.")
     public ResponseEntity<ApiResponse<PayrollResponse>> updatePayroll(
@@ -81,11 +81,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // NHÂN VIÊN/ADMIN: CẬP NHẬT HÀNG LOẠT
+    // ADMIN: CẬP NHẬT HÀNG LOẠT
     // ========================================
 
     @PutMapping("/bulk-update")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Cập nhật hàng loạt",
             description = "Áp dụng phụ cấp/khấu trừ cho nhiều phiếu lương cùng lúc (chỉ DRAFT). " +
                     "Phụ cấp/khấu trừ mới sẽ merge vào danh sách hiện có.")
@@ -99,11 +99,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // NHÂN VIÊN/ADMIN: CHỐT LƯƠNG
+    // ADMIN: CHỐT LƯƠNG
     // ========================================
 
     @PutMapping("/{id}/submit")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Chốt lương",
             description = "Kế toán chốt phiếu lương. Sau khi chốt không thể sửa được nữa (CALCULATED).")
     public ResponseEntity<ApiResponse<PayrollResponse>> submitPayroll(@PathVariable Integer id) {
@@ -134,11 +134,11 @@ public class PayrollController {
     }
 
     // ========================================
-    // NHÂN VIÊN/ADMIN: THANH TOÁN
+    // ADMIN: THANH TOÁN
     // ========================================
 
     @PutMapping("/{id}/pay")
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Đánh dấu đã thanh toán",
             description = "Đánh dấu phiếu lương đã được thanh toán (APPROVED → PAID).")
     public ResponseEntity<ApiResponse<PayrollResponse>> markAsPaid(@PathVariable Integer id) {
@@ -154,7 +154,7 @@ public class PayrollController {
     // ========================================
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Bảng lương theo tháng",
             description = "Xem bảng lương toàn công ty theo tháng (format: 2026-04)")
     public ResponseEntity<ApiResponse<Page<PayrollResponse>>> getPayrollsByMonth(
@@ -191,16 +191,30 @@ public class PayrollController {
     }
 
     @GetMapping("/employee/{employeeId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'ACCOUNTANT', 'MANAGER', 'EMPLOYEE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE')")
     @Operation(summary = "Lịch sử lương nhân viên",
             description = "Xem lịch sử lương của nhân viên (NV chỉ xem được của mình)")
     public ResponseEntity<ApiResponse<Page<PayrollResponse>>> getPayrollsByEmployee(
+            Authentication authentication,
             @PathVariable Integer employeeId,
             @RequestParam(required = false) String status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "month") String sortBy,
             @RequestParam(defaultValue = "desc") String sortDir) {
+
+        // FIX #8: Kiểm tra quyền sở hữu — EMPLOYEE chỉ xem được lương của chính mình
+        boolean isAdmin = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+        if (!isAdmin) {
+            // Lấy employeeId của user đang đăng nhập để so sánh
+            String username = authentication.getName();
+            com.hrm.backend.entity.User user = payrollService.getUserByUsername(username);
+            if (user.getEmployee() == null || !user.getEmployee().getId().equals(employeeId)) {
+                return ResponseEntity.status(org.springframework.http.HttpStatus.FORBIDDEN).body(
+                        ApiResponse.error("Bạn chỉ có thể xem lương của chính mình"));
+            }
+        }
 
         Sort sort = sortDir.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
