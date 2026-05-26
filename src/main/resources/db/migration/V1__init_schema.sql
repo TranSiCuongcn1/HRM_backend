@@ -370,21 +370,39 @@ $$ LANGUAGE plpgsql;
 -- 6. SEED MOCK DATA SO LUONG LON (FOR TEST)
 -- ==========================================
 
+-- 6.0a Seed shifts
+INSERT INTO shifts (code, name, start_time, end_time, break_start_time, break_end_time, is_default)
+VALUES 
+  ('CA1', 'Ca Hành chính', '08:00', '17:30', '12:00', '13:00', true),
+  ('CA2', 'Ca Sáng', '06:00', '14:00', '11:30', '12:00', false),
+  ('CA3', 'Ca Chiều', '14:00', '22:00', '17:30', '18:00', false)
+ON CONFLICT (code) DO NOTHING;
+
+-- 6.0b Seed holidays
+INSERT INTO holidays (name, date, is_paid)
+VALUES 
+  ('Tết Dương lịch', date_trunc('year', CURRENT_DATE)::date, true),
+  ('Giỗ Tổ Hùng Vương', (date_trunc('year', CURRENT_DATE) + INTERVAL '3 months 9 days')::date, true),
+  ('Giải phóng miền Nam', (date_trunc('year', CURRENT_DATE) + INTERVAL '3 months 29 days')::date, true),
+  ('Quốc tế Lao động', (date_trunc('year', CURRENT_DATE) + INTERVAL '4 months')::date, true),
+  ('Quốc khánh', (date_trunc('year', CURRENT_DATE) + INTERVAL '8 months 1 day')::date, true)
+ON CONFLICT (date) DO NOTHING;
+
 -- 6.1 Seed leave types
 INSERT INTO leave_types (code, name, is_paid, description)
 VALUES
-  ('ANNUAL', 'Nghi phep nam', true, 'Nghi phep huong luong theo nam'),
-  ('SICK', 'Nghi om', true, 'Nghi om co giay xac nhan y te'),
-  ('PERSONAL', 'Nghi viec rieng', false, 'Nghi viec rieng khong huong luong'),
-  ('MATERNITY', 'Nghi thai san', true, 'Nghi thai san theo quy dinh')
+  ('ANNUAL', 'Nghỉ phép năm', true, 'Nghỉ phép hưởng lương theo năm'),
+  ('SICK', 'Nghỉ ốm', true, 'Nghỉ ốm có giấy xác nhận y tế'),
+  ('PERSONAL', 'Nghỉ việc riêng', false, 'Nghỉ việc riêng không hưởng lương'),
+  ('MATERNITY', 'Nghỉ thai sản', true, 'Nghỉ thai sản theo quy định')
 ON CONFLICT (code) DO NOTHING;
 
 -- 6.2 Seed departments
 INSERT INTO departments (code, name, description)
 SELECT
   'PB' || LPAD(gs::text, 3, '0'),
-  'Phong ban ' || gs,
-  'Du lieu phong ban mock #' || gs
+  (ARRAY['Phòng Nhân sự', 'Phòng Kế toán', 'Phòng IT', 'Phòng Marketing', 'Phòng Kinh doanh', 'Phòng Hành chính', 'Phòng Kỹ thuật', 'Phòng Vận hành', 'Phòng Chăm sóc khách hàng', 'Phòng Pháp chế', 'Phòng R&D', 'Phòng Sản xuất'])[gs],
+  (ARRAY['Tuyển dụng, đào tạo và phát triển nhân sự', 'Quản lý tài chính, thu chi, lương thưởng', 'Phát triển và bảo trì hệ thống phần mềm', 'Nghiên cứu thị trường và quảng bá thương hiệu', 'Mở rộng đối tác và phát triển doanh thu', 'Quản trị văn phòng và hỗ trợ các phòng ban', 'Bảo trì trang thiết bị và hạ tầng mạng', 'Đảm bảo hoạt động kinh doanh hàng ngày', 'Tư vấn và hỗ trợ người dùng', 'Cố vấn luật và kiểm soát rủi ro pháp lý', 'Nghiên cứu công nghệ mới, sản phẩm mới', 'Quản lý quy trình vận hành sản phẩm'])[gs]
 FROM generate_series(1, 12) AS gs;
 
 -- 6.3 Seed employees (1200 records)
@@ -403,7 +421,7 @@ INSERT INTO employees (
 SELECT
   ((gs - 1) % 12) + 1,
   'EMP' || LPAD(gs::text, 5, '0'),
-  'Nhan vien ' || LPAD(gs::text, 5, '0'),
+  n.ho || ' ' || n.dem || ' ' || n.ten,
   'employee' || LPAD(gs::text, 5, '0') || '@hrm.local',
   '09' || LPAD((10000000 + gs)::text, 8, '0'),
   CURRENT_DATE - ((22 * 365) + (gs % 2000)),
@@ -418,7 +436,13 @@ SELECT
     WHEN gs % 20 = 0 THEN CURRENT_DATE - ((gs % 300) + 15)
     ELSE NULL
   END
-FROM generate_series(1, 1200) AS gs;
+FROM generate_series(1, 1200) AS gs
+CROSS JOIN LATERAL (
+  SELECT
+    (ARRAY['Nguyễn', 'Trần', 'Lê', 'Phạm', 'Hoàng', 'Huỳnh', 'Phan', 'Vũ', 'Võ', 'Đặng'])[floor(random() * 10 + 1 + (gs * 0))::int] as ho,
+    (ARRAY['Thị', 'Văn', 'Hữu', 'Đức', 'Ngọc', 'Minh', 'Xuân', 'Thu', 'Thanh', 'Tuấn', 'Hải', 'Thùy', 'Hồng', 'Thái'])[floor(random() * 14 + 1 + (gs * 0))::int] as dem,
+    (ARRAY['Anh', 'Hùng', 'Cường', 'Lan', 'Hoa', 'Mai', 'Linh', 'Sơn', 'Tùng', 'Nam', 'Hiếu', 'Thảo', 'Trang', 'Hải', 'Bình', 'Phương', 'Nhung', 'Quỳnh', 'Dương', 'Hà'])[floor(random() * 20 + 1 + (gs * 0))::int] as ten
+) n;
 
 -- 6.4 Gan manager cho tung phong ban
 UPDATE departments d
@@ -484,11 +508,11 @@ SELECT
   y.y,
   CASE WHEN lt.is_paid THEN 12.0 ELSE 0.0 END,
   CASE
-    WHEN lt.is_paid THEN ROUND((random() * 6)::numeric, 1)
+    WHEN lt.is_paid THEN ROUND(((random() + (e.id * 0)) * 6)::numeric, 1)
     ELSE 0.0
   END,
   CASE
-    WHEN y.y = EXTRACT(YEAR FROM CURRENT_DATE)::int AND lt.is_paid THEN ROUND((random() * 3)::numeric, 1)
+    WHEN y.y = EXTRACT(YEAR FROM CURRENT_DATE)::int AND lt.is_paid THEN ROUND(((random() + (e.id * 0)) * 3)::numeric, 1)
     ELSE 0.0
   END
 FROM employees e
@@ -498,7 +522,7 @@ CROSS JOIN years y;
 -- 6.8 Seed attendance records (du lieu 4 thang lam viec gan day)
 WITH work_dates AS (
   SELECT d::date AS work_date
-  FROM generate_series(CURRENT_DATE - INTERVAL '120 day', CURRENT_DATE - INTERVAL '1 day', INTERVAL '1 day') d
+  FROM generate_series(CURRENT_DATE - INTERVAL '120 day', CURRENT_DATE, INTERVAL '1 day') d
   WHERE EXTRACT(ISODOW FROM d) BETWEEN 1 AND 5
 )
 INSERT INTO attendance_records (
@@ -541,7 +565,7 @@ SELECT
   'Attendance mock data'
 FROM employees e
 JOIN work_dates wd ON wd.work_date >= e.join_date
-CROSS JOIN LATERAL (SELECT random() AS r1, random() AS r2, random() AS r3) r
+CROSS JOIN LATERAL (SELECT random() + (e.id * 0) AS r1, random() + (e.id * 0) AS r2, random() + (e.id * 0) AS r3) r
 WHERE e.status <> 'RESIGNED'
    OR wd.work_date <= COALESCE(e.resignation_date, CURRENT_DATE);
 
@@ -581,8 +605,8 @@ CROSS JOIN LATERAL (
 ) lt
 CROSS JOIN LATERAL (
   SELECT
-    (CURRENT_DATE - (((e.id * 7) + (n.seq * 13)) % 320 + 5))::date AS start_date,
-    (CURRENT_DATE - (((e.id * 7) + (n.seq * 13)) % 320 + 5) + ((e.id + n.seq) % 3))::date AS end_date,
+    (CURRENT_DATE + (((e.id * 7) + (n.seq * 13)) % 60 - 30))::date AS start_date,
+    (CURRENT_DATE + (((e.id * 7) + (n.seq * 13)) % 60 - 30) + ((e.id + n.seq) % 3))::date AS end_date,
     ((e.id + n.seq) % 3 + 1)::DECIMAL(4, 1) AS days,
     CASE
       WHEN (e.id + n.seq) % 5 = 0 THEN 'PENDING'
@@ -606,7 +630,7 @@ INSERT INTO overtime_requests (
 )
 SELECT
   e.id,
-  (CURRENT_DATE - (((e.id * 5) + (n.seq * 11)) % 120 + 2))::date,
+  (CURRENT_DATE + (((e.id * 5) + (n.seq * 11)) % 30 - 15))::date,
   (TIME '18:00' + ((n.seq % 3) || ' hours')::interval)::time,
   (TIME '20:00' + ((n.seq % 3) || ' hours')::interval)::time,
   (2 + (n.seq % 3))::DECIMAL(4,2),
