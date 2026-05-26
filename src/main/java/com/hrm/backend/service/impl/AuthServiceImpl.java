@@ -36,6 +36,9 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
+    // TODO: [FIX #3] resetCache dùng ConcurrentHashMap (in-memory) — sẽ mất khi restart server
+    // và không hoạt động với multi-instance deployment. Cần chuyển sang Redis hoặc lưu DB.
+    // Ngoài ra cần scheduled job để cleanup OTP hết hạn, tránh memory leak.
     private final Map<String, TempResetData> resetCache = new ConcurrentHashMap<>();
 
     @Getter
@@ -73,6 +76,7 @@ public class AuthServiceImpl implements AuthService {
                 .accessToken(token)
                 .tokenType("Bearer")
                 .userId(user.getId())
+                .employeeId(user.getEmployee() != null ? user.getEmployee().getId() : null) // FIX #19
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .role(user.getRole())
@@ -112,7 +116,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void initiateForgotPassword(ForgotPasswordRequest request) {
         String email = request.getEmail().trim().toLowerCase();
         User user = userRepository.findByEmailIgnoreCase(email)
