@@ -16,6 +16,10 @@ import com.hrm.backend.service.LeaveRequestService;
 import com.hrm.backend.service.PayrollService;
 import com.hrm.backend.service.TaxAndInsuranceService;
 import com.hrm.backend.service.EmailService;
+import com.hrm.backend.entity.Holiday;
+import com.hrm.backend.entity.AttendanceRecord;
+import com.hrm.backend.repository.HolidayRepository;
+import com.hrm.backend.repository.AttendanceRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -25,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -42,6 +47,8 @@ public class PayrollServiceImpl implements PayrollService {
     private final TaxAndInsuranceService taxAndInsuranceService;
     private final ObjectMapper objectMapper;
     private final EmailService emailService;
+    private final HolidayRepository holidayRepository;
+    private final AttendanceRepository attendanceRepository;
 
     // Hệ số OT: 150% lương giờ bình thường
     private static final BigDecimal OT_RATE = new BigDecimal("1.5");
@@ -62,6 +69,12 @@ public class PayrollServiceImpl implements PayrollService {
 
         String monthStr = String.format("%d-%02d", year, month);
         BigDecimal standardWorkDays = (workDays != null) ? workDays : DEFAULT_WORK_DAYS;
+
+        // Lấy tất cả ngày lễ trong tháng
+        java.time.YearMonth yearMonth = java.time.YearMonth.of(year, month);
+        LocalDate startOfMonth = yearMonth.atDay(1);
+        LocalDate endOfMonth = yearMonth.atEndOfMonth();
+        List<Holiday> holidaysInMonth = holidayRepository.findByDateBetween(startOfMonth, endOfMonth);
 
         // Tính tổng phụ cấp/khấu trừ mặc định
         BigDecimal defaultTotalAllowances = sumMap(defaultAllowances);
@@ -98,8 +111,6 @@ public class PayrollServiceImpl implements PayrollService {
             AttendanceResponse.MonthlyStats stats = attendanceService.getMonthlyStats(
                     employee.getId(), month, year);
             BigDecimal actualWorkDays = BigDecimal.valueOf(stats.getTotalWorkDays());
-            BigDecimal totalOvertimeHours = stats.getTotalOvertimeHours() != null
-                    ? stats.getTotalOvertimeHours() : BigDecimal.ZERO;
 
             // c. Lấy ngày nghỉ có lương
             BigDecimal paidLeaveDays = leaveRequestService.getPaidLeaveDaysInMonth(
@@ -108,18 +119,66 @@ public class PayrollServiceImpl implements PayrollService {
                 paidLeaveDays = BigDecimal.ZERO;
             }
 
-            // d. Tính tổng ngày công thực tế
-            BigDecimal totalPaidDays = actualWorkDays.add(paidLeaveDays);
+            // c.2 Tính toán Ngày lễ (Holidays) và làm thêm ngày lễ/ngày thường
+            BigDecimal paidHolidayDays = BigDecimal.ZERO;
+            BigDecimal totalNormalOvertimeHours = BigDecimal.ZERO;
+            BigDecimal totalHolidayWorkHours = BigDecimal.ZERO;
+
+            // Lấy tất cả bản ghi chấm công của nhân viên trong tháng
+            List<AttendanceRecord> attendanceRecords = attendanceRepository.findByEmployeeIdAndDateBetweenOrderByDateDesc(
+                    employee.getId(), startOfMonth, endOfMonth);
+
+            // Duyệt qua từng ngày lễ trong tháng
+            for (Holiday holiday : holidaysInMonth) {
+                if (Boolean.TRUE.equals(holiday.getIsPaid())) {
+                    // Kiểm tra xem nhân viên có đi làm (chấm công) vào ngày lễ này không
+                    Optional<AttendanceRecord> holidayRecordOpt = attendanceRecords.stream()
+                            .filter(r -> r.getDate().equals(holiday.getDate()) && !"ABSENT".equals(r.getStatus()))
+                            .findFirst();
+
+                    if (holidayRecordOpt.isPresent()) {
+                        // Nhân viên đi làm vào ngày nghỉ lễ:
+                        // Tính tổng số giờ làm việc trong ngày hôm đó là giờ làm lễ (x3.0)
+                        AttendanceRecord holidayRecord = holidayRecordOpt.get();
+                        BigDecimal workHours = holidayRecord.getWorkHours() != null ? holidayRecord.getWorkHours() : BigDecimal.ZERO;
+                        totalHolidayWorkHours = totalHolidayWorkHours.add(workHours);
+                    } else {
+                        // Nhân viên nghỉ vào ngày lễ: Được hưởng 1 ngày lương (1.0 công)
+                        paidHolidayDays = paidHolidayDays.add(BigDecimal.ONE);
+                    }
+                }
+            }
+
+            // Tính tổng giờ làm thêm (OT) của các ngày THƯỜNG (không phải ngày lễ)
+            for (AttendanceRecord record : attendanceRecords) {
+                boolean isHolidayDate = holidaysInMonth.stream()
+                        .anyMatch(h -> h.getDate().equals(record.getDate()) && Boolean.TRUE.equals(h.getIsPaid()));
+                
+                if (!isHolidayDate) {
+                    BigDecimal recordOT = record.getOvertimeHours() != null ? record.getOvertimeHours() : BigDecimal.ZERO;
+                    totalNormalOvertimeHours = totalNormalOvertimeHours.add(recordOT);
+                }
+            }
+
+            // d. Tính tổng ngày công thực tế hưởng lương
+            BigDecimal totalPaidDays = actualWorkDays.add(paidLeaveDays).add(paidHolidayDays);
 
             // e. Tính tiền OT
-            // overtimePay = totalOvertimeHours × (basicSalary / workDays / 8) × 1.5
             BigDecimal hourlyRate = basicSalary
                     .divide(standardWorkDays, 4, RoundingMode.HALF_UP)
                     .divide(STANDARD_HOURS_PER_DAY, 4, RoundingMode.HALF_UP);
-            BigDecimal overtimePay = totalOvertimeHours
+
+            BigDecimal normalOvertimePay = totalNormalOvertimeHours
                     .multiply(hourlyRate)
-                    .multiply(OT_RATE)
+                    .multiply(OT_RATE) // 1.5
                     .setScale(2, RoundingMode.HALF_UP);
+
+            BigDecimal holidayOvertimePay = totalHolidayWorkHours
+                    .multiply(hourlyRate)
+                    .multiply(BigDecimal.valueOf(3.0)) // 3.0 (300% cho làm việc ngày lễ)
+                    .setScale(2, RoundingMode.HALF_UP);
+
+            BigDecimal overtimePay = normalOvertimePay.add(holidayOvertimePay);
 
             // f. Tính grossSalary
             BigDecimal dailyRate = basicSalary.divide(standardWorkDays, 4, RoundingMode.HALF_UP);

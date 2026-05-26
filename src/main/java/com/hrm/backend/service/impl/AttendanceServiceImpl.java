@@ -12,6 +12,8 @@ import com.hrm.backend.repository.ShiftRepository;
 import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.repository.OvertimeRequestRepository;
 import com.hrm.backend.entity.OvertimeRequest;
+import com.hrm.backend.entity.Holiday;
+import com.hrm.backend.repository.HolidayRepository;
 import com.hrm.backend.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final UserRepository userRepository;
     private final ShiftRepository shiftRepository;
     private final OvertimeRequestRepository overtimeRequestRepository;
+    private final HolidayRepository holidayRepository;
 
     @org.springframework.beans.factory.annotation.Value("${app.attendance.office-latitude:21.028511}")
     private double officeLatitude;
@@ -185,8 +188,15 @@ public class AttendanceServiceImpl implements AttendanceService {
         Shift defaultShift = shiftRepository.findByIsDefaultTrue().orElse(null);
         String status = "ON_TIME";
         int lateMinutes = 0;
+        String note = null;
 
-        if (defaultShift != null && now.isAfter(defaultShift.getStartTime())) {
+        // Kiểm tra nếu là ngày lễ
+        Holiday holiday = holidayRepository.findByDate(today).orElse(null);
+        boolean isHoliday = holiday != null;
+
+        if (isHoliday) {
+            note = "[Ngày lễ: " + holiday.getName() + "]";
+        } else if (defaultShift != null && now.isAfter(defaultShift.getStartTime())) {
             status = "LATE";
             lateMinutes = (int) Duration.between(defaultShift.getStartTime(), now).toMinutes();
         }
@@ -205,6 +215,7 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .checkInLng(longitude)
                 .checkInGpsValid(verification.gpsValid())
                 .checkInIpValid(verification.ipValid())
+                .note(note)
                 .build();
 
         AttendanceRecord saved = attendanceRepository.save(record);
@@ -240,8 +251,19 @@ public class AttendanceServiceImpl implements AttendanceService {
         // Tính workHours và overtimeHours
         calculateHours(record, defaultShift);
 
-        // Nếu về trước giờ chuẩn → đánh EARLY_LEAVE
-        if (defaultShift != null && now.isBefore(defaultShift.getEndTime())) {
+        // Kiểm tra nếu là ngày lễ
+        Holiday holiday = holidayRepository.findByDate(today).orElse(null);
+        boolean isHoliday = holiday != null;
+
+        if (isHoliday) {
+            String holidayNote = "[Ngày lễ: " + holiday.getName() + "]";
+            if (record.getNote() == null || !record.getNote().contains(holidayNote)) {
+                record.setNote(record.getNote() == null ? holidayNote : record.getNote() + " " + holidayNote);
+            }
+        }
+
+        // Nếu về trước giờ chuẩn → đánh EARLY_LEAVE (chỉ khi không phải ngày lễ)
+        if (!isHoliday && defaultShift != null && now.isBefore(defaultShift.getEndTime())) {
             earlyLeaveMinutes = (int) Duration.between(now, defaultShift.getEndTime()).toMinutes();
             record.setEarlyLeaveMinutes(earlyLeaveMinutes);
             if (!"LATE".equals(record.getStatus())) {

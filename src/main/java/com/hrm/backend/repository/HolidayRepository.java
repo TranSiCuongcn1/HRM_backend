@@ -10,5 +10,7 @@ import java.util.List;
 @Repository
 public interface HolidayRepository extends JpaRepository<Holiday, Integer> {
     boolean existsByDate(LocalDate date);
+    java.util.Optional<Holiday> findByDate(LocalDate date);
     List<Holiday> findAllByOrderByDateDesc();
+    List<Holiday> findByDateBetween(LocalDate start, LocalDate end);
 }
