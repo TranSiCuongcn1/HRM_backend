@@ -85,25 +85,28 @@ Dưới đây là thiết kế Schema cơ sở dữ liệu chi tiết của HRM 
 erDiagram
     USERS {
         Integer id PK
+        Integer employee_id FK
         String username UK
-        String password
         String email UK
-        String role "ADMIN, EMPLOYEE"
-        Boolean enabled
+        String password_hash
+        String role
+        Boolean is_active
     }
     
     EMPLOYEES {
         Integer id PK
-        String first_name
-        String last_name
+        String code UK
+        String name
+        String avatar
         String email UK
         String phone
-        String gender
-        Date dob
-        Date hire_date
-        BigDecimal basic_salary
-        String status "ACTIVE, INACTIVE, RESIGNED"
+        LocalDate birthday
+        String address
+        LocalDate join_date
         Integer department_id FK
+        String status
+        LocalDate resignation_date
+        Integer dependent_count
     }
 
     DEPARTMENTS {
@@ -111,46 +114,76 @@ erDiagram
         String code UK
         String name
         String description
+        Integer manager_id FK
         Integer parent_id FK
     }
 
     CONTRACTS {
         Integer id PK
         Integer employee_id FK
-        String contract_number UK
-        String contract_type "PROBATION, FIXED_TERM, INDEFINITE"
-        Date start_date
-        Date end_date
+        String contract_type
+        LocalDate start_date
+        LocalDate end_date
         BigDecimal basic_salary
-        String status "ACTIVE, EXPIRED, TERMINATED"
+        String status
     }
 
     ATTENDANCE_RECORDS {
         Integer id PK
         Integer employee_id FK
-        Date date "UK (employee_id, date)"
-        Time check_in
-        Time check_out
-        Integer shift_id FK
-        String status "PRESENT, ABSENT, LATE, EARLY_LEAVE"
+        LocalDate date
+        LocalTime check_in
+        LocalTime check_out
+        String status
+        BigDecimal overtime_hours
+        BigDecimal work_hours
+        String note
         Integer late_minutes
         Integer early_leave_minutes
-        BigDecimal work_hours
+        String check_in_ip
+        BigDecimal check_in_lat
+        BigDecimal check_in_lng
+        String check_out_ip
+        BigDecimal check_out_lat
+        BigDecimal check_out_lng
+        Boolean check_in_gps_valid
+        Boolean check_in_ip_valid
+        Boolean check_out_gps_valid
+        Boolean check_out_ip_valid
+    }
+
+    OVERTIME_REQUESTS {
+        Integer id PK
+        Integer employee_id FK
+        LocalDate date
+        LocalTime start_time
+        LocalTime end_time
+        BigDecimal hours
+        String reason
+        String status
+        Integer approved_by FK
+        LocalDateTime approved_at
+        String rejection_reason
     }
 
     SHIFTS {
         Integer id PK
+        String code UK
         String name
-        Time start_time
-        Time end_time
-        Integer late_grace_minutes
+        LocalTime start_time
+        LocalTime end_time
+        LocalTime break_start_time
+        LocalTime break_end_time
+        Boolean is_default
+        Boolean is_active
     }
 
     LEAVE_TYPES {
         Integer id PK
         String code UK
         String name
-        Integer default_days
+        Boolean is_paid
+        String description
     }
 
     LEAVE_BALANCES {
@@ -158,52 +191,68 @@ erDiagram
         Integer employee_id FK
         Integer leave_type_id FK
         Integer year
-        Integer total_days
-        Integer used_days
-        Integer remaining_days
+        BigDecimal total_days
+        BigDecimal used_days
+        BigDecimal carry_over_days
     }
 
     LEAVE_REQUESTS {
         Integer id PK
         Integer employee_id FK
         Integer leave_type_id FK
-        Date start_date
-        Date end_date
-        Boolean half_day
-        String status "PENDING, APPROVED, REJECTED"
+        LocalDate start_date
+        LocalDate end_date
+        BigDecimal days
         String reason
+        String attachment_url
+        String status
         Integer approved_by FK
+        LocalDateTime approved_at
+        String rejection_reason
     }
 
     PAYROLL {
         Integer id PK
         Integer employee_id FK
-        Integer month
-        Integer year
+        String month UK
         BigDecimal basic_salary
-        String allowances "JSON - Phụ cấp"
-        String deductions "JSON - Khấu trừ (BHXH, PIT...)"
+        BigDecimal work_days
+        BigDecimal actual_days
+        String allowances
+        BigDecimal total_allowances
+        BigDecimal overtime_pay
+        BigDecimal gross_salary
+        String deductions
+        BigDecimal total_deductions
         BigDecimal net_salary
-        String status "PENDING, PAID"
+        String status
+        Integer approved_by FK
+        LocalDateTime approved_at
+        LocalDateTime paid_at
     }
 
     HOLIDAYS {
         Integer id PK
         String name
-        Date date UK
-        BigDecimal multiplier "Hệ số công ngày lễ"
+        LocalDate date UK
+        BigDecimal multiplier
     }
 
-    DEPARTMENTS ||--o{ DEPARTMENTS : "parent_id"
-    DEPARTMENTS ||--o{ EMPLOYEES : "has"
-    EMPLOYEES ||--o{ CONTRACTS : "signs"
-    EMPLOYEES ||--o{ ATTENDANCE_RECORDS : "records"
-    SHIFTS ||--o{ ATTENDANCE_RECORDS : "applies_to"
-    EMPLOYEES ||--o{ LEAVE_BALANCES : "has"
-    LEAVE_TYPES ||--o{ LEAVE_BALANCES : "defines"
-    EMPLOYEES ||--o{ LEAVE_REQUESTS : "requests"
-    LEAVE_TYPES ||--o{ LEAVE_REQUESTS : "type_of"
-    EMPLOYEES ||--o{ PAYROLL : "receives"
+    EMPLOYEES ||--|| USERS : "has_user"
+    DEPARTMENTS ||--o{ EMPLOYEES : "has_employees"
+    EMPLOYEES ||--o{ DEPARTMENTS : "manages"
+    DEPARTMENTS ||--o{ DEPARTMENTS : "parent_department"
+    EMPLOYEES ||--o{ CONTRACTS : "signs_contracts"
+    EMPLOYEES ||--o{ ATTENDANCE_RECORDS : "records_attendance"
+    EMPLOYEES ||--o{ OVERTIME_REQUESTS : "requests_overtime"
+    EMPLOYEES ||--o{ OVERTIME_REQUESTS : "approves_overtime"
+    EMPLOYEES ||--o{ LEAVE_BALANCES : "has_leave_balances"
+    LEAVE_TYPES ||--o{ LEAVE_BALANCES : "balances_type"
+    EMPLOYEES ||--o{ LEAVE_REQUESTS : "requests_leaves"
+    LEAVE_TYPES ||--o{ LEAVE_REQUESTS : "leave_request_type"
+    EMPLOYEES ||--o{ LEAVE_REQUESTS : "approves_leaves"
+    EMPLOYEES ||--o{ PAYROLL : "receives_payrolls"
+    EMPLOYEES ||--o{ PAYROLL : "approves_payrolls"
 ```
 
 ---
@@ -412,4 +461,4 @@ Màn hình hiển thị kết quả kiểm thử hoàn thành thành công:
 ```
 
 ---
-**Lead Backend Architect** - *Tran Si Cuong (TranSiCuongcn1/EnglishMaster)*
+**Lead Backend Architect** - *Tran Si Cuong (TranSiCuongcn1)*
