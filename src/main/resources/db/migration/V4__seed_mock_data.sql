@@ -321,3 +321,34 @@ FROM employees e
 JOIN contracts c ON c.employee_id = e.id
 JOIN month_ref mr ON mr.month_date >= date_trunc('month', e.join_date)
 ON CONFLICT (employee_id, month) DO NOTHING;
+
+-- 6.12 Seed specific admin account
+INSERT INTO employees (
+  department_id,
+  code,
+  name,
+  email,
+  phone,
+  birthday,
+  address,
+  join_date,
+  status
+) VALUES (
+  1,
+  'ADMIN',
+  'System Admin',
+  'admin@hrm.local',
+  '0999999999',
+  '1990-01-01',
+  'Admin Address',
+  CURRENT_DATE - INTERVAL '1 year',
+  'ACTIVE'
+);
+
+INSERT INTO users (employee_id, username, email, password_hash, role)
+SELECT id, 'admin', 'admin@hrm.local', '$2a$10$aA5uoPZXRCWc37TUBVUNGeaWVM9uF88G8JeKlwMckbyX/d9.rpkni', 'ADMIN'
+FROM employees WHERE code = 'ADMIN';
+
+INSERT INTO contracts (employee_id, contract_type, start_date, basic_salary, status)
+SELECT id, 'INDEFINITE', join_date, 20000000.00, 'ACTIVE'
+FROM employees WHERE code = 'ADMIN';
