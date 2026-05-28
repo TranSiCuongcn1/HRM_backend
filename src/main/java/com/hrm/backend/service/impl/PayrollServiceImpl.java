@@ -96,16 +96,14 @@ public class PayrollServiceImpl implements PayrollService {
             }
 
             // a. Lấy lương cơ bản từ Contract
-            ContractResponse activeContract;
-            try {
-                activeContract = contractService.getActiveContract(employee.getId());
-            } catch (Exception e) {
-                log.warn("NV {} ({}) không có hợp đồng ACTIVE, bỏ qua. Lỗi: {}",
-                        employee.getCode(), employee.getName(), e.getMessage());
+            Optional<ContractResponse> contractOpt = contractService.findActiveContract(employee.getId());
+            if (contractOpt.isEmpty()) {
+                log.warn("NV {} ({}) không có hợp đồng ACTIVE, bỏ qua.",
+                        employee.getCode(), employee.getName());
                 skipped++;
                 continue;
             }
-            BigDecimal basicSalary = activeContract.getBasicSalary();
+            BigDecimal basicSalary = contractOpt.get().getBasicSalary();
 
             // b. Lấy thống kê chấm công
             AttendanceResponse.MonthlyStats stats = attendanceService.getMonthlyStats(

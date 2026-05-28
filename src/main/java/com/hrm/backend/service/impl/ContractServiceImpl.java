@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -190,6 +191,13 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> new RuntimeException(
                         "Nhân viên ID " + employeeId + " chưa có hợp đồng đang hiệu lực (ACTIVE)"));
         return mapToResponse(contract);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<ContractResponse> findActiveContract(Integer employeeId) {
+        return contractRepository.findByEmployeeIdAndStatus(employeeId, "ACTIVE")
+                .map(this::mapToResponse);
     }
 
     // ========================================

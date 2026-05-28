@@ -4,6 +4,7 @@ import com.hrm.backend.dto.ContractRequest;
 import com.hrm.backend.dto.ContractResponse;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ContractService {
 
@@ -43,6 +44,11 @@ public interface ContractService {
      * Module Payroll sẽ gọi method này để lấy basic_salary.
      */
     ContractResponse getActiveContract(Integer employeeId);
+
+    /**
+     * Tìm hợp đồng ACTIVE (không ném lỗi nếu không tìm thấy, dùng cho batch processing).
+     */
+    Optional<ContractResponse> findActiveContract(Integer employeeId);
 
     /**
      * Danh sách hợp đồng sắp hết hạn trong N ngày tới (cảnh báo cho HR)
