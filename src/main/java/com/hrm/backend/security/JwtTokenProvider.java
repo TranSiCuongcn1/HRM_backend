@@ -63,12 +63,8 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (MalformedJwtException e) {
-            System.err.println("Token JWT không hợp lệ: " + e.getMessage());
-        } catch (ExpiredJwtException e) {
-            System.err.println("Token JWT đã hết hạn: " + e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            System.err.println("Token JWT không được hỗ trợ: " + e.getMessage());
+        } catch (io.jsonwebtoken.JwtException e) {
+            System.err.println("Token JWT không hợp lệ hoặc sai chữ ký: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.err.println("Chuỗi JWT claims trống: " + e.getMessage());
         }
