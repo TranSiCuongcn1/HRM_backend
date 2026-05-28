@@ -1,0 +1,846 @@
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::staticFieldBase has been called by com.google.inject.internal.aop.HiddenClassDefiner (file:/opt/homebrew/Cellar/maven/3.9.11/libexec/lib/guice-5.1.0-classes.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.inject.internal.aop.HiddenClassDefiner
+WARNING: sun.misc.Unsafe::staticFieldBase will be removed in a future release
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.hrm:backend >---------------------------
+[INFO] Building HRM_backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+Downloading from central: https://repo.maven.apache.org/maven2/com/h2database/h2/2.4.240/h2-2.4.240.pom
+Progress (1): 1.1 kB                    Downloaded from central: https://repo.maven.apache.org/maven2/com/h2database/h2/2.4.240/h2-2.4.240.pom (1.1 kB at 2.6 kB/s)
+Downloading from central: https://repo.maven.apache.org/maven2/com/h2database/h2/2.4.240/h2-2.4.240.jar
+Progress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.1/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.2/2.7 MBProgress (1): 0.3/2.7 MBProgress (1): 0.3/2.7 MBProgress (1): 0.3/2.7 MBProgress (1): 0.3/2.7 MBProgress (1): 0.3/2.7 MBProgress (1): 0.3/2.7 MBProgress (1): 0.3/2.7 MBProgress (1): 0.4/2.7 MBProgress (1): 0.4/2.7 MBProgress (1): 0.4/2.7 MBProgress (1): 0.4/2.7 MBProgress (1): 0.4/2.7 MBProgress (1): 0.4/2.7 MBProgress (1): 0.5/2.7 MBProgress (1): 0.5/2.7 MBProgress (1): 0.5/2.7 MBProgress (1): 0.5/2.7 MBProgress (1): 0.5/2.7 MBProgress (1): 0.5/2.7 MBProgress (1): 0.6/2.7 MBProgress (1): 0.6/2.7 MBProgress (1): 0.6/2.7 MBProgress (1): 0.6/2.7 MBProgress (1): 0.6/2.7 MBProgress (1): 0.6/2.7 MBProgress (1): 0.7/2.7 MBProgress (1): 0.7/2.7 MBProgress (1): 0.7/2.7 MBProgress (1): 0.7/2.7 MBProgress (1): 0.7/2.7 MBProgress (1): 0.7/2.7 MBProgress (1): 0.7/2.7 MBProgress (1): 0.8/2.7 MBProgress (1): 0.8/2.7 MBProgress (1): 0.8/2.7 MBProgress (1): 0.8/2.7 MBProgress (1): 0.8/2.7 MBProgress (1): 0.8/2.7 MBProgress (1): 0.8/2.7 MBProgress (1): 0.9/2.7 MBProgress (1): 0.9/2.7 MBProgress (1): 0.9/2.7 MBProgress (1): 0.9/2.7 MBProgress (1): 0.9/2.7 MBProgress (1): 0.9/2.7 MBProgress (1): 1.0/2.7 MBProgress (1): 1.0/2.7 MBProgress (1): 1.0/2.7 MBProgress (1): 1.0/2.7 MBProgress (1): 1.0/2.7 MBProgress (1): 1.0/2.7 MBProgress (1): 1.1/2.7 MBProgress (1): 1.1/2.7 MBProgress (1): 1.1/2.7 MBProgress (1): 1.1/2.7 MBProgress (1): 1.1/2.7 MBProgress (1): 1.1/2.7 MBProgress (1): 1.2/2.7 MBProgress (1): 1.2/2.7 MBProgress (1): 1.2/2.7 MBProgress (1): 1.2/2.7 MBProgress (1): 1.2/2.7 MBProgress (1): 1.2/2.7 MBProgress (1): 1.3/2.7 MBProgress (1): 1.3/2.7 MBProgress (1): 1.3/2.7 MBProgress (1): 1.3/2.7 MBProgress (1): 1.3/2.7 MBProgress (1): 1.3/2.7 MBProgress (1): 1.4/2.7 MBProgress (1): 1.4/2.7 MBProgress (1): 1.4/2.7 MBProgress (1): 1.4/2.7 MBProgress (1): 1.4/2.7 MBProgress (1): 1.4/2.7 MBProgress (1): 1.4/2.7 MBProgress (1): 1.5/2.7 MBProgress (1): 1.5/2.7 MBProgress (1): 1.5/2.7 MBProgress (1): 1.5/2.7 MBProgress (1): 1.5/2.7 MBProgress (1): 1.5/2.7 MBProgress (1): 1.6/2.7 MBProgress (1): 1.6/2.7 MBProgress (1): 1.6/2.7 MBProgress (1): 1.6/2.7 MBProgress (1): 1.6/2.7 MBProgress (1): 1.6/2.7 MBProgress (1): 1.7/2.7 MBProgress (1): 1.7/2.7 MBProgress (1): 1.7/2.7 MBProgress (1): 1.7/2.7 MBProgress (1): 1.7/2.7 MBProgress (1): 1.7/2.7 MBProgress (1): 1.8/2.7 MBProgress (1): 1.8/2.7 MBProgress (1): 1.8/2.7 MBProgress (1): 1.8/2.7 MBProgress (1): 1.8/2.7 MBProgress (1): 1.8/2.7 MBProgress (1): 1.9/2.7 MBProgress (1): 1.9/2.7 MBProgress (1): 1.9/2.7 MBProgress (1): 1.9/2.7 MBProgress (1): 1.9/2.7 MBProgress (1): 1.9/2.7 MBProgress (1): 2.0/2.7 MBProgress (1): 2.0/2.7 MBProgress (1): 2.0/2.7 MBProgress (1): 2.0/2.7 MBProgress (1): 2.0/2.7 MBProgress (1): 2.0/2.7 MBProgress (1): 2.1/2.7 MBProgress (1): 2.1/2.7 MBProgress (1): 2.1/2.7 MBProgress (1): 2.1/2.7 MBProgress (1): 2.1/2.7 MBProgress (1): 2.1/2.7 MBProgress (1): 2.1/2.7 MBProgress (1): 2.2/2.7 MBProgress (1): 2.2/2.7 MBProgress (1): 2.2/2.7 MBProgress (1): 2.2/2.7 MBProgress (1): 2.2/2.7 MBProgress (1): 2.2/2.7 MBProgress (1): 2.3/2.7 MBProgress (1): 2.3/2.7 MBProgress (1): 2.3/2.7 MBProgress (1): 2.3/2.7 MBProgress (1): 2.3/2.7 MBProgress (1): 2.3/2.7 MBProgress (1): 2.4/2.7 MBProgress (1): 2.4/2.7 MBProgress (1): 2.4/2.7 MBProgress (1): 2.4/2.7 MBProgress (1): 2.4/2.7 MBProgress (1): 2.4/2.7 MBProgress (1): 2.5/2.7 MBProgress (1): 2.5/2.7 MBProgress (1): 2.5/2.7 MBProgress (1): 2.5/2.7 MBProgress (1): 2.5/2.7 MBProgress (1): 2.5/2.7 MBProgress (1): 2.6/2.7 MBProgress (1): 2.6/2.7 MBProgress (1): 2.6/2.7 MBProgress (1): 2.6/2.7 MBProgress (1): 2.6/2.7 MBProgress (1): 2.6/2.7 MBProgress (1): 2.7/2.7 MBProgress (1): 2.7/2.7 MBProgress (1): 2.7 MB                        Downloaded from central: https://repo.maven.apache.org/maven2/com/h2database/h2/2.4.240/h2-2.4.240.jar (2.7 MB at 7.2 MB/s)
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ backend ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] Copying 4 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ backend ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 100 source files with javac [debug parameters release 21] to target/classes
+[INFO] /Users/tphuc263/Project/hrm_proj/backend/src/main/java/com/hrm/backend/service/impl/EmailServiceImpl.java: /Users/tphuc263/Project/hrm_proj/backend/src/main/java/com/hrm/backend/service/impl/EmailServiceImpl.java uses or overrides a deprecated API.
+[INFO] /Users/tphuc263/Project/hrm_proj/backend/src/main/java/com/hrm/backend/service/impl/EmailServiceImpl.java: Recompile with -Xlint:deprecation for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ backend ---
+[INFO] Copying 2 resources from src/test/resources to target/test-classes
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ backend ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 25 source files with javac [debug parameters release 21] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.5.5:test (default-test) @ backend ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.hrm.backend.HrmBackendApplicationTests
+21:44:11.008 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.hrm.backend.HrmBackendApplicationTests]: HrmBackendApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+21:44:11.050 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.hrm.backend.HrmBackendApplication for test class com.hrm.backend.HrmBackendApplicationTests
+21:44:11.080 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.hrm.backend.HrmBackendApplicationTests]: HrmBackendApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+21:44:11.080 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.hrm.backend.HrmBackendApplication for test class com.hrm.backend.HrmBackendApplicationTests
+21:44:11.111 [main] INFO org.springframework.boot.devtools.restart.RestartApplicationListener -- Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.5)
+
+2026-05-28T21:44:11.212+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.backend.HrmBackendApplicationTests   : Starting HrmBackendApplicationTests using Java 25.0.2 with PID 69580 (started by tphuc263 in /Users/tphuc263/Project/hrm_proj/backend)
+2026-05-28T21:44:11.212+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.backend.HrmBackendApplicationTests   : The following 1 profile is active: "test"
+2026-05-28T21:44:11.595+07:00  INFO 69580 --- [hrm-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-28T21:44:11.624+07:00  INFO 69580 --- [hrm-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 25 ms. Found 12 JPA repository interfaces.
+2026-05-28T21:44:11.806+07:00  INFO 69580 --- [hrm-backend] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-28T21:44:11.829+07:00  INFO 69580 --- [hrm-backend] [           main] org.hibernate.orm.core                   : HHH000001: Hibernate ORM core version 7.2.7.Final
+2026-05-28T21:44:11.977+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-28T21:44:11.989+07:00  INFO 69580 --- [hrm-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-28T21:44:12.049+07:00  INFO 69580 --- [hrm-backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:hrm_test user=SA
+2026-05-28T21:44:12.049+07:00  INFO 69580 --- [hrm-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-28T21:44:12.057+07:00  WARN 69580 --- [hrm-backend] [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-28T21:44:12.065+07:00  INFO 69580 --- [hrm-backend] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:hrm_test]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: hrm_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-28T21:44:12.473+07:00  INFO 69580 --- [hrm-backend] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-28T21:44:12.507+07:00  INFO 69580 --- [hrm-backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-28T21:44:12.544+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.d.j.r.query.QueryEnhancerFactories   : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-05-28T21:44:13.168+07:00  INFO 69580 --- [hrm-backend] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-05-28T21:44:13.330+07:00  WARN 69580 --- [hrm-backend] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-28T21:44:13.607+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.backend.HrmBackendApplicationTests   : Started HrmBackendApplicationTests in 2.501 seconds (process running for 2.977)
+2026-05-28T21:44:13.944+07:00  INFO 69580 --- [hrm-backend] [           main] com.hrm.backend.config.DataInitializer   : === Dữ liệu mẫu đã được khởi tạo ===
+2026-05-28T21:44:13.944+07:00  INFO 69580 --- [hrm-backend] [           main] com.hrm.backend.config.DataInitializer   : Admin Username: admin / Password: admin123
+2026-05-28T21:44:13.944+07:00  INFO 69580 --- [hrm-backend] [           main] com.hrm.backend.config.DataInitializer   : ============================================
+2026-05-28T21:44:13.949+07:00  INFO 69580 --- [hrm-backend] [           main] com.hrm.backend.config.DataInitializer   : Đã khởi tạo danh mục loại phép (6 loại)
+Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build as described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org.mockito/org/mockito/Mockito.html#0.3
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+WARNING: A Java agent has been loaded dynamically (/Users/tphuc263/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.277 s -- in com.hrm.backend.HrmBackendApplicationTests
+[INFO] Running com.hrm.backend.integration.HrmEndToEndIntegrationTest
+2026-05-28T21:44:14.229+07:00  INFO 69580 --- [hrm-backend] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.hrm.backend.integration.HrmEndToEndIntegrationTest]: HrmEndToEndIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-28T21:44:14.236+07:00  INFO 69580 --- [hrm-backend] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.hrm.backend.HrmBackendApplication for test class com.hrm.backend.integration.HrmEndToEndIntegrationTest
+2026-05-28T21:44:14.236+07:00  INFO 69580 --- [hrm-backend] [           main] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.hrm.backend.integration.HrmEndToEndIntegrationTest]: HrmEndToEndIntegrationTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+2026-05-28T21:44:14.237+07:00  INFO 69580 --- [hrm-backend] [           main] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.hrm.backend.HrmBackendApplication for test class com.hrm.backend.integration.HrmEndToEndIntegrationTest
+2026-05-28T21:44:14.239+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.b.d.r.RestartApplicationListener     : Restart disabled due to context in which it is running
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.0.5)
+
+2026-05-28T21:44:14.250+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.i.HrmEndToEndIntegrationTest       : Starting HrmEndToEndIntegrationTest using Java 25.0.2 with PID 69580 (started by tphuc263 in /Users/tphuc263/Project/hrm_proj/backend)
+2026-05-28T21:44:14.250+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.i.HrmEndToEndIntegrationTest       : The following 1 profile is active: "test"
+2026-05-28T21:44:14.319+07:00  INFO 69580 --- [hrm-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-28T21:44:14.327+07:00  INFO 69580 --- [hrm-backend] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 7 ms. Found 12 JPA repository interfaces.
+2026-05-28T21:44:14.398+07:00  INFO 69580 --- [hrm-backend] [           main] org.hibernate.orm.jpa                    : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-05-28T21:44:14.404+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-28T21:44:14.404+07:00  INFO 69580 --- [hrm-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-05-28T21:44:14.405+07:00  INFO 69580 --- [hrm-backend] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn10: url=jdbc:h2:mem:hrm_test user=SA
+2026-05-28T21:44:14.405+07:00  INFO 69580 --- [hrm-backend] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-05-28T21:44:14.405+07:00  WARN 69580 --- [hrm-backend] [           main] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-05-28T21:44:14.405+07:00  INFO 69580 --- [hrm-backend] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [jdbc:h2:mem:hrm_test]
+	Database driver: H2 JDBC Driver
+	Database dialect: H2Dialect
+	Database version: 2.4.240
+	Default catalog/schema: hrm_test/public
+	Autocommit mode: undefined/unknown
+	Isolation level: READ_COMMITTED [default READ_COMMITTED]
+	JDBC fetch size: 100
+	Pool: DataSourceConnectionProvider
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-05-28T21:44:14.443+07:00  INFO 69580 --- [hrm-backend] [           main] org.hibernate.orm.core                   : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-28T21:44:14.457+07:00  INFO 69580 --- [hrm-backend] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-28T21:44:14.522+07:00  INFO 69580 --- [hrm-backend] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-05-28T21:44:14.564+07:00  WARN 69580 --- [hrm-backend] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-05-28T21:44:14.646+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:14.646+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:14.646+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:14.652+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.i.HrmEndToEndIntegrationTest       : Started HrmEndToEndIntegrationTest in 0.413 seconds (process running for 4.022)
+2026-05-28T21:44:14.893+07:00  INFO 69580 --- [hrm-backend] [           main] com.hrm.backend.config.DataInitializer   : === Dữ liệu mẫu đã được khởi tạo ===
+2026-05-28T21:44:14.894+07:00  INFO 69580 --- [hrm-backend] [           main] com.hrm.backend.config.DataInitializer   : Admin Username: admin / Password: admin123
+2026-05-28T21:44:14.894+07:00  INFO 69580 --- [hrm-backend] [           main] com.hrm.backend.config.DataInitializer   : ============================================
+2026-05-28T21:44:14.898+07:00  INFO 69580 --- [hrm-backend] [           main] com.hrm.backend.config.DataInitializer   : Đã khởi tạo danh mục loại phép (6 loại)
+2026-05-28T21:44:15.986+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Check-in: E2E001 lúc 21:44:15.983083 - Trạng thái: LATE, GPS Valid: true, IP Valid: true
+2026-05-28T21:44:15.995+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Check-out: E2E001 lúc 21:44:15.993398 - Giờ làm: 0.00h, OT: 0h, GPS Valid: true, IP Valid: true
+2026-05-28T21:44:16.006+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.OvertimeRequestServiceImpl  : NV E2E001 đã gửi đơn đăng ký tăng ca ngày 2026-05-28 (17:00 - 19:00)
+2026-05-28T21:44:16.012+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.OvertimeRequestServiceImpl  : Admin EMP001 đã duyệt đơn tăng ca #1 của NV E2E001
+2026-05-28T21:44:16.029+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Admin đã sửa bản ghi chấm công #1 - NV: E2E001, Ngày: 2026-05-28, Note: E2E normalized attendance
+2026-05-28T21:44:16.056+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveRequestServiceImpl     : NV E2E001 gửi đơn xin Phép năm 1.0 ngày (2026-05-28 → 2026-05-28)
+2026-05-28T21:44:16.063+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveBalanceServiceImpl     : Trừ 1.0 ngày phép cho NV ID 2 - Loại phép ID 1
+2026-05-28T21:44:16.064+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveRequestServiceImpl     : Admin EMP001 duyệt đơn xin phép #1 của NV E2E001 - Phép năm 1.0 ngày
+2026-05-28T21:44:16.091+07:00  WARN 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : NV EMP001 (System Administrator) không có hợp đồng ACTIVE, bỏ qua.
+2026-05-28T21:44:16.106+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Generate bảng lương tháng 2026-05: Tạo 1 phiếu, bỏ qua 1 NV
+2026-05-28T21:44:16.116+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Chốt phiếu lương #1 - NV: E2E001, Net: 19239750.00
+2026-05-28T21:44:16.120+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Giám đốc EMP001 duyệt phiếu #1 - NV: E2E001, Net: 19239750.00
+2026-05-28T21:44:16.124+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Đã thanh toán phiếu #1 - NV: E2E001, Net: 19239750.00
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.900 s -- in com.hrm.backend.integration.HrmEndToEndIntegrationTest
+[INFO] Running com.hrm.backend.controller.PayrollControllerBlackBoxTest
+2026-05-28T21:44:16.197+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.198+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.198+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.211+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.211+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.211+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.216+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.216+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.217+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.222+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.222+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.222+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.234+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.234+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.234+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.246+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.246+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.246+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.253+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.253+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.253+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.260+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.260+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.260+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.266+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.266+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.266+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.273+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.273+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.273+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.279+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.279+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.279+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.284+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.284+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.284+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.155 s -- in com.hrm.backend.controller.PayrollControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.HolidayControllerBlackBoxTest
+2026-05-28T21:44:16.313+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.313+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.313+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.316+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.316+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.316+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.320+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.320+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.320+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.325+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.325+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.325+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.329+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.329+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.329+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.333+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.333+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.333+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.336+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.336+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.336+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.052 s -- in com.hrm.backend.controller.HolidayControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.OvertimeRequestControllerBlackBoxTest
+2026-05-28T21:44:16.366+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.366+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.366+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.372+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.372+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.372+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.377+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.377+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.377+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.381+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.381+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.381+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.386+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.386+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.386+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.390+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.390+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.390+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.395+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.395+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.395+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.399+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.399+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.399+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.063 s -- in com.hrm.backend.controller.OvertimeRequestControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.AttendanceControllerBlackBoxTest
+2026-05-28T21:44:16.431+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.431+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.432+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-28T21:44:16.436+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.436+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.436+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.443+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.443+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.443+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.450+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.450+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.450+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.456+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.456+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.456+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.461+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.461+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.461+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.465+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.466+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.466+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.471+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.471+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.471+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.476+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.476+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.476+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.481+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.481+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.481+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.487+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.487+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.487+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.492+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.492+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.492+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.092 s -- in com.hrm.backend.controller.AttendanceControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.ShiftControllerBlackBoxTest
+2026-05-28T21:44:16.521+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.522+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.522+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.525+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.525+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.526+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-05-28T21:44:16.531+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.531+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.531+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.535+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.535+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.535+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.540+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.540+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.540+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.544+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.544+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.544+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.051 s -- in com.hrm.backend.controller.ShiftControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.LeaveRequestControllerBlackBoxTest
+2026-05-28T21:44:16.576+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.576+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.576+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.585+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.585+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.585+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.591+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.591+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.591+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.598+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.598+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.598+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.602+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.602+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.602+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.605+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.606+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.606+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.611+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.611+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.611+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.615+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.615+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.615+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.620+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.620+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.620+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.627+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.627+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.627+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.083 s -- in com.hrm.backend.controller.LeaveRequestControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.LeaveBalanceControllerBlackBoxTest
+2026-05-28T21:44:16.693+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.693+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.693+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.698+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.698+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.698+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.702+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.702+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.702+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.705+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.705+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.705+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.708+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.708+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.708+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.712+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.712+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.712+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.083 s -- in com.hrm.backend.controller.LeaveBalanceControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.EmployeeControllerBlackBoxTest
+2026-05-28T21:44:16.745+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.745+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.745+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.751+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.751+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.751+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.755+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.755+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.755+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.762+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.762+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.762+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.773+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.773+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.773+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.779+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.779+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.779+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.782+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.782+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.782+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.787+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.787+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.787+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.790+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.790+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.790+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.795+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.795+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.795+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.084 s -- in com.hrm.backend.controller.EmployeeControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.AuthControllerBlackBoxTest
+2026-05-28T21:44:16.826+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.826+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.826+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.830+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.831+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.831+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.835+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.835+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.835+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.039 s -- in com.hrm.backend.controller.AuthControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.DepartmentControllerBlackBoxTest
+2026-05-28T21:44:16.864+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.864+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.864+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.869+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.869+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.869+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.872+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.872+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.872+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.876+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.876+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.876+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.881+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.881+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.881+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.884+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.884+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.884+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.888+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.888+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.888+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.892+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.892+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.892+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.897+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.897+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.897+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.061 s -- in com.hrm.backend.controller.DepartmentControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.SecurityPenTest
+2026-05-28T21:44:16.901+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.901+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.901+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.907+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.907+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.907+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+Token JWT không hợp lệ hoặc sai chữ ký: JWT expired 1907 milliseconds ago at 2026-05-28T14:44:15.000Z. Current time: 2026-05-28T14:44:16.907Z. Allowed clock skew: 0 milliseconds.
+2026-05-28T21:44:16.911+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.911+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.911+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+
+MockHttpServletRequest:
+      HTTP Method = GET
+      Request URI = /api/v1/employees
+       Parameters = {keyword=[' OR '1'='1' --]}
+          Headers = [Content-Type:"application/json"]
+             Body = <no character encoding set>
+    Session Attrs = {}
+
+Handler:
+             Type = com.hrm.backend.controller.EmployeeController
+           Method = com.hrm.backend.controller.EmployeeController#getAllEmployees(String, String, Integer, int, int, String, String)
+
+Async:
+    Async started = false
+     Async result = null
+
+Resolved Exception:
+             Type = null
+
+ModelAndView:
+        View name = null
+             View = null
+            Model = null
+
+FlashMap:
+       Attributes = null
+
+MockHttpServletResponse:
+           Status = 200
+    Error message = null
+          Headers = [Content-Type:"application/json"]
+     Content type = application/json
+             Body = {"success":true,"message":"Lấy danh sách nhân viên thành công","data":{"content":[],"empty":true,"first":true,"last":true,"number":0,"numberOfElements":0,"pageable":{"offset":0,"pageNumber":0,"pageSize":10,"paged":true,"sort":{"empty":true,"sorted":false,"unsorted":true},"unpaged":false},"size":10,"sort":{"empty":true,"sorted":false,"unsorted":true},"totalElements":0,"totalPages":0}}
+    Forwarded URL = null
+   Redirected URL = null
+          Cookies = []
+2026-05-28T21:44:16.917+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.917+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.917+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.922+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.922+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.922+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.927+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.927+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.927+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+Token JWT không hợp lệ hoặc sai chữ ký: JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted.
+2026-05-28T21:44:16.931+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.931+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.931+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+Token JWT không hợp lệ hoặc sai chữ ký: Malformed protected header JSON: Unable to deserialize: Unexpected character ('�' (code 65533 / 0xfffd)): expected a valid value (JSON String, Number, Array, Object or token 'null', 'true' or 'false')
+ at [Source: REDACTED (`StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION` disabled); line: 1, column: 1]
+Chuỗi JWT claims trống: CharSequence cannot be null or empty.
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.033 s -- in com.hrm.backend.controller.SecurityPenTest
+[INFO] Running com.hrm.backend.controller.ContractControllerBlackBoxTest
+2026-05-28T21:44:16.960+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.960+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.960+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.963+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.963+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.963+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.968+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.968+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.968+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.971+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.971+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.971+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.976+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.976+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.976+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.979+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.979+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.979+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.982+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.982+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.982+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.990+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.990+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.990+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:16.996+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:16.996+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:16.996+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:17.001+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.001+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.001+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:17.006+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.006+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.006+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.075 s -- in com.hrm.backend.controller.ContractControllerBlackBoxTest
+[INFO] Running com.hrm.backend.controller.AttendanceStressTest
+2026-05-28T21:44:17.011+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.011+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.011+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+Stress Test Concurrency Output: 200 successful, 0 failed.
+2026-05-28T21:44:17.064+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.064+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.064+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+Race Condition Concurrency: 1 success, 4 blocked cleanly.
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.060 s -- in com.hrm.backend.controller.AttendanceStressTest
+[INFO] Running com.hrm.backend.controller.LeaveTypeControllerBlackBoxTest
+2026-05-28T21:44:17.099+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.100+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.100+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:17.105+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.105+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.105+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:17.111+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.111+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.111+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:17.115+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.115+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.115+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:17.120+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.120+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.120+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+2026-05-28T21:44:17.123+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.mock.web.MockServletContext          : Initializing Spring TestDispatcherServlet ''
+2026-05-28T21:44:17.123+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-05-28T21:44:17.123+07:00  INFO 69580 --- [hrm-backend] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 0 ms
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.058 s -- in com.hrm.backend.controller.LeaveTypeControllerBlackBoxTest
+[INFO] Running com.hrm.backend.service.impl.DepartmentServiceImplTest
+2026-05-28T21:44:17.196+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.DepartmentServiceImpl       : Đã xóa phòng ban ID: 1
+2026-05-28T21:44:17.199+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.DepartmentServiceImpl       : Đã tạo phòng ban: IT - Information Technology
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.075 s -- in com.hrm.backend.service.impl.DepartmentServiceImplTest
+[INFO] Running com.hrm.backend.service.impl.OvertimeRequestServiceImplTest
+2026-05-28T21:44:17.233+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.OvertimeRequestServiceImpl  : NV EMP0001 đã hủy đơn tăng ca #1
+2026-05-28T21:44:17.234+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.OvertimeRequestServiceImpl  : Admin ADM0001 đã duyệt đơn tăng ca #1 của NV EMP0001
+2026-05-28T21:44:17.236+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.OvertimeRequestServiceImpl  : Admin ADM0001 đã từ chối đơn tăng ca #1 của NV EMP0001 - Lý do: Too late
+2026-05-28T21:44:17.238+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.OvertimeRequestServiceImpl  : NV EMP0001 đã gửi đơn đăng ký tăng ca ngày 2026-06-02 (18:00 - 20:30)
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.037 s -- in com.hrm.backend.service.impl.OvertimeRequestServiceImplTest
+[INFO] Running com.hrm.backend.service.impl.TaxAndInsuranceServiceImplTest
+[INFO] Tests run: 19, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.004 s -- in com.hrm.backend.service.impl.TaxAndInsuranceServiceImplTest
+[INFO] Running com.hrm.backend.service.impl.PayrollServiceImplTest
+2026-05-28T21:44:17.472+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Chốt phiếu lương #1 - NV: EMP0001, Net: 22000000
+2026-05-28T21:44:17.478+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Generate bảng lương tháng 2026-06: Tạo 1 phiếu, bỏ qua 0 NV
+2026-05-28T21:44:17.499+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Bulk update 1 phiếu lương thành công
+2026-05-28T21:44:17.504+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Giám đốc ADM0001 duyệt phiếu #1 - NV: EMP0001, Net: 22000000
+2026-05-28T21:44:17.506+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Đã thanh toán phiếu #1 - NV: EMP0001, Net: 22000000
+2026-05-28T21:44:17.509+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Kế toán sửa phiếu lương #1 - NV: EMP0001
+2026-05-28T21:44:17.512+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Generate bảng lương tháng 2026-06: Tạo 0 phiếu, bỏ qua 1 NV
+2026-05-28T21:44:17.513+07:00  WARN 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : NV EMP0001 (Nguyen Van A) không có hợp đồng ACTIVE, bỏ qua.
+2026-05-28T21:44:17.513+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Generate bảng lương tháng 2026-06: Tạo 0 phiếu, bỏ qua 1 NV
+2026-05-28T21:44:17.515+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Generate bảng lương tháng 2026-06: Tạo 1 phiếu, bỏ qua 0 NV
+2026-05-28T21:44:17.521+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.PayrollServiceImpl    : Generate bảng lương tháng 2026-06: Tạo 1 phiếu, bỏ qua 0 NV
+[INFO] Tests run: 14, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.280 s -- in com.hrm.backend.service.impl.PayrollServiceImplTest
+[INFO] Running com.hrm.backend.service.impl.LeaveRequestServiceImplTest
+2026-05-28T21:44:17.635+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveRequestServiceImpl     : NV EMP0001 đã hủy đơn xin phép #1
+2026-05-28T21:44:17.637+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveRequestServiceImpl     : Admin ADM0001 từ chối đơn #1 của NV EMP0001 - Lý do: Insufficient evidence
+2026-05-28T21:44:17.640+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveRequestServiceImpl     : NV EMP0001 gửi đơn xin Unpaid Leave 1.0 ngày (2026-06-01 → 2026-06-01)
+2026-05-28T21:44:17.641+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveRequestServiceImpl     : NV EMP0001 gửi đơn xin Annual Leave 3.0 ngày (2026-06-03 → 2026-06-05)
+2026-05-28T21:44:17.643+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveRequestServiceImpl     : Admin ADM0001 duyệt đơn xin phép #1 của NV EMP0001 - Annual Leave 1.0 ngày
+2026-05-28T21:44:17.645+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveRequestServiceImpl     : NV EMP0001 gửi đơn xin Annual Leave 1.0 ngày (2026-06-01 → 2026-06-01)
+[INFO] Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.125 s -- in com.hrm.backend.service.impl.LeaveRequestServiceImplTest
+[INFO] Running com.hrm.backend.service.impl.AttendanceServiceImplTest
+2026-05-28T21:44:17.685+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Check-out: EMP0001 lúc 21:44:17.685784 - Giờ làm: 4.00h, OT: 0h, GPS Valid: true, IP Valid: true
+2026-05-28T21:44:17.687+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Check-in: EMP0001 lúc 21:44:17.687329 - Trạng thái: ON_TIME, GPS Valid: true, IP Valid: true
+2026-05-28T21:44:17.688+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Check-out: EMP0001 lúc 21:44:17.688722 - Giờ làm: 10.00h, OT: 1.50h, GPS Valid: true, IP Valid: true
+2026-05-28T21:44:17.689+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Admin đã sửa bản ghi chấm công #1 - NV: EMP0001, Ngày: 2026-06-02, Note: Manual fix
+2026-05-28T21:44:17.692+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Check-in: EMP0001 lúc 21:44:17.692561 - Trạng thái: ON_TIME, GPS Valid: true, IP Valid: true
+2026-05-28T21:44:17.693+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.AttendanceServiceImpl       : Check-in: EMP0001 lúc 21:44:17.693804 - Trạng thái: LATE, GPS Valid: true, IP Valid: true
+[INFO] Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.045 s -- in com.hrm.backend.service.impl.AttendanceServiceImplTest
+[INFO] Running com.hrm.backend.service.impl.LeaveBalanceServiceImplTest
+2026-05-28T21:44:17.695+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveBalanceServiceImpl     : Hoàn 1.5 ngày phép cho NV ID 1 - Loại phép ID 1
+2026-05-28T21:44:17.697+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveBalanceServiceImpl     : Admin cập nhật phép: NV EMP0001 - Loại ANNUAL, totalDays=15.0, carryOver=2.0
+2026-05-28T21:44:17.698+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveBalanceServiceImpl     : Cấp phép cho NV EMP0001 - Loại: ANNUAL, Số ngày: 12.0, Năm: 2026
+2026-05-28T21:44:17.698+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveBalanceServiceImpl     : Cấp phép cho NV EMP0001 - Loại: SICK, Số ngày: 30.0, Năm: 2026
+2026-05-28T21:44:17.698+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveBalanceServiceImpl     : Cấp phép cho NV EMP0001 - Loại: UNPAID, Số ngày: 0, Năm: 2026
+2026-05-28T21:44:17.701+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveBalanceServiceImpl     : Hoàn 3.0 ngày phép cho NV ID 1 - Loại phép ID 1
+2026-05-28T21:44:17.701+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.s.impl.LeaveBalanceServiceImpl     : Trừ 1.5 ngày phép cho NV ID 1 - Loại phép ID 1
+[INFO] Tests run: 8, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.007 s -- in com.hrm.backend.service.impl.LeaveBalanceServiceImplTest
+[INFO] Running com.hrm.backend.service.impl.ContractServiceImplTest
+2026-05-28T21:44:17.735+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.ContractServiceImpl   : Đã tạo hợp đồng DRAFT #null cho nhân viên EMP0001 - Loại: INDEFINITE, Lương: 22000000
+2026-05-28T21:44:17.740+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.ContractServiceImpl   : Tự động EXPIRED và cập nhật ngày kết thúc thực tế cho hợp đồng cũ #10 của nhân viên EMP0001
+2026-05-28T21:44:17.740+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.ContractServiceImpl   : Đã kích hoạt hợp đồng #1 cho nhân viên EMP0001 - Lương: 22000000
+2026-05-28T21:44:17.740+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.ContractServiceImpl   : Đã chấm dứt hợp đồng #1 của nhân viên EMP0001
+2026-05-28T21:44:17.741+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.ContractServiceImpl   : Đã tạo hợp đồng DRAFT #1 cho nhân viên EMP0001 - Loại: DEFINITE_1YR, Lương: 22000000
+2026-05-28T21:44:17.742+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.ContractServiceImpl   : Tự động EXPIRED và cập nhật ngày kết thúc thực tế cho hợp đồng cũ #10 của nhân viên EMP0001
+2026-05-28T21:44:17.742+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.ContractServiceImpl   : Đã kích hoạt hợp đồng #1 cho nhân viên EMP0001 - Lương: 22000000
+2026-05-28T21:44:17.743+07:00  INFO 69580 --- [hrm-backend] [           main] c.h.b.service.impl.ContractServiceImpl   : Đã cập nhật hợp đồng DRAFT #1 - Lương mới: 25000000
+[INFO] Tests run: 15, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.043 s -- in com.hrm.backend.service.impl.ContractServiceImplTest
+
+
+==========================================================================================
+                                HRM BACKEND TEST REPORT                                  
+==========================================================================================
+ | STATUS     | TEST SUITE                       | TEST CASE / METHOD               | TIME    |
+------------------------------------------------------------------------------------------
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box GET /api/v1/attenda... | 6ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box GET /api/v1/attenda... | 7ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box GET /api/v1/attenda... | 5ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box GET /api/v1/attenda... | 6ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box GET /api/v1/attenda... | 7ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box GET /api/v1/attenda... | 30ms    |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box GET /api/v1/attenda... | 5ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box POST /api/v1/attend... | 5ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box POST /api/v1/attend... | 5ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box POST /api/v1/attend... | 5ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box POST /api/v1/attend... | 5ms     |
+ | SUCCESS    | AttendanceControllerBlackBoxTest | Black-box PUT /api/v1/attenda... | 5ms     |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit adminUpdateRecord - Shou... | 0ms     |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit checkIn - Duplicate chec... | 0ms     |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit checkIn - Holiday should... | 1ms     |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit checkIn - Invalid office... | 1ms     |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit checkIn - Late compared ... | 1ms     |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit checkIn - Missing GPS sh... | 0ms     |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit checkIn - Valid GPS/IP s... | 2ms     |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit checkOut - Early checkou... | 37ms    |
+ | SUCCESS    | AttendanceServiceImplTest        | Unit checkOut - Overtime shou... | 1ms     |
+ | SUCCESS    | AttendanceStressTest             | Stress Test - Race Condition ... | 7ms     |
+ | SUCCESS    | AttendanceStressTest             | Stress Test - Simulating 200 ... | 53ms    |
+ | SUCCESS    | AuthControllerBlackBoxTest       | Black-box POST /api/v1/auth/l... | 5ms     |
+ | SUCCESS    | AuthControllerBlackBoxTest       | Black-box POST /api/v1/auth/l... | 4ms     |
+ | SUCCESS    | AuthControllerBlackBoxTest       | Black-box POST /api/v1/auth/l... | 30ms    |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box GET /api/v1/contrac... | 3ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box GET /api/v1/contrac... | 3ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box GET /api/v1/contrac... | 3ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box GET /api/v1/contrac... | 3ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box POST /api/v1/contra... | 4ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box POST /api/v1/contra... | 4ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box POST /api/v1/contra... | 8ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box POST /api/v1/contra... | 6ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box PUT /api/v1/contrac... | 5ms     |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box PUT /api/v1/contrac... | 29ms    |
+ | SUCCESS    | ContractControllerBlackBoxTest   | Black-box PUT /api/v1/contrac... | 4ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit activateContract - Draft... | 1ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit activateContract - Non-d... | 0ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit activateContract - Overl... | 1ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit createContract - Definit... | 0ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit createContract - Exceedi... | 1ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit createContract - INDEFIN... | 34ms    |
+ | SUCCESS    | ContractServiceImplTest          | Unit createContract - Overlap... | 0ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit createContract - Probati... | 0ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit createContract - Resigne... | 1ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit createContract - Valid d... | 1ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit findActiveContract - Act... | 1ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit getContractsByEmployee -... | 1ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit terminateContract - Acti... | 0ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit updateContract - Draft c... | 1ms     |
+ | SUCCESS    | ContractServiceImplTest          | Unit updateContract - Non-dra... | 0ms     |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box DELETE /api/v1/depa... | 3ms     |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box DELETE /api/v1/depa... | 3ms     |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box GET /api/v1/departm... | 3ms     |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box GET /api/v1/departm... | 4ms     |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box POST /api/v1/depart... | 4ms     |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box POST /api/v1/depart... | 30ms    |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box POST /api/v1/depart... | 5ms     |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box PUT /api/v1/departm... | 4ms     |
+ | SUCCESS    | DepartmentControllerBlackBoxTest | Black-box PUT /api/v1/departm... | 5ms     |
+ | SUCCESS    | DepartmentServiceImplTest        | Create Department - Duplicate... | 68ms    |
+ | SUCCESS    | DepartmentServiceImplTest        | Create Department - Valid req... | 3ms     |
+ | SUCCESS    | DepartmentServiceImplTest        | Delete Department - Deleting ... | 1ms     |
+ | SUCCESS    | DepartmentServiceImplTest        | Delete Department - Deleting ... | 0ms     |
+ | SUCCESS    | DepartmentServiceImplTest        | Delete Department - Empty dep... | 1ms     |
+ | SUCCESS    | DepartmentServiceImplTest        | Update Department - Cyclic pa... | 0ms     |
+ | SUCCESS    | DepartmentServiceImplTest        | Update Department - Cyclical ... | 1ms     |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box DELETE /api/v1/empl... | 3ms     |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box DELETE /api/v1/empl... | 3ms     |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box GET /api/v1/employe... | 35ms    |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box GET /api/v1/employe... | 4ms     |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box POST /api/v1/employ... | 5ms     |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box POST /api/v1/employ... | 4ms     |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box POST /api/v1/employ... | 6ms     |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box POST /api/v1/employ... | 15ms    |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box PUT /api/v1/employe... | 5ms     |
+ | SUCCESS    | EmployeeControllerBlackBoxTest   | Black-box PUT /api/v1/employe... | 3ms     |
+ | SUCCESS    | HolidayControllerBlackBoxTest    | Black-box DELETE /api/v1/holi... | 27ms    |
+ | SUCCESS    | HolidayControllerBlackBoxTest    | Black-box DELETE /api/v1/holi... | 4ms     |
+ | SUCCESS    | HolidayControllerBlackBoxTest    | Black-box GET /api/v1/holiday... | 3ms     |
+ | SUCCESS    | HolidayControllerBlackBoxTest    | Black-box POST /api/v1/holida... | 5ms     |
+ | SUCCESS    | HolidayControllerBlackBoxTest    | Black-box POST /api/v1/holida... | 4ms     |
+ | SUCCESS    | HolidayControllerBlackBoxTest    | Black-box POST /api/v1/holida... | 5ms     |
+ | SUCCESS    | HolidayControllerBlackBoxTest    | Black-box PUT /api/v1/holiday... | 4ms     |
+ | SUCCESS    | HrmBackendApplicationTests       | contextLoads()                   | 268ms   |
+ | SUCCESS    | HrmEndToEndIntegrationTest       | E2E - Employee attendance, le... | 1229ms  |
+ | SUCCESS    | LeaveBalanceControllerBlackBo... | Black-box GET /api/v1/leave-b... | 4ms     |
+ | SUCCESS    | LeaveBalanceControllerBlackBo... | Black-box GET /api/v1/leave-b... | 4ms     |
+ | SUCCESS    | LeaveBalanceControllerBlackBo... | Black-box GET /api/v1/leave-b... | 3ms     |
+ | SUCCESS    | LeaveBalanceControllerBlackBo... | Black-box GET /api/v1/leave-b... | 65ms    |
+ | SUCCESS    | LeaveBalanceControllerBlackBo... | Black-box POST /api/v1/leave-... | 3ms     |
+ | SUCCESS    | LeaveBalanceControllerBlackBo... | Black-box PUT /api/v1/leave-b... | 3ms     |
+ | SUCCESS    | LeaveBalanceServiceImplTest      | Unit deductBalance - Missing ... | 0ms     |
+ | SUCCESS    | LeaveBalanceServiceImplTest      | Unit deductBalance - Should a... | 0ms     |
+ | SUCCESS    | LeaveBalanceServiceImplTest      | Unit getBalancesByEmployee - ... | 1ms     |
+ | SUCCESS    | LeaveBalanceServiceImplTest      | Unit initBalanceForEmployee -... | 0ms     |
+ | SUCCESS    | LeaveBalanceServiceImplTest      | Unit initBalanceForEmployee -... | 2ms     |
+ | SUCCESS    | LeaveBalanceServiceImplTest      | Unit refundBalance - Should s... | 1ms     |
+ | SUCCESS    | LeaveBalanceServiceImplTest      | Unit refundBalance - Used day... | 0ms     |
+ | SUCCESS    | LeaveBalanceServiceImplTest      | Unit updateBalance - Should u... | 1ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box GET /api/v1/leave-r... | 5ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box GET /api/v1/leave-r... | 5ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box GET /api/v1/leave-r... | 6ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box POST /api/v1/leave-... | 6ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box POST /api/v1/leave-... | 6ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box POST /api/v1/leave-... | 35ms    |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box POST /api/v1/leave-... | 6ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box PUT /api/v1/leave-r... | 4ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box PUT /api/v1/leave-r... | 5ms     |
+ | SUCCESS    | LeaveRequestControllerBlackBo... | Black-box PUT /api/v1/leave-r... | 4ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit approveRequest - Non-pen... | 110ms   |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit approveRequest - Pending... | 2ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit cancelRequest - Non-owne... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit cancelRequest - Owner ca... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit rejectRequest - Pending ... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit submitRequest - End date... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit submitRequest - Insuffic... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit submitRequest - Leave re... | 2ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit submitRequest - Overlapp... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit submitRequest - Single-d... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit submitRequest - UNPAID l... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit submitRequest - Valid an... | 1ms     |
+ | SUCCESS    | LeaveRequestServiceImplTest      | Unit submitRequest - Weekend ... | 1ms     |
+ | SUCCESS    | LeaveTypeControllerBlackBoxTest  | Black-box GET /api/v1/leave-t... | 3ms     |
+ | SUCCESS    | LeaveTypeControllerBlackBoxTest  | Black-box POST /api/v1/leave-... | 5ms     |
+ | SUCCESS    | LeaveTypeControllerBlackBoxTest  | Black-box POST /api/v1/leave-... | 5ms     |
+ | SUCCESS    | LeaveTypeControllerBlackBoxTest  | Black-box POST /api/v1/leave-... | 4ms     |
+ | SUCCESS    | LeaveTypeControllerBlackBoxTest  | Black-box PUT /api/v1/leave-t... | 35ms    |
+ | SUCCESS    | LeaveTypeControllerBlackBoxTest  | Black-box PUT /api/v1/leave-t... | 5ms     |
+ | SUCCESS    | OvertimeRequestControllerBlac... | Black-box DELETE /api/v1/over... | 4ms     |
+ | SUCCESS    | OvertimeRequestControllerBlac... | Black-box DELETE /api/v1/over... | 5ms     |
+ | SUCCESS    | OvertimeRequestControllerBlac... | Black-box GET /api/v1/overtim... | 5ms     |
+ | SUCCESS    | OvertimeRequestControllerBlac... | Black-box GET /api/v1/overtim... | 5ms     |
+ | SUCCESS    | OvertimeRequestControllerBlac... | Black-box POST /api/v1/overti... | 4ms     |
+ | SUCCESS    | OvertimeRequestControllerBlac... | Black-box POST /api/v1/overti... | 30ms    |
+ | SUCCESS    | OvertimeRequestControllerBlac... | Black-box PUT /api/v1/overtim... | 4ms     |
+ | SUCCESS    | OvertimeRequestControllerBlac... | Black-box PUT /api/v1/overtim... | 5ms     |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit approveRequest - Non-pen... | 31ms    |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit approveRequest - Pending... | 1ms     |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit cancelRequest - Non-owne... | 0ms     |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit cancelRequest - Non-pend... | 0ms     |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit cancelRequest - Owner ca... | 1ms     |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit createRequest - End time... | 1ms     |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit createRequest - Overlapp... | 0ms     |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit createRequest - Valid ti... | 1ms     |
+ | SUCCESS    | OvertimeRequestServiceImplTest   | Unit rejectRequest - Pending ... | 1ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box GET /api/v1/payroll... | 7ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box GET /api/v1/payroll... | 7ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box GET /api/v1/payroll... | 6ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box GET /api/v1/payroll... | 12ms    |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box GET /api/v1/payroll... | 5ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box POST /api/v1/payrol... | 76ms    |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box POST /api/v1/payrol... | 5ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box PUT /api/v1/payroll... | 12ms    |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box PUT /api/v1/payroll... | 7ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box PUT /api/v1/payroll... | 6ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box PUT /api/v1/payroll... | 7ms     |
+ | SUCCESS    | PayrollControllerBlackBoxTest    | Black-box PUT /api/v1/payroll... | 5ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit approvePayroll - Calcula... | 2ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit approvePayroll - Non-cal... | 1ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit bulkUpdatePayroll - Draf... | 16ms    |
+ | SUCCESS    | PayrollServiceImplTest           | Unit generatePayroll - Active... | 4ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit generatePayroll - Employ... | 1ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit generatePayroll - Existi... | 1ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit generatePayroll - Paid h... | 9ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit generatePayroll - Workin... | 2ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit markAsPaid - Approved pa... | 1ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit markAsPaid - Non-approve... | 3ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit submitPayroll - Draft pa... | 229ms   |
+ | SUCCESS    | PayrollServiceImplTest           | Unit submitPayroll - Non-draf... | 2ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit updatePayroll - Draft pa... | 5ms     |
+ | SUCCESS    | PayrollServiceImplTest           | Unit updatePayroll - Non-draf... | 1ms     |
+ | SUCCESS    | SecurityPenTest                  | Pen-Test JWT - Blank or malfo... | 3ms     |
+ | SUCCESS    | SecurityPenTest                  | Pen-Test JWT - Expired token ... | 4ms     |
+ | SUCCESS    | SecurityPenTest                  | Pen-Test JWT - Generate valid... | 6ms     |
+ | SUCCESS    | SecurityPenTest                  | Pen-Test JWT - Tampered token... | 3ms     |
+ | SUCCESS    | SecurityPenTest                  | SQL Injection - Passing SQL p... | 4ms     |
+ | SUCCESS    | SecurityPenTest                  | SQL Injection - Passing SQL p... | 5ms     |
+ | SUCCESS    | SecurityPenTest                  | XSS Mitigation - Input contai... | 6ms     |
+ | SUCCESS    | ShiftControllerBlackBoxTest      | Black-box DELETE /api/v1/shif... | 28ms    |
+ | SUCCESS    | ShiftControllerBlackBoxTest      | Black-box DELETE /api/v1/shif... | 5ms     |
+ | SUCCESS    | ShiftControllerBlackBoxTest      | Black-box GET /api/v1/shifts ... | 4ms     |
+ | SUCCESS    | ShiftControllerBlackBoxTest      | Black-box POST /api/v1/shifts... | 4ms     |
+ | SUCCESS    | ShiftControllerBlackBoxTest      | Black-box POST /api/v1/shifts... | 5ms     |
+ | SUCCESS    | ShiftControllerBlackBoxTest      | Black-box PUT /api/v1/shifts/... | 5ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate Insurance - Basic s... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate Insurance - Basic s... | 1ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate Insurance - Basic s... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate Insurance - Negativ... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate Insurance - Normal ... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate Insurance - Null ba... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate Insurance - Zero ba... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Bracket 1: Ta... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Bracket 2: Ta... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Bracket 3: Ta... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Bracket 4: Ta... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Bracket 5: Ta... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Bracket 6: Ta... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Bracket 7: Ta... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Gross salary ... | 1ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Negative gros... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Null gross sa... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Null insuranc... | 0ms     |
+ | SUCCESS    | TaxAndInsuranceServiceImplTest   | Calculate PIT - Progressive t... | 0ms     |
+==========================================================================================
+ SUMMARY: Total: 205 | Passed: 205 | Failed: 0 | Skipped: 0 | Success Rate: 100.0%
+==========================================================================================
+
+
+[INFO] [TestReportListener] Successfully wrote clean test result to: /Users/tphuc263/Project/hrm_proj/backend/docs/test-reports/TEST_RESULT.md
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 205, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  11.664 s
+[INFO] Finished at: 2026-05-28T21:44:17+07:00
+[INFO] ------------------------------------------------------------------------
