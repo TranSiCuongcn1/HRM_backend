@@ -17,6 +17,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
+    repair: true
   mail:
     host: smtp.gmail.com
     port: 465
@@ -38,11 +39,11 @@ app:
     secret: dGhpc0lzQVN1cGVyU2VjcmV0S2V5Rm9ySFJNU3lzdGVtSldUVG9rZW5HZW5lcmF0aW9uMjAyNg==
     expiration-ms: 86400000
   attendance:
-    office-latitude: 10.848031  
-    office-longitude: 106.784944
+    office-latitude: 10.848007  
+    office-longitude: 106.786373
     allowed-radius-meters: 200.0
     allowed-ips:
       - "127.0.0.1"
       - "0:0:0:0:0:0:0:1"
-      - "192.168.1.45"
+      - "172.28.176.1"
       - "123.21.246.223"

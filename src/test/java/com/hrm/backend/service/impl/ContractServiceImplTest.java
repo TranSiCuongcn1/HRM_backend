@@ -212,6 +212,84 @@ class ContractServiceImplTest {
         assertThat(response.get().getStatus()).isEqualTo("ACTIVE");
     }
 
+    @Test
+    @DisplayName("Unit createContract - Overlapping dates should throw IllegalArgumentException")
+    void createContract_OverlappingDates_ThrowsException() {
+        when(employeeRepository.findById(1)).thenReturn(Optional.of(employee));
+        Contract active = activeContract(10);
+        when(contractRepository.findByEmployeeIdOrderByStartDateDesc(1)).thenReturn(List.of(active));
+
+        ContractRequest overlappingRequest = new ContractRequest(
+                1,
+                "DEFINITE_1YR",
+                LocalDate.of(2025, 12, 1), // Trùng vào giữa hợp đồng active (2025-06-01 -> 2026-05-31)
+                LocalDate.of(2026, 11, 30),
+                new BigDecimal("22000000")
+        );
+
+        assertThatThrownBy(() -> contractService.createContract(overlappingRequest))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("trùng lặp");
+    }
+
+    @Test
+    @DisplayName("Unit createContract - Probation > 180 days should throw IllegalArgumentException")
+    void createContract_ProbationOver180Days_ThrowsException() {
+        when(employeeRepository.findById(1)).thenReturn(Optional.of(employee));
+
+        ContractRequest longProbation = new ContractRequest(
+                1,
+                "PROBATION",
+                LocalDate.of(2026, 1, 1),
+                LocalDate.of(2026, 12, 31), // 364 ngày > 180
+                new BigDecimal("15000000")
+        );
+
+        assertThatThrownBy(() -> contractService.createContract(longProbation))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("thử việc tối đa");
+    }
+
+    @Test
+    @DisplayName("Unit createContract - Exceeding 2 definite contracts should throw IllegalArgumentException")
+    void createContract_DefiniteLimitExceeded_ThrowsException() {
+        when(employeeRepository.findById(1)).thenReturn(Optional.of(employee));
+
+        Contract past1 = activeContract(10);
+        past1.setStatus("EXPIRED");
+        Contract past2 = activeContract(11);
+        past2.setStatus("EXPIRED");
+        past2.setStartDate(LocalDate.of(2024, 6, 1));
+        past2.setEndDate(LocalDate.of(2025, 5, 31));
+
+        // Employee đã có 2 hợp đồng xác định thời hạn EXPIRED
+        when(contractRepository.findByEmployeeIdOrderByStartDateDesc(1)).thenReturn(List.of(past1, past2));
+
+        ContractRequest thirdDefinite = standardRequest();
+
+        assertThatThrownBy(() -> contractService.createContract(thirdDefinite))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("không được ký quá 2 lần");
+    }
+
+    @Test
+    @DisplayName("Unit activateContract - Overlapping old active contract should shorten its endDate")
+    void activateContract_OverlappingOldActiveContract_ShortensEndDate() {
+        Contract oldActive = activeContract(10); // 2025-06-01 -> 2026-05-31
+        Contract draft = draftContract(); // 2026-06-01 -> 2027-05-31, but let's make it starts early, e.g. 2026-05-15
+        draft.setStartDate(LocalDate.of(2026, 5, 15));
+
+        when(contractRepository.findById(1)).thenReturn(Optional.of(draft));
+        when(contractRepository.findByEmployeeIdAndStatus(1, "ACTIVE")).thenReturn(Optional.of(oldActive));
+        when(contractRepository.save(any(Contract.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        contractService.activateContract(1);
+
+        assertThat(oldActive.getStatus()).isEqualTo("EXPIRED");
+        // endDate của oldActive phải bị rút ngắn thành 2026-05-14 (trước ngày 2026-05-15 một ngày)
+        assertThat(oldActive.getEndDate()).isEqualTo(LocalDate.of(2026, 5, 14));
+    }
+
     private ContractRequest standardRequest() {
         return new ContractRequest(
                 1,

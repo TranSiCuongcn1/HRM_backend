@@ -44,7 +44,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // Validate logic ngày tháng
-        validateDates(request);
+        validateDates(request, null);
 
         // Tạo hợp đồng mới với trạng thái DRAFT
         Contract contract = Contract.builder()
@@ -80,7 +80,7 @@ public class ContractServiceImpl implements ContractService {
         }
 
         // Validate logic ngày tháng
-        validateDates(request);
+        validateDates(request, id);
 
         // Cập nhật thông tin
         contract.setContractType(request.getContractType());
@@ -115,8 +115,13 @@ public class ContractServiceImpl implements ContractService {
         contractRepository.findByEmployeeIdAndStatus(employeeId, "ACTIVE")
                 .ifPresent(oldContract -> {
                     oldContract.setStatus("EXPIRED");
+                    // Cập nhật endDate của hợp đồng cũ về ngày liền trước ngày bắt đầu hợp đồng mới
+                    LocalDate dayBeforeNewStart = contract.getStartDate().minusDays(1);
+                    if (oldContract.getEndDate() == null || oldContract.getEndDate().isAfter(dayBeforeNewStart)) {
+                        oldContract.setEndDate(dayBeforeNewStart);
+                    }
                     contractRepository.save(oldContract);
-                    log.info("Tự động EXPIRED hợp đồng cũ #{} của nhân viên {}",
+                    log.info("Tự động EXPIRED và cập nhật ngày kết thúc thực tế cho hợp đồng cũ #{} của nhân viên {}",
                             oldContract.getId(), contract.getEmployee().getCode());
                 });
 
@@ -217,20 +222,77 @@ public class ContractServiceImpl implements ContractService {
     // HELPER: Validate ngày tháng hợp đồng
     // ========================================
 
-    private void validateDates(ContractRequest request) {
-        // Nếu là hợp đồng INDEFINITE thì không cần endDate
-        if ("INDEFINITE".equals(request.getContractType())) {
-            return;
-        }
-
+    private void validateDates(ContractRequest request, Integer contractId) {
         // Các loại hợp đồng có thời hạn bắt buộc phải có endDate
-        if (request.getEndDate() == null) {
-            throw new IllegalArgumentException(
-                    "Hợp đồng loại " + request.getContractType() + " bắt buộc phải có ngày kết thúc (endDate)");
+        if (!"INDEFINITE".equals(request.getContractType())) {
+            if (request.getEndDate() == null) {
+                throw new IllegalArgumentException(
+                        "Hợp đồng loại " + request.getContractType() + " bắt buộc phải có ngày kết thúc (endDate)");
+            }
+            if (request.getEndDate().isBefore(request.getStartDate())) {
+                throw new IllegalArgumentException("Ngày kết thúc phải sau ngày bắt đầu");
+            }
         }
 
-        if (request.getEndDate().isBefore(request.getStartDate())) {
-            throw new IllegalArgumentException("Ngày kết thúc phải sau ngày bắt đầu");
+        // 1. Giới hạn Thử việc không quá 180 ngày
+        if ("PROBATION".equals(request.getContractType())) {
+            if (request.getEndDate() != null) {
+                long probationDays = java.time.temporal.ChronoUnit.DAYS.between(request.getStartDate(), request.getEndDate());
+                if (probationDays > 180) {
+                    throw new IllegalArgumentException("Thời gian thử việc tối đa theo luật định là 180 ngày.");
+                }
+            }
+        }
+
+        // 2. Chặn trùng khoảng ngày (Overlapping Dates Check)
+        checkOverlapping(request.getEmployeeId(), request.getStartDate(), "INDEFINITE".equals(request.getContractType()) ? null : request.getEndDate(), contractId);
+
+        // 3. Giới hạn số lần ký hợp đồng xác định thời hạn (DEFINITE_1YR)
+        if ("DEFINITE_1YR".equals(request.getContractType())) {
+            checkDefiniteContractLimit(request.getEmployeeId(), contractId);
+        }
+    }
+
+    private void checkDefiniteContractLimit(Integer employeeId, Integer contractId) {
+        List<Contract> contracts = contractRepository.findByEmployeeIdOrderByStartDateDesc(employeeId);
+        long definiteCount = contracts.stream()
+                .filter(c -> !c.getId().equals(contractId)) // Bỏ qua chính nó khi sửa
+                .filter(c -> !"DRAFT".equals(c.getStatus()) && !"TERMINATED".equals(c.getStatus())) // Chỉ tính các hợp đồng đã ký/kích hoạt hiệu lực
+                .filter(c -> !"PROBATION".equals(c.getContractType()) && !"INDEFINITE".equals(c.getContractType()))
+                .count();
+        if (definiteCount >= 2) {
+            throw new IllegalArgumentException(
+                    "Theo Bộ luật Lao động Việt Nam, người lao động không được ký quá 2 lần hợp đồng xác định thời hạn. Vui lòng ký hợp đồng vô thời hạn (INDEFINITE).");
+        }
+    }
+
+    private void checkOverlapping(Integer employeeId, LocalDate newStart, LocalDate newEnd, Integer contractId) {
+        List<Contract> contracts = contractRepository.findByEmployeeIdOrderByStartDateDesc(employeeId);
+        for (Contract existing : contracts) {
+            // Bỏ qua chính nó (khi sửa DRAFT)
+            if (contractId != null && existing.getId().equals(contractId)) {
+                continue;
+            }
+            // Bỏ qua hợp đồng DRAFT (chưa hiệu lực) và TERMINATED
+            if ("DRAFT".equals(existing.getStatus()) || "TERMINATED".equals(existing.getStatus())) {
+                continue;
+            }
+
+            LocalDate existStart = existing.getStartDate();
+            LocalDate existEnd = existing.getEndDate();
+
+            // Kiểm tra giao nhau: (StartA <= EndB) và (StartB <= EndA)
+            boolean overlap = (existEnd == null || !newStart.isAfter(existEnd)) &&
+                              (newEnd == null || !existStart.isAfter(newEnd));
+
+            if (overlap) {
+                throw new IllegalArgumentException(
+                        String.format("Thời gian hợp đồng bị trùng lặp với hợp đồng số #%d (%s) từ %s đến %s",
+                                existing.getId(),
+                                existing.getContractType(),
+                                existStart,
+                                existEnd != null ? existEnd : "Vô thời hạn"));
+            }
         }
     }
 
