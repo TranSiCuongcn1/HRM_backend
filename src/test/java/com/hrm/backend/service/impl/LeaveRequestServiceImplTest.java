@@ -12,6 +12,8 @@ import com.hrm.backend.repository.LeaveBalanceRepository;
 import com.hrm.backend.repository.LeaveRequestRepository;
 import com.hrm.backend.repository.LeaveTypeRepository;
 import com.hrm.backend.repository.UserRepository;
+import com.hrm.backend.repository.HolidayRepository;
+import com.hrm.backend.entity.Holiday;
 import com.hrm.backend.service.EmailService;
 import com.hrm.backend.service.LeaveBalanceService;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +60,9 @@ class LeaveRequestServiceImplTest {
 
     @Mock
     private EmailService emailService;
+
+    @Mock
+    private HolidayRepository holidayRepository;
 
     @InjectMocks
     private LeaveRequestServiceImpl leaveRequestService;
@@ -218,6 +223,59 @@ class LeaveRequestServiceImplTest {
         assertThat(response.getLeaveTypeCode()).isEqualTo("UNPAID");
         assertThat(response.getStatus()).isEqualTo("PENDING");
         verify(leaveBalanceRepository, never()).findByEmployeeIdAndLeaveTypeIdAndYear(any(), any(), anyInt());
+    }
+
+    @Test
+    @DisplayName("Unit submitRequest - Single-day holiday leave should throw IllegalArgumentException")
+    void submitRequest_SingleDayHoliday_ThrowsException() {
+        LeaveRequestDTO request = standardRequest();
+        request.setStartDate(LocalDate.of(2026, 6, 1));
+        request.setEndDate(LocalDate.of(2026, 6, 1));
+        when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
+        when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+                .thenReturn(0L);
+        Holiday holiday = Holiday.builder().name("National Day").date(LocalDate.of(2026, 6, 1)).isPaid(true).build();
+        when(holidayRepository.findByDate(LocalDate.of(2026, 6, 1))).thenReturn(Optional.of(holiday));
+
+        assertThatThrownBy(() -> leaveRequestService.submitRequest("employee", request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("nghỉ lễ được hưởng lương");
+
+        verify(leaveRequestRepository, never()).save(any(LeaveRequest.class));
+    }
+
+    @Test
+    @DisplayName("Unit submitRequest - Leave request overlapping with holiday should exclude holiday days")
+    void submitRequest_LeaveOverlappingHoliday_ExcludesHolidayDays() {
+        LeaveRequestDTO request = new LeaveRequestDTO(
+                1,
+                LocalDate.of(2026, 6, 3), // Wednesday
+                LocalDate.of(2026, 6, 5), // Friday
+                new BigDecimal("3.0"),
+                null,
+                "Vacation",
+                null
+        );
+        when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
+        when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+                .thenReturn(0L);
+        when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(1, 1, 2026))
+                .thenReturn(Optional.of(balance(new BigDecimal("12.0"), BigDecimal.ZERO, BigDecimal.ZERO)));
+
+        // Mock June 4 as a paid holiday
+        Holiday holiday = Holiday.builder().name("Special Holiday").date(LocalDate.of(2026, 6, 4)).isPaid(true).build();
+        when(holidayRepository.findByDate(LocalDate.of(2026, 6, 3))).thenReturn(Optional.empty());
+        when(holidayRepository.findByDate(LocalDate.of(2026, 6, 4))).thenReturn(Optional.of(holiday));
+        when(holidayRepository.findByDate(LocalDate.of(2026, 6, 5))).thenReturn(Optional.empty());
+
+        when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        LeaveRequestResponse response = leaveRequestService.submitRequest("employee", request);
+
+        // Expected days = 2.0 days (Wednesday and Friday, Thursday is excluded)
+        assertThat(response.getDays()).isEqualByComparingTo(new BigDecimal("2.0"));
     }
 
     @Test

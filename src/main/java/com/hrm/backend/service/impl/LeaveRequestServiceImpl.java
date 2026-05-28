@@ -31,6 +31,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
     private final UserRepository userRepository;
     private final LeaveBalanceService leaveBalanceService;
     private final EmailService emailService;
+    private final HolidayRepository holidayRepository;
 
     // ========================================
     // 1. NV GỬI ĐƠN XIN PHÉP
@@ -58,13 +59,19 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
             throw new IllegalArgumentException("Bạn đã có đơn xin nghỉ phép (PENDING/APPROVED) trong khoảng thời gian này");
         }
 
-        // Tính ngày làm việc thực tế (trừ T7, CN)
+        // Tính ngày làm việc thực tế (trừ T7, CN và Ngày lễ)
         BigDecimal finalDays = request.getDays();
         if (request.getStartDate().isEqual(request.getEndDate())) {
             // Trong cùng 1 ngày
             java.time.DayOfWeek dayOfWeek = request.getStartDate().getDayOfWeek();
             if (dayOfWeek == java.time.DayOfWeek.SATURDAY || dayOfWeek == java.time.DayOfWeek.SUNDAY) {
                  throw new IllegalArgumentException("Không thể tạo đơn nghỉ phép vào ngày nghỉ cuối tuần");
+            }
+            boolean isHoliday = holidayRepository.findByDate(request.getStartDate())
+                    .map(Holiday::getIsPaid)
+                    .orElse(false);
+            if (isHoliday) {
+                throw new IllegalArgumentException("Ngày này là ngày nghỉ lễ được hưởng lương, bạn không cần xin nghỉ phép");
             }
             // Trust frontend for days (e.g. 0.5 or 1.0)
         } else {
@@ -73,8 +80,12 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
             while (!date.isAfter(request.getEndDate())) {
                 java.time.DayOfWeek dayOfWeek = date.getDayOfWeek();
                 if (dayOfWeek != java.time.DayOfWeek.SATURDAY && dayOfWeek != java.time.DayOfWeek.SUNDAY) {
-                    // TODO: Truy vấn bảng holidays để trừ thêm ngày lễ nếu cần
-                    businessDays++;
+                    boolean isHoliday = holidayRepository.findByDate(date)
+                            .map(Holiday::getIsPaid)
+                            .orElse(false);
+                    if (!isHoliday) {
+                        businessDays++;
+                    }
                 }
                 date = date.plusDays(1);
             }

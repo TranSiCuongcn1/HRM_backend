@@ -62,12 +62,28 @@ class TaxAndInsuranceServiceImplTest {
     }
 
     @Test
-    @DisplayName("Calculate Insurance - Basic salary over cap should return capped amount")
-    void calculateInsurance_SalaryOverCap_ReturnsCappedAmount() {
-        // Salary = 60M (Over Cap of 46.8M)
-        // Capped at 46.8M -> 4,914,000
+    @DisplayName("Calculate Insurance - Basic salary over cap of BHXH/BHYT but under BHTN cap")
+    void calculateInsurance_SalaryOverCap_ReturnsCorrectAmount() {
+        // Salary = 60M (Over BHXH/BHYT Cap of 46.8M but under BHTN Cap of 99.2M)
+        // BHXH + BHYT: Capped at 46.8M * 9.5% = 4,446,000
+        // BHTN: Not capped -> 60M * 1% = 600,000
+        // Total = 4,446,000 + 600,000 = 5,046,000
         BigDecimal basicSalary = new BigDecimal("60000000");
-        BigDecimal expected = new BigDecimal("4914000");
+        BigDecimal expected = new BigDecimal("5046000");
+        
+        BigDecimal result = service.calculateInsurance(basicSalary);
+        assertThat(result).isEqualByComparingTo(expected);
+    }
+
+    @Test
+    @DisplayName("Calculate Insurance - Basic salary over both BHXH/BHYT and BHTN caps should cap both")
+    void calculateInsurance_SalaryOverBhtnCap_ReturnsCappedAmount() {
+        // Salary = 120M (Over both Caps: BHXH/BHYT 46.8M and BHTN 99.2M)
+        // BHXH + BHYT: Capped at 46.8M * 9.5% = 4,446,000
+        // BHTN: Capped at 99.2M * 1% = 992,000
+        // Total = 4,446,000 + 992,000 = 5,438,000
+        BigDecimal basicSalary = new BigDecimal("120000000");
+        BigDecimal expected = new BigDecimal("5438000");
         
         BigDecimal result = service.calculateInsurance(basicSalary);
         assertThat(result).isEqualByComparingTo(expected);
