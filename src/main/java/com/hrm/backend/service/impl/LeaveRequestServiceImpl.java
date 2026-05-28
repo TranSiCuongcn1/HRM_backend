@@ -51,6 +51,39 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
             throw new IllegalArgumentException("Ngày kết thúc phải sau hoặc bằng ngày bắt đầu");
         }
 
+        // Kiểm tra trùng lặp đơn nghỉ phép
+        long overlappingCount = leaveRequestRepository.countOverlappingRequests(
+                employee.getId(), request.getStartDate(), request.getEndDate());
+        if (overlappingCount > 0) {
+            throw new IllegalArgumentException("Bạn đã có đơn xin nghỉ phép (PENDING/APPROVED) trong khoảng thời gian này");
+        }
+
+        // Tính ngày làm việc thực tế (trừ T7, CN)
+        BigDecimal finalDays = request.getDays();
+        if (request.getStartDate().isEqual(request.getEndDate())) {
+            // Trong cùng 1 ngày
+            java.time.DayOfWeek dayOfWeek = request.getStartDate().getDayOfWeek();
+            if (dayOfWeek == java.time.DayOfWeek.SATURDAY || dayOfWeek == java.time.DayOfWeek.SUNDAY) {
+                 throw new IllegalArgumentException("Không thể tạo đơn nghỉ phép vào ngày nghỉ cuối tuần");
+            }
+            // Trust frontend for days (e.g. 0.5 or 1.0)
+        } else {
+            long businessDays = 0;
+            LocalDate date = request.getStartDate();
+            while (!date.isAfter(request.getEndDate())) {
+                java.time.DayOfWeek dayOfWeek = date.getDayOfWeek();
+                if (dayOfWeek != java.time.DayOfWeek.SATURDAY && dayOfWeek != java.time.DayOfWeek.SUNDAY) {
+                    // TODO: Truy vấn bảng holidays để trừ thêm ngày lễ nếu cần
+                    businessDays++;
+                }
+                date = date.plusDays(1);
+            }
+            finalDays = BigDecimal.valueOf(businessDays);
+            if (finalDays.compareTo(BigDecimal.ZERO) == 0) {
+                throw new IllegalArgumentException("Khoảng thời gian xin nghỉ không có ngày làm việc hợp lệ");
+            }
+        }
+
         // Validate số dư phép (chỉ check cho phép có giới hạn, UNPAID không cần check)
         if (!"UNPAID".equals(leaveType.getCode())) {
             int year = request.getStartDate().getYear();
@@ -64,10 +97,10 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                     .add(balance.getCarryOverDays())
                     .subtract(balance.getUsedDays());
 
-            if (remaining.compareTo(request.getDays()) < 0) {
+            if (remaining.compareTo(finalDays) < 0) {
                 throw new IllegalArgumentException(
                         "Không đủ số dư phép '" + leaveType.getName() + "'. "
-                                + "Còn lại: " + remaining + " ngày, yêu cầu: " + request.getDays() + " ngày");
+                                + "Còn lại: " + remaining + " ngày, yêu cầu: " + finalDays + " ngày");
             }
         }
 
@@ -77,7 +110,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 .leaveType(leaveType)
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
-                .days(request.getDays())
+                .days(finalDays)
+                .halfDaySession(request.getHalfDaySession())
                 .reason(request.getReason())
                 .attachmentUrl(request.getAttachmentUrl())
                 .status("PENDING")
@@ -300,6 +334,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .days(request.getDays())
+                .halfDaySession(request.getHalfDaySession())
                 .reason(request.getReason())
                 .attachmentUrl(request.getAttachmentUrl())
                 .status(request.getStatus())

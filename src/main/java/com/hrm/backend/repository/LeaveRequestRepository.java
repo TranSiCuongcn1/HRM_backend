@@ -63,4 +63,12 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Inte
             @Param("empId") Integer empId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate);
+
+    @Query("SELECT COUNT(lr) FROM LeaveRequest lr WHERE lr.employee.id = :empId " +
+            "AND lr.status IN ('PENDING', 'APPROVED') " +
+            "AND lr.startDate <= :endDate AND lr.endDate >= :startDate")
+    long countOverlappingRequests(
+            @Param("empId") Integer empId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
 }

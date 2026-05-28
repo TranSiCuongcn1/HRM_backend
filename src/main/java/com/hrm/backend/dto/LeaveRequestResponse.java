@@ -32,6 +32,7 @@ public class LeaveRequestResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private BigDecimal days;
+    private String halfDaySession;
     private String reason;
     private String attachmentUrl;
 

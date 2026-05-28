@@ -39,6 +39,9 @@ public class LeaveRequest {
     @Column(precision = 4, scale = 1, nullable = false)
     private BigDecimal days; // Hỗ trợ 0.5 cho nửa ngày
 
+    @Column(name = "half_day_session", length = 20)
+    private String halfDaySession; // MORNING or AFTERNOON
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String reason;
 

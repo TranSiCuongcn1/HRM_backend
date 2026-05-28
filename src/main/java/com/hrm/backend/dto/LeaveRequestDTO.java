@@ -31,6 +31,8 @@ public class LeaveRequestDTO {
     @Positive(message = "Số ngày nghỉ phải lớn hơn 0")
     private BigDecimal days; // Hỗ trợ 0.5 cho nửa ngày
 
+    private String halfDaySession; // MORNING, AFTERNOON
+
     @NotBlank(message = "Lý do xin nghỉ không được để trống")
     private String reason;
 

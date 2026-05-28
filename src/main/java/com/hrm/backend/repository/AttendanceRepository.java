@@ -25,7 +25,17 @@ public interface AttendanceRepository extends JpaRepository<AttendanceRecord, In
      */
     boolean existsByEmployeeIdAndDate(Integer employeeId, LocalDate date);
 
-        boolean existsByEmployeeId(Integer employeeId);
+    /**
+     * Tìm bản ghi chưa check-out của nhân viên trong ngày cụ thể
+     */
+    Optional<AttendanceRecord> findByEmployeeIdAndDateAndCheckOutIsNull(Integer employeeId, LocalDate date);
+
+    /**
+     * Tìm các bản ghi bị quên check-out trong ngày
+     */
+    List<AttendanceRecord> findByDateAndCheckOutIsNullAndStatusNot(LocalDate date, String status);
+
+    boolean existsByEmployeeId(Integer employeeId);
 
     /**
      * Lấy toàn bộ bản ghi chấm công trong khoảng ngày của 1 nhân viên

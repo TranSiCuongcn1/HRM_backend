@@ -234,12 +234,26 @@ public class AttendanceServiceImpl implements AttendanceService {
         Employee employee = getEmployeeByUsername(username);
         LocalDate today = LocalDate.now();
 
+        // Hỗ trợ ca đêm: Nếu hôm nay không có check-in, tìm bản ghi hôm qua chưa có check-out
         AttendanceRecord record = attendanceRepository.findByEmployeeIdAndDate(employee.getId(), today)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Bạn chưa check-in ngày hôm nay. Vui lòng check-in trước."));
+                .orElse(null);
+
+        if (record == null || record.getCheckOut() != null) {
+            AttendanceRecord yesterdayRecord = attendanceRepository
+                    .findByEmployeeIdAndDateAndCheckOutIsNull(employee.getId(), today.minusDays(1))
+                    .orElse(null);
+
+            if (yesterdayRecord != null) {
+                record = yesterdayRecord;
+            }
+        }
+
+        if (record == null) {
+            throw new IllegalArgumentException("Bạn chưa check-in. Vui lòng check-in trước.");
+        }
 
         if (record.getCheckOut() != null) {
-            throw new IllegalArgumentException("Bạn đã check-out ngày hôm nay rồi");
+            throw new IllegalArgumentException("Bạn đã check-out ca làm việc này rồi");
         }
 
         LocalTime now = LocalTime.now();
