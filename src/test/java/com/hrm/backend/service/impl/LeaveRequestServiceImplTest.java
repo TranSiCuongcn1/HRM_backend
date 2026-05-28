@@ -111,7 +111,7 @@ class LeaveRequestServiceImplTest {
         LeaveRequestDTO request = standardRequest();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
                 .thenReturn(0L);
         when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(1, 1, 2026))
                 .thenReturn(Optional.of(balance(new BigDecimal("12.0"), BigDecimal.ZERO, BigDecimal.ZERO)));
@@ -155,7 +155,7 @@ class LeaveRequestServiceImplTest {
         LeaveRequestDTO request = standardRequest();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
                 .thenReturn(1L);
 
         assertThatThrownBy(() -> leaveRequestService.submitRequest("employee", request))
@@ -173,7 +173,7 @@ class LeaveRequestServiceImplTest {
         request.setEndDate(LocalDate.of(2026, 6, 6));
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
                 .thenReturn(0L);
 
         assertThatThrownBy(() -> leaveRequestService.submitRequest("employee", request))
@@ -189,7 +189,7 @@ class LeaveRequestServiceImplTest {
         LeaveRequestDTO request = standardRequest();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
                 .thenReturn(0L);
         when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(1, 1, 2026))
                 .thenReturn(Optional.of(balance(new BigDecimal("1.0"), new BigDecimal("1.0"), BigDecimal.ZERO)));
@@ -214,7 +214,7 @@ class LeaveRequestServiceImplTest {
         request.setLeaveTypeId(2);
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(2)).thenReturn(Optional.of(unpaid));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
                 .thenReturn(0L);
         when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -233,7 +233,7 @@ class LeaveRequestServiceImplTest {
         request.setEndDate(LocalDate.of(2026, 6, 1));
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
                 .thenReturn(0L);
         Holiday holiday = Holiday.builder().name("National Day").date(LocalDate.of(2026, 6, 1)).isPaid(true).build();
         when(holidayRepository.findByDate(LocalDate.of(2026, 6, 1))).thenReturn(Optional.of(holiday));
@@ -259,7 +259,7 @@ class LeaveRequestServiceImplTest {
         );
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
                 .thenReturn(0L);
         when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(1, 1, 2026))
                 .thenReturn(Optional.of(balance(new BigDecimal("12.0"), BigDecimal.ZERO, BigDecimal.ZERO)));

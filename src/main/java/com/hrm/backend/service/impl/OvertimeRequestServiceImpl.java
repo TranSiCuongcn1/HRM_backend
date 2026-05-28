@@ -46,6 +46,13 @@ public class OvertimeRequestServiceImpl implements OvertimeRequestService {
             throw new IllegalArgumentException("Giờ kết thúc phải sau giờ bắt đầu");
         }
 
+        // Kiểm tra trùng lặp thời gian đăng ký tăng ca
+        long overlappingCount = overtimeRequestRepository.countOverlappingRequests(
+                employee.getId(), request.getDate(), request.getStartTime(), request.getEndTime());
+        if (overlappingCount > 0) {
+            throw new IllegalArgumentException("Bạn đã có đơn đăng ký tăng ca (PENDING/APPROVED) trùng khoảng thời gian này");
+        }
+
         OvertimeRequest orq = OvertimeRequest.builder()
                 .employee(employee)
                 .date(request.getDate())

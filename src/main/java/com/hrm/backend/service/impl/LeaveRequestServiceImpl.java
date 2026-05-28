@@ -54,7 +54,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         // Kiểm tra trùng lặp đơn nghỉ phép
         long overlappingCount = leaveRequestRepository.countOverlappingRequests(
-                employee.getId(), request.getStartDate(), request.getEndDate());
+                employee.getId(), request.getStartDate(), request.getEndDate(), request.getHalfDaySession());
         if (overlappingCount > 0) {
             throw new IllegalArgumentException("Bạn đã có đơn xin nghỉ phép (PENDING/APPROVED) trong khoảng thời gian này");
         }

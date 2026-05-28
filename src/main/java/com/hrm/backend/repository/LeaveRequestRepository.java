@@ -66,9 +66,14 @@ public interface LeaveRequestRepository extends JpaRepository<LeaveRequest, Inte
 
     @Query("SELECT COUNT(lr) FROM LeaveRequest lr WHERE lr.employee.id = :empId " +
             "AND lr.status IN ('PENDING', 'APPROVED') " +
-            "AND lr.startDate <= :endDate AND lr.endDate >= :startDate")
+            "AND lr.startDate <= :endDate AND lr.endDate >= :startDate " +
+            "AND (" +
+            "  lr.halfDaySession IS NULL OR :halfDaySession IS NULL " +
+            "  OR lr.halfDaySession = :halfDaySession" +
+            ")")
     long countOverlappingRequests(
             @Param("empId") Integer empId,
             @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate);
+            @Param("endDate") LocalDate endDate,
+            @Param("halfDaySession") String halfDaySession);
 }

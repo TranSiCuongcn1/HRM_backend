@@ -75,6 +75,8 @@ class OvertimeRequestServiceImplTest {
     @DisplayName("Unit createRequest - Valid time range should create PENDING request with calculated hours")
     void createRequest_ValidTimeRange_CreatesPendingRequest() {
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
+        when(overtimeRequestRepository.countOverlappingRequests(1, LocalDate.of(2026, 6, 2), LocalTime.of(18, 0), LocalTime.of(20, 30)))
+                .thenReturn(0L);
         when(overtimeRequestRepository.save(any(OvertimeRequest.class))).thenAnswer(invocation -> {
             OvertimeRequest request = invocation.getArgument(0);
             request.setId(1);
@@ -104,6 +106,21 @@ class OvertimeRequestServiceImplTest {
         assertThatThrownBy(() -> overtimeRequestService.createRequest("employee", request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("kết thúc");
+
+        verify(overtimeRequestRepository, never()).save(any(OvertimeRequest.class));
+    }
+
+    @Test
+    @DisplayName("Unit createRequest - Overlapping time range should throw IllegalArgumentException")
+    void createRequest_OverlappingTimeRange_ThrowsException() {
+        OvertimeRequestRequest request = standardRequest();
+        when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
+        when(overtimeRequestRepository.countOverlappingRequests(1, request.getDate(), request.getStartTime(), request.getEndTime()))
+                .thenReturn(1L);
+
+        assertThatThrownBy(() -> overtimeRequestService.createRequest("employee", request))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("trùng khoảng thời gian này");
 
         verify(overtimeRequestRepository, never()).save(any(OvertimeRequest.class));
     }

@@ -37,4 +37,14 @@ public interface OvertimeRequestRepository extends JpaRepository<OvertimeRequest
     );
 
     java.util.List<OvertimeRequest> findByEmployeeIdAndDateAndStatus(Integer employeeId, LocalDate date, String status);
+
+    @Query("SELECT COUNT(orq) FROM OvertimeRequest orq WHERE orq.employee.id = :empId " +
+            "AND orq.date = :date " +
+            "AND orq.status IN ('PENDING', 'APPROVED') " +
+            "AND orq.startTime < :endTime AND orq.endTime > :startTime")
+    long countOverlappingRequests(
+            @Param("empId") Integer empId,
+            @Param("date") LocalDate date,
+            @Param("startTime") java.time.LocalTime startTime,
+            @Param("endTime") java.time.LocalTime endTime);
 }
