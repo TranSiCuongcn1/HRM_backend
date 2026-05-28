@@ -116,6 +116,17 @@ class TaxAndInsuranceServiceImplTest {
     }
 
     @Test
+    @DisplayName("Calculate PIT - Bracket 2: Taxable income between 5M and 10M (10% tax - 250k)")
+    void calculatePIT_Bracket2_CalculatesProgressiveTax() {
+        BigDecimal result = service.calculatePIT(
+                grossForTaxableIncome(new BigDecimal("8000000"), BigDecimal.ZERO, 0),
+                BigDecimal.ZERO,
+                0);
+
+        assertThat(result).isEqualByComparingTo(new BigDecimal("550000"));
+    }
+
+    @Test
     @DisplayName("Calculate PIT - Bracket 3: Taxable income between 10M and 18M (15% tax - 750k)")
     void calculatePIT_Bracket3_CalculatesProgressiveTax() {
         // Gross = 30M, Insurance = 3.15M, Dependents = 0
@@ -131,6 +142,39 @@ class TaxAndInsuranceServiceImplTest {
     }
 
     @Test
+    @DisplayName("Calculate PIT - Bracket 4: Taxable income between 18M and 32M (20% tax - 1.65M)")
+    void calculatePIT_Bracket4_CalculatesProgressiveTax() {
+        BigDecimal result = service.calculatePIT(
+                grossForTaxableIncome(new BigDecimal("25000000"), BigDecimal.ZERO, 0),
+                BigDecimal.ZERO,
+                0);
+
+        assertThat(result).isEqualByComparingTo(new BigDecimal("3350000"));
+    }
+
+    @Test
+    @DisplayName("Calculate PIT - Bracket 5: Taxable income between 32M and 52M (25% tax - 3.25M)")
+    void calculatePIT_Bracket5_CalculatesProgressiveTax() {
+        BigDecimal result = service.calculatePIT(
+                grossForTaxableIncome(new BigDecimal("40000000"), BigDecimal.ZERO, 0),
+                BigDecimal.ZERO,
+                0);
+
+        assertThat(result).isEqualByComparingTo(new BigDecimal("6750000"));
+    }
+
+    @Test
+    @DisplayName("Calculate PIT - Bracket 6: Taxable income between 52M and 80M (30% tax - 5.85M)")
+    void calculatePIT_Bracket6_CalculatesProgressiveTax() {
+        BigDecimal result = service.calculatePIT(
+                grossForTaxableIncome(new BigDecimal("60000000"), BigDecimal.ZERO, 0),
+                BigDecimal.ZERO,
+                0);
+
+        assertThat(result).isEqualByComparingTo(new BigDecimal("12150000"));
+    }
+
+    @Test
     @DisplayName("Calculate PIT - Bracket 7: Taxable income > 80M (35% tax - 9.85M)")
     void calculatePIT_Bracket7_CalculatesMaxProgressiveTax() {
         // Gross = 120M, Insurance = 4.914M (capped), Dependents = 2 (8.8M)
@@ -143,5 +187,35 @@ class TaxAndInsuranceServiceImplTest {
         
         BigDecimal result = service.calculatePIT(gross, insurance, 2);
         assertThat(result).isEqualByComparingTo(expectedTax);
+    }
+
+    @Test
+    @DisplayName("Calculate PIT - Progressive tax boundary values should stay in correct brackets")
+    void calculatePIT_BoundaryValues_CalculatesExpectedTax() {
+        assertThat(taxForTaxableIncome("5000000")).isEqualByComparingTo(new BigDecimal("250000"));
+        assertThat(taxForTaxableIncome("10000000")).isEqualByComparingTo(new BigDecimal("750000"));
+        assertThat(taxForTaxableIncome("18000000")).isEqualByComparingTo(new BigDecimal("1950000"));
+        assertThat(taxForTaxableIncome("32000000")).isEqualByComparingTo(new BigDecimal("4750000"));
+        assertThat(taxForTaxableIncome("52000000")).isEqualByComparingTo(new BigDecimal("9750000"));
+        assertThat(taxForTaxableIncome("80000000")).isEqualByComparingTo(new BigDecimal("18150000"));
+        assertThat(taxForTaxableIncome("80000001")).isEqualByComparingTo(new BigDecimal("18150000"));
+    }
+
+    @Test
+    @DisplayName("Calculate PIT - Null insurance should be treated as zero")
+    void calculatePIT_NullInsurance_TreatsAsZero() {
+        BigDecimal result = service.calculatePIT(new BigDecimal("20000000"), null, 0);
+
+        assertThat(result).isEqualByComparingTo(new BigDecimal("650000"));
+    }
+
+    private BigDecimal taxForTaxableIncome(String taxableIncome) {
+        return service.calculatePIT(grossForTaxableIncome(new BigDecimal(taxableIncome), BigDecimal.ZERO, 0), BigDecimal.ZERO, 0);
+    }
+
+    private BigDecimal grossForTaxableIncome(BigDecimal taxableIncome, BigDecimal insurance, int dependentCount) {
+        BigDecimal personalDeduction = new BigDecimal("11000000");
+        BigDecimal dependentDeduction = new BigDecimal("4400000").multiply(BigDecimal.valueOf(dependentCount));
+        return taxableIncome.add(personalDeduction).add(dependentDeduction).add(insurance);
     }
 }

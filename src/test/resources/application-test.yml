@@ -1,0 +1,31 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:hrm_test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;NON_KEYWORDS=YEAR,MONTH;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  flyway:
+    enabled: false
+  mail:
+    host: localhost
+    port: 2525
+    username:
+    password:
+
+app:
+  jwt:
+    secret: dGhpc0lzQVN1cGVyU2VjcmV0S2V5Rm9ySFJNU3lzdGVtSldUVG9rZW5HZW5lcmF0aW9uMjAyNg==
+    expiration-ms: 86400000
+  attendance:
+    office-latitude: 10.848031
+    office-longitude: 106.784944
+    allowed-radius-meters: 200.0
+    allowed-ips: 127.0.0.1,0:0:0:0:0:0:0:1
