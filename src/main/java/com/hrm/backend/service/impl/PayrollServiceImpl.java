@@ -536,6 +536,9 @@ public class PayrollServiceImpl implements PayrollService {
             deptName = payroll.getEmployee().getDepartment().getName();
         }
 
+        Map<String, BigDecimal> allowancesMap = fromJson(payroll.getAllowances());
+        Map<String, BigDecimal> deductionsMap = fromJson(payroll.getDeductions());
+
         return PayrollResponse.builder()
                 .id(payroll.getId())
                 .employeeId(payroll.getEmployee().getId())
@@ -546,11 +549,11 @@ public class PayrollServiceImpl implements PayrollService {
                 .basicSalary(payroll.getBasicSalary())
                 .workDays(payroll.getWorkDays())
                 .actualDays(payroll.getActualDays())
-                .allowances(fromJson(payroll.getAllowances()))
+                .allowances(allowancesMap != null ? Map.copyOf(allowancesMap) : Map.of())
                 .totalAllowances(payroll.getTotalAllowances())
                 .overtimePay(payroll.getOvertimePay())
                 .grossSalary(payroll.getGrossSalary())
-                .deductions(fromJson(payroll.getDeductions()))
+                .deductions(deductionsMap != null ? Map.copyOf(deductionsMap) : Map.of())
                 .totalDeductions(payroll.getTotalDeductions())
                 .netSalary(payroll.getNetSalary())
                 .status(payroll.getStatus())
