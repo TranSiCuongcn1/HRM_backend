@@ -561,4 +561,12 @@ public class PayrollServiceImpl implements PayrollService {
                 .updatedAt(payroll.getUpdatedAt())
                 .build();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<PayrollResponse> findLatestPayroll(Integer employeeId) {
+        List<Payroll> payrollHistory = payrollRepository.findByEmployeeIdOrderByMonthDesc(employeeId);
+        return payrollHistory.isEmpty() ? Optional.empty() : Optional.of(mapToResponse(payrollHistory.get(0)));
+    }
 }
+

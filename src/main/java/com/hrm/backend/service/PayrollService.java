@@ -68,4 +68,7 @@ public interface PayrollService {
     PayrollResponse getPayrollById(Integer id);
 
     com.hrm.backend.entity.User getUserByUsername(String username);
+
+    java.util.Optional<PayrollResponse> findLatestPayroll(Integer employeeId);
 }
+

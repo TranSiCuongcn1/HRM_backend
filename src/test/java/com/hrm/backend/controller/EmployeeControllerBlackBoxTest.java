@@ -5,7 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hrm.backend.dto.EmployeeRequest;
 import com.hrm.backend.dto.EmployeeResponse;
 import com.hrm.backend.exception.GlobalExceptionHandler;
-import com.hrm.backend.service.EmployeeService;
+import com.hrm.backend.service.facade.EmployeeFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class EmployeeControllerBlackBoxTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private EmployeeService employeeService;
+    private EmployeeFacade employeeFacade;
 
     @InjectMocks
     private EmployeeController employeeController;
@@ -61,7 +61,7 @@ class EmployeeControllerBlackBoxTest {
     @DisplayName("Black-box GET /api/v1/employees - Returns paged employees in ApiResponse")
     void getAllEmployees_ReturnsPagedEmployees() throws Exception {
         EmployeeResponse employee = standardResponse();
-        when(employeeService.getAllEmployees(eq("EMP"), eq("ACTIVE"), eq(1), any(Pageable.class)))
+        when(employeeFacade.getAllEmployees(eq("EMP"), eq("ACTIVE"), eq(1), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(employee), PageRequest.of(0, 10), 1));
 
         mockMvc.perform(get("/api/v1/employees")
@@ -78,7 +78,7 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box GET /api/v1/employees/{id} - Returns employee detail")
     void getEmployeeById_ReturnsEmployeeDetail() throws Exception {
-        when(employeeService.getEmployeeById(1)).thenReturn(standardResponse());
+        when(employeeFacade.getEmployeeById(1)).thenReturn(standardResponse());
 
         mockMvc.perform(get("/api/v1/employees/{id}", 1))
                 .andExpect(status().isOk())
@@ -97,7 +97,7 @@ class EmployeeControllerBlackBoxTest {
                         .role("EMPLOYEE")
                         .build())
                 .build();
-        when(employeeService.createEmployee(any(EmployeeRequest.class))).thenReturn(created);
+        when(employeeFacade.onboardEmployee(any(EmployeeRequest.class))).thenReturn(created);
 
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -147,7 +147,7 @@ class EmployeeControllerBlackBoxTest {
         EmployeeResponse updated = standardResponse().toBuilder()
                 .name("Nguyen Van B")
                 .build();
-        when(employeeService.updateEmployee(eq(1), any(EmployeeRequest.class))).thenReturn(updated);
+        when(employeeFacade.updateEmployee(eq(1), any(EmployeeRequest.class))).thenReturn(updated);
 
         EmployeeRequest request = standardRequestBuilder()
                 .name("Nguyen Van B")
@@ -165,32 +165,32 @@ class EmployeeControllerBlackBoxTest {
     @DisplayName("Black-box PUT /api/v1/employees/{id}/resign - Should call resign service")
     void resignEmployee_ReturnsOk() throws Exception {
         LocalDate resignationDate = LocalDate.of(2026, 5, 28);
-        doNothing().when(employeeService).resignEmployee(1, resignationDate);
+        doNothing().when(employeeFacade).resignEmployee(1, resignationDate);
 
         mockMvc.perform(put("/api/v1/employees/{id}/resign", 1)
                         .param("resignationDate", "2026-05-28"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(employeeService).resignEmployee(1, resignationDate);
+        verify(employeeFacade).resignEmployee(1, resignationDate);
     }
 
     @Test
     @DisplayName("Black-box DELETE /api/v1/employees/{id} - Should call delete service")
     void deleteEmployee_ReturnsOk() throws Exception {
-        doNothing().when(employeeService).deleteEmployee(1);
+        doNothing().when(employeeFacade).deleteEmployee(1);
 
         mockMvc.perform(delete("/api/v1/employees/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(employeeService).deleteEmployee(1);
+        verify(employeeFacade).deleteEmployee(1);
     }
 
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Duplicate email should return 400 Bad Request")
     void createEmployee_DuplicateEmail_ReturnsBadRequest() throws Exception {
-        when(employeeService.createEmployee(any(EmployeeRequest.class)))
+        when(employeeFacade.onboardEmployee(any(EmployeeRequest.class)))
                 .thenThrow(new IllegalArgumentException("Email already exists"));
 
         mockMvc.perform(post("/api/v1/employees")
@@ -205,7 +205,7 @@ class EmployeeControllerBlackBoxTest {
     @DisplayName("Black-box DELETE /api/v1/employees/{id} - Business conflict currently maps to 500 fallback")
     void deleteEmployee_BusinessConflict_ReturnsInternalServerError() throws Exception {
         doThrow(new IllegalStateException("Employee has business data"))
-                .when(employeeService).deleteEmployee(1);
+                .when(employeeFacade).deleteEmployee(1);
 
         mockMvc.perform(delete("/api/v1/employees/{id}", 1))
                 .andExpect(status().isInternalServerError())
