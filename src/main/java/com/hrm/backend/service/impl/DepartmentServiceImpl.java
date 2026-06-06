@@ -22,20 +22,20 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentRepository departmentRepository;
     private final EmployeeRepository employeeRepository;
+    private final com.hrm.backend.config.prototype.DepartmentPrototypeRegistry departmentPrototypeRegistry;
 
     @Override
     @Transactional(readOnly = true)
     public List<DepartmentResponse> getAllDepartments() {
-        // Sử dụng phương thức repository đã tối ưu hóa để lấy các phòng ban cấp cao nhất
-        return departmentRepository.findAllByParentIsNull().stream()
+        return departmentPrototypeRegistry.getRootDepartmentsCloned().stream()
                 .map(this::mapToResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
     public DepartmentResponse getDepartmentById(Integer id) {
-        Department department = departmentRepository.findWithChildrenById(id)
+        Department department = departmentPrototypeRegistry.getDepartmentByIdCloned(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng ban với ID: " + id));
         return mapToResponse(department);
     }
@@ -69,6 +69,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         Department saved = departmentRepository.save(department);
         log.info("Đã tạo phòng ban: {} - {}", saved.getCode(), saved.getName());
+        departmentPrototypeRegistry.refreshCache(); // Làm mới registry mẫu sau khi thêm mới
         return mapToResponse(saved);
     }
 
@@ -112,6 +113,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         Department updated = departmentRepository.save(department);
         log.info("Đã cập nhật phòng ban: {}", updated.getCode());
+        departmentPrototypeRegistry.refreshCache(); // Làm mới registry mẫu sau khi cập nhật
         return mapToResponse(updated);
     }
 
@@ -147,6 +149,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         departmentRepository.delete(department);
         log.info("Đã xóa phòng ban ID: {}", id);
+        departmentPrototypeRegistry.refreshCache(); // Làm mới registry mẫu sau khi xóa
     }
 
     private DepartmentResponse mapToResponse(Department department) {
@@ -172,7 +175,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         if (department.getChildren() != null && !department.getChildren().isEmpty()) {
             children = department.getChildren().stream()
                     .map(this::mapToResponse)
-                    .collect(Collectors.toList());
+                    .toList();
         }
 
         return DepartmentResponse.builder()

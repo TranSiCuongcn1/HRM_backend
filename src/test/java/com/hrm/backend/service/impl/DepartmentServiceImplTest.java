@@ -32,6 +32,9 @@ class DepartmentServiceImplTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
+    @Mock
+    private com.hrm.backend.config.prototype.DepartmentPrototypeRegistry departmentPrototypeRegistry;
+
     @InjectMocks
     private DepartmentServiceImpl departmentService;
 

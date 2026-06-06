@@ -1,5 +1,6 @@
 package com.hrm.backend.entity;
 
+import com.hrm.backend.config.prototype.Prototype;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -7,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "departments")
@@ -15,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Department {
+public class Department implements Prototype<Department> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,4 +50,29 @@ public class Department {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Override
+    public Department clonePrototype() {
+        Department cloned = Department.builder()
+                .id(this.id)
+                .code(this.code)
+                .name(this.name)
+                .description(this.description)
+                .manager(this.manager)
+                .createdAt(this.createdAt)
+                .updatedAt(this.updatedAt)
+                .build();
+        
+        if (this.children != null) {
+            List<Department> clonedChildren = this.children.stream()
+                    .map(child -> {
+                        Department clonedChild = child.clonePrototype();
+                        clonedChild.setParent(cloned);
+                        return clonedChild;
+                    })
+                    .collect(Collectors.toList());
+            cloned.setChildren(clonedChildren);
+        }
+        return cloned;
+    }
 }

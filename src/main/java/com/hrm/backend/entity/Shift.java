@@ -1,5 +1,6 @@
 package com.hrm.backend.entity;
 
+import com.hrm.backend.config.prototype.Prototype;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalTime;
@@ -11,7 +12,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Shift {
+public class Shift implements Prototype<Shift> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -41,4 +42,19 @@ public class Shift {
     @Column(name = "is_active")
     @Builder.Default
     private Boolean isActive = true;
+
+    @Override
+    public Shift clonePrototype() {
+        return Shift.builder()
+                .id(this.id)
+                .code(this.code)
+                .name(this.name)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
+                .breakStartTime(this.breakStartTime)
+                .breakEndTime(this.breakEndTime)
+                .isDefault(this.isDefault)
+                .isActive(this.isActive)
+                .build();
+    }
 }

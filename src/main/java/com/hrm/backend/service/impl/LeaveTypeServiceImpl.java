@@ -17,6 +17,7 @@ import java.util.List;
 public class LeaveTypeServiceImpl implements LeaveTypeService {
 
     private final LeaveTypeRepository leaveTypeRepository;
+    private final com.hrm.backend.config.prototype.LeaveTypePrototypeRegistry leaveTypePrototypeRegistry;
 
     @Override
     @Transactional
@@ -34,13 +35,14 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
 
         LeaveType saved = leaveTypeRepository.save(leaveType);
         log.info("Đã tạo loại phép: {} - {} (Có lương: {})", saved.getCode(), saved.getName(), saved.getIsPaid());
+        leaveTypePrototypeRegistry.refreshCache(); // Làm mới registry sau khi thêm
         return saved;
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<LeaveType> getAllLeaveTypes() {
-        return leaveTypeRepository.findAll();
+        return leaveTypePrototypeRegistry.getAllCloned();
     }
 
     @Override
@@ -58,6 +60,7 @@ public class LeaveTypeServiceImpl implements LeaveTypeService {
 
         LeaveType updated = leaveTypeRepository.save(leaveType);
         log.info("Đã cập nhật loại phép: {} - {}", updated.getCode(), updated.getName());
+        leaveTypePrototypeRegistry.refreshCache(); // Làm mới registry sau khi cập nhật
         return updated;
     }
 }

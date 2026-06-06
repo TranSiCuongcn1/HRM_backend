@@ -16,17 +16,18 @@ import java.util.stream.Collectors;
 public class ShiftServiceImpl implements ShiftService {
 
     private final ShiftRepository shiftRepository;
+    private final com.hrm.backend.config.prototype.ShiftPrototypeRegistry shiftPrototypeRegistry;
 
     @Override
     @Transactional(readOnly = true)
     public List<ShiftDto> getAllShifts() {
-        return shiftRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return shiftPrototypeRegistry.getAllCloned().stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public ShiftDto getShiftById(Integer id) {
-        Shift shift = shiftRepository.findById(id).orElseThrow(() -> new RuntimeException("Shift not found"));
+        Shift shift = shiftPrototypeRegistry.getByIdCloned(id).orElseThrow(() -> new RuntimeException("Shift not found"));
         return mapToDto(shift);
     }
 
@@ -54,7 +55,9 @@ public class ShiftServiceImpl implements ShiftService {
                 .isDefault(dto.isDefault() != null ? dto.isDefault() : false)
                 .isActive(dto.isActive() != null ? dto.isActive() : true)
                 .build();
-        return mapToDto(shiftRepository.save(shift));
+        Shift saved = shiftRepository.save(shift);
+        shiftPrototypeRegistry.refreshCache(); // Làm mới registry sau khi thêm
+        return mapToDto(saved);
     }
 
     @Override
@@ -78,19 +81,22 @@ public class ShiftServiceImpl implements ShiftService {
         shift.setIsDefault(dto.isDefault() != null ? dto.isDefault() : false);
         shift.setIsActive(dto.isActive() != null ? dto.isActive() : true);
         
-        return mapToDto(shiftRepository.save(shift));
+        Shift saved = shiftRepository.save(shift);
+        shiftPrototypeRegistry.refreshCache(); // Làm mới registry sau khi cập nhật
+        return mapToDto(saved);
     }
 
     @Override
     @Transactional
     public void deleteShift(Integer id) {
         shiftRepository.deleteById(id);
+        shiftPrototypeRegistry.refreshCache(); // Làm mới registry sau khi xóa
     }
 
     @Override
     @Transactional(readOnly = true)
     public ShiftDto getDefaultShift() {
-        return shiftRepository.findByIsDefaultTrue()
+        return shiftPrototypeRegistry.getDefaultShiftCloned()
                 .map(this::mapToDto)
                 .orElse(null);
     }
