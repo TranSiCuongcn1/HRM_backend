@@ -4,7 +4,7 @@ import lombok.Builder;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-@Builder(toBuilder = true)
+@Builder
 public record ForgotPasswordRequest(
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không đúng định dạng")

@@ -4,7 +4,7 @@ import lombok.Builder;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Builder(toBuilder = true)
+@Builder
 public record OvertimeRequestRequest(
     LocalDate date,
     LocalTime startTime,

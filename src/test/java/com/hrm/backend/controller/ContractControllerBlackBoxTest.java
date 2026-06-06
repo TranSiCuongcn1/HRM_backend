@@ -88,7 +88,7 @@ class ContractControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/contracts - Non-positive salary should return validation error")
     void createContract_NonPositiveSalary_ReturnsBadRequest() throws Exception {
-        ContractRequest request = standardRequest().toBuilder()
+        ContractRequest request = standardRequestBuilder()
                 .basicSalary(BigDecimal.ZERO)
                 .build();
 
@@ -122,7 +122,7 @@ class ContractControllerBlackBoxTest {
                 .build();
         when(contractService.updateContract(eq(1), any(ContractRequest.class))).thenReturn(updated);
 
-        ContractRequest request = standardRequest().toBuilder()
+        ContractRequest request = standardRequestBuilder()
                 .basicSalary(new BigDecimal("22000000"))
                 .build();
 
@@ -201,14 +201,17 @@ class ContractControllerBlackBoxTest {
                 .andExpect(jsonPath("$.data[0].status").value("ACTIVE"));
     }
 
+    private ContractRequest.ContractRequestBuilder standardRequestBuilder() {
+        return ContractRequest.builder()
+                .employeeId(1)
+                .contractType("DEFINITE_1YR")
+                .startDate(LocalDate.of(2026, 1, 1))
+                .endDate(LocalDate.of(2026, 12, 31))
+                .basicSalary(new BigDecimal("20000000"));
+    }
+
     private ContractRequest standardRequest() {
-        return new ContractRequest(
-                1,
-                "DEFINITE_1YR",
-                LocalDate.of(2026, 1, 1),
-                LocalDate.of(2026, 12, 31),
-                new BigDecimal("20000000")
-        );
+        return standardRequestBuilder().build();
     }
 
     private ContractResponse standardResponse(String status) {

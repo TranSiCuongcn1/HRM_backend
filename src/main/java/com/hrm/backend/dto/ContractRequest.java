@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Builder(toBuilder = true)
+@Builder
 public record ContractRequest(
     @NotNull(message = "Mã nhân viên không được để trống")
     Integer employeeId,

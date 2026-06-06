@@ -76,7 +76,7 @@ class LeaveTypeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/leave-types - Missing code and name should return validation errors")
     void createLeaveType_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        LeaveTypeRequest request = standardRequest().toBuilder()
+        LeaveTypeRequest request = standardRequestBuilder()
                 .code("")
                 .name("")
                 .build();
@@ -111,7 +111,7 @@ class LeaveTypeControllerBlackBoxTest {
         updated.setName("Annual Paid Leave");
         when(leaveTypeService.updateLeaveType(eq(1), any(LeaveTypeRequest.class))).thenReturn(updated);
 
-        LeaveTypeRequest request = standardRequest().toBuilder()
+        LeaveTypeRequest request = standardRequestBuilder()
                 .name("Annual Paid Leave")
                 .build();
 
@@ -126,7 +126,7 @@ class LeaveTypeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/leave-types/{id} - Missing name should return validation error")
     void updateLeaveType_MissingName_ReturnsBadRequest() throws Exception {
-        LeaveTypeRequest request = standardRequest().toBuilder()
+        LeaveTypeRequest request = standardRequestBuilder()
                 .name("")
                 .build();
 
@@ -138,8 +138,16 @@ class LeaveTypeControllerBlackBoxTest {
                 .andExpect(jsonPath("$.data.name").exists());
     }
 
+    private LeaveTypeRequest.LeaveTypeRequestBuilder standardRequestBuilder() {
+        return LeaveTypeRequest.builder()
+                .code("ANNUAL")
+                .name("Annual Leave")
+                .isPaid(true)
+                .description("Paid annual leave");
+    }
+
     private LeaveTypeRequest standardRequest() {
-        return new LeaveTypeRequest("ANNUAL", "Annual Leave", true, "Paid annual leave");
+        return standardRequestBuilder().build();
     }
 
     private LeaveType standardLeaveType() {

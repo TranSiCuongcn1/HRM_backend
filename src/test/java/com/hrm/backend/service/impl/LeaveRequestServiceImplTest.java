@@ -136,7 +136,7 @@ class LeaveRequestServiceImplTest {
     @Test
     @DisplayName("Unit submitRequest - End date before start date should throw IllegalArgumentException")
     void submitRequest_EndDateBeforeStartDate_ThrowsException() {
-        LeaveRequestDTO request = standardRequest().toBuilder()
+        LeaveRequestDTO request = standardRequestBuilder()
                 .startDate(LocalDate.of(2026, 6, 5))
                 .endDate(LocalDate.of(2026, 6, 4))
                 .build();
@@ -169,7 +169,7 @@ class LeaveRequestServiceImplTest {
     @Test
     @DisplayName("Unit submitRequest - Weekend single-day leave should throw IllegalArgumentException")
     void submitRequest_WeekendSingleDay_ThrowsException() {
-        LeaveRequestDTO request = standardRequest().toBuilder()
+        LeaveRequestDTO request = standardRequestBuilder()
                 .startDate(LocalDate.of(2026, 6, 6))
                 .endDate(LocalDate.of(2026, 6, 6))
                 .build();
@@ -212,7 +212,7 @@ class LeaveRequestServiceImplTest {
                 .name("Unpaid Leave")
                 .isPaid(false)
                 .build();
-        LeaveRequestDTO request = standardRequest().toBuilder().leaveTypeId(2).build();
+        LeaveRequestDTO request = standardRequestBuilder().leaveTypeId(2).build();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(2)).thenReturn(Optional.of(unpaid));
         when(leaveRequestRepository.countOverlappingRequests(1, request.startDate(), request.endDate(), request.halfDaySession()))
@@ -229,7 +229,7 @@ class LeaveRequestServiceImplTest {
     @Test
     @DisplayName("Unit submitRequest - Single-day holiday leave should throw IllegalArgumentException")
     void submitRequest_SingleDayHoliday_ThrowsException() {
-        LeaveRequestDTO request = standardRequest().toBuilder()
+        LeaveRequestDTO request = standardRequestBuilder()
                 .startDate(LocalDate.of(2026, 6, 1))
                 .endDate(LocalDate.of(2026, 6, 1))
                 .build();
@@ -355,16 +355,19 @@ class LeaveRequestServiceImplTest {
         verify(leaveRequestRepository, never()).save(any(LeaveRequest.class));
     }
 
+    private LeaveRequestDTO.LeaveRequestDTOBuilder standardRequestBuilder() {
+        return LeaveRequestDTO.builder()
+                .leaveTypeId(1)
+                .startDate(LocalDate.of(2026, 6, 1))
+                .endDate(LocalDate.of(2026, 6, 1))
+                .days(new BigDecimal("1.0"))
+                .halfDaySession(null)
+                .reason("Family matter")
+                .attachmentUrl(null);
+    }
+
     private LeaveRequestDTO standardRequest() {
-        return new LeaveRequestDTO(
-                1,
-                LocalDate.of(2026, 6, 1),
-                LocalDate.of(2026, 6, 1),
-                new BigDecimal("1.0"),
-                null,
-                "Family matter",
-                null
-        );
+        return standardRequestBuilder().build();
     }
 
     private LeaveBalance balance(BigDecimal totalDays, BigDecimal usedDays, BigDecimal carryOverDays) {

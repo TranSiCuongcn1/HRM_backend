@@ -3,7 +3,7 @@ package com.hrm.backend.dto;
 import lombok.Builder;
 import java.math.BigDecimal;
 
-@Builder(toBuilder = true)
+@Builder
 public record CheckInRequest(
     BigDecimal latitude,
     BigDecimal longitude

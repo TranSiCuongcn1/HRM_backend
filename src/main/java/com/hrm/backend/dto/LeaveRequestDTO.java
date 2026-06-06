@@ -10,7 +10,7 @@ import java.time.LocalDate;
 /**
  * Request body khi nhân viên gửi đơn xin nghỉ phép
  */
-@Builder(toBuilder = true)
+@Builder
 public record LeaveRequestDTO(
     @NotNull(message = "Loại phép không được để trống")
     Integer leaveTypeId,

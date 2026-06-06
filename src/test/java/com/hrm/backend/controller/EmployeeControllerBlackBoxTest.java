@@ -110,7 +110,7 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Invalid email should return validation errors")
     void createEmployee_InvalidEmail_ReturnsBadRequest() throws Exception {
-        EmployeeRequest request = standardRequest().toBuilder()
+        EmployeeRequest request = standardRequestBuilder()
                 .email("invalid-email")
                 .build();
 
@@ -125,7 +125,7 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Missing required fields should return validation errors")
     void createEmployee_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        EmployeeRequest request = standardRequest().toBuilder()
+        EmployeeRequest request = standardRequestBuilder()
                 .name("")
                 .email("")
                 .joinDate(null)
@@ -149,7 +149,7 @@ class EmployeeControllerBlackBoxTest {
                 .build();
         when(employeeService.updateEmployee(eq(1), any(EmployeeRequest.class))).thenReturn(updated);
 
-        EmployeeRequest request = standardRequest().toBuilder()
+        EmployeeRequest request = standardRequestBuilder()
                 .name("Nguyen Van B")
                 .build();
 
@@ -212,7 +212,7 @@ class EmployeeControllerBlackBoxTest {
                 .andExpect(jsonPath("$.success").value(false));
     }
 
-    private EmployeeRequest standardRequest() {
+    private EmployeeRequest.EmployeeRequestBuilder standardRequestBuilder() {
         return EmployeeRequest.builder()
                 .code("EMP0001")
                 .name("Nguyen Van A")
@@ -220,8 +220,11 @@ class EmployeeControllerBlackBoxTest {
                 .phone("0900000000")
                 .joinDate(LocalDate.of(2026, 1, 1))
                 .departmentId(1)
-                .dependentCount(0)
-                .build();
+                .dependentCount(0);
+    }
+
+    private EmployeeRequest standardRequest() {
+        return standardRequestBuilder().build();
     }
 
     private EmployeeResponse standardResponse() {

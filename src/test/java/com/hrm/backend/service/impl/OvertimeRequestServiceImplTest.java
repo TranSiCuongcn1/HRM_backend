@@ -98,7 +98,7 @@ class OvertimeRequestServiceImplTest {
     @Test
     @DisplayName("Unit createRequest - End time before start time should throw IllegalArgumentException")
     void createRequest_EndBeforeStart_ThrowsException() {
-        OvertimeRequestRequest request = standardRequest().toBuilder()
+        OvertimeRequestRequest request = standardRequestBuilder()
                 .startTime(LocalTime.of(20, 30))
                 .endTime(LocalTime.of(18, 0))
                 .build();
@@ -215,13 +215,16 @@ class OvertimeRequestServiceImplTest {
         verify(overtimeRequestRepository, never()).save(any(OvertimeRequest.class));
     }
 
-    private OvertimeRequestRequest standardRequest() {
+    private OvertimeRequestRequest.OvertimeRequestRequestBuilder standardRequestBuilder() {
         return OvertimeRequestRequest.builder()
                 .date(LocalDate.of(2026, 6, 2))
                 .startTime(LocalTime.of(18, 0))
                 .endTime(LocalTime.of(20, 30))
-                .reason("Project release")
-                .build();
+                .reason("Project release");
+    }
+
+    private OvertimeRequestRequest standardRequest() {
+        return standardRequestBuilder().build();
     }
 
     private OvertimeRequest pendingRequest() {

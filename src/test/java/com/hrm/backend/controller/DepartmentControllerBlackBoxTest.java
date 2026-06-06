@@ -92,7 +92,7 @@ class DepartmentControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/departments - Missing code and name should return validation errors")
     void createDepartment_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        DepartmentRequest request = standardRequest().toBuilder()
+        DepartmentRequest request = standardRequestBuilder()
                 .code("")
                 .name("")
                 .build();
@@ -128,7 +128,7 @@ class DepartmentControllerBlackBoxTest {
                 .build();
         when(departmentService.updateDepartment(eq(1), any(DepartmentRequest.class))).thenReturn(updated);
 
-        DepartmentRequest request = standardRequest().toBuilder()
+        DepartmentRequest request = standardRequestBuilder()
                 .name("Engineering")
                 .build();
 
@@ -177,12 +177,15 @@ class DepartmentControllerBlackBoxTest {
                 .andExpect(jsonPath("$.success").value(false));
     }
 
-    private DepartmentRequest standardRequest() {
+    private DepartmentRequest.DepartmentRequestBuilder standardRequestBuilder() {
         return DepartmentRequest.builder()
                 .code("IT")
                 .name("Information Technology")
-                .description("IT Department")
-                .build();
+                .description("IT Department");
+    }
+
+    private DepartmentRequest standardRequest() {
+        return standardRequestBuilder().build();
     }
 
     private DepartmentResponse standardResponse() {

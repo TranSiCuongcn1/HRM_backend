@@ -89,7 +89,7 @@ class ContractServiceImplTest {
     @Test
     @DisplayName("Unit createContract - Definite contract without end date should throw IllegalArgumentException")
     void createContract_DefiniteContractWithoutEndDate_ThrowsException() {
-        ContractRequest request = standardRequest().toBuilder().endDate(null).build();
+        ContractRequest request = standardRequestBuilder().endDate(null).build();
         when(employeeRepository.findById(1)).thenReturn(Optional.of(employee));
 
         assertThatThrownBy(() -> contractService.createContract(request))
@@ -102,7 +102,7 @@ class ContractServiceImplTest {
     @Test
     @DisplayName("Unit createContract - INDEFINITE contract may omit end date")
     void createContract_IndefiniteWithoutEndDate_CreatesDraftContract() {
-        ContractRequest request = standardRequest().toBuilder()
+        ContractRequest request = standardRequestBuilder()
                 .contractType("INDEFINITE")
                 .endDate(null)
                 .build();
@@ -120,7 +120,7 @@ class ContractServiceImplTest {
     @DisplayName("Unit updateContract - Draft contract should update core fields")
     void updateContract_DraftContract_UpdatesFields() {
         Contract contract = draftContract();
-        ContractRequest request = standardRequest().toBuilder()
+        ContractRequest request = standardRequestBuilder()
                 .basicSalary(new BigDecimal("25000000"))
                 .build();
         when(contractRepository.findById(1)).thenReturn(Optional.of(contract));
@@ -291,14 +291,17 @@ class ContractServiceImplTest {
         assertThat(oldActive.getEndDate()).isEqualTo(LocalDate.of(2026, 5, 14));
     }
 
+    private ContractRequest.ContractRequestBuilder standardRequestBuilder() {
+        return ContractRequest.builder()
+                .employeeId(1)
+                .contractType("DEFINITE_1YR")
+                .startDate(LocalDate.of(2026, 6, 1))
+                .endDate(LocalDate.of(2027, 5, 31))
+                .basicSalary(new BigDecimal("22000000"));
+    }
+
     private ContractRequest standardRequest() {
-        return new ContractRequest(
-                1,
-                "DEFINITE_1YR",
-                LocalDate.of(2026, 6, 1),
-                LocalDate.of(2027, 5, 31),
-                new BigDecimal("22000000")
-        );
+        return standardRequestBuilder().build();
     }
 
     private Contract draftContract() {

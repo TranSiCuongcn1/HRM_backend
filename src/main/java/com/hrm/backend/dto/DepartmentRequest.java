@@ -3,7 +3,7 @@ package com.hrm.backend.dto;
 import lombok.Builder;
 import jakarta.validation.constraints.NotBlank;
 
-@Builder(toBuilder = true)
+@Builder
 public record DepartmentRequest(
     @NotBlank(message = "Mã phòng ban không được để trống")
     String code,

@@ -78,7 +78,7 @@ class LeaveRequestControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/leave-requests - Missing required fields should return validation errors")
     void submitRequest_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        LeaveRequestDTO request = standardRequest().toBuilder()
+        LeaveRequestDTO request = standardRequestBuilder()
                 .leaveTypeId(null)
                 .startDate(null)
                 .endDate(null)
@@ -102,7 +102,7 @@ class LeaveRequestControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/leave-requests - Non-positive days should return validation error")
     void submitRequest_NonPositiveDays_ReturnsBadRequest() throws Exception {
-        LeaveRequestDTO request = standardRequest().toBuilder()
+        LeaveRequestDTO request = standardRequestBuilder()
                 .days(BigDecimal.ZERO)
                 .build();
 
@@ -224,16 +224,19 @@ class LeaveRequestControllerBlackBoxTest {
         return new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1);
     }
 
+    private LeaveRequestDTO.LeaveRequestDTOBuilder standardRequestBuilder() {
+        return LeaveRequestDTO.builder()
+                .leaveTypeId(1)
+                .startDate(LocalDate.of(2026, 6, 1))
+                .endDate(LocalDate.of(2026, 6, 1))
+                .days(new BigDecimal("1.0"))
+                .halfDaySession(null)
+                .reason("Family matter")
+                .attachmentUrl(null);
+    }
+
     private LeaveRequestDTO standardRequest() {
-        return new LeaveRequestDTO(
-                1,
-                LocalDate.of(2026, 6, 1),
-                LocalDate.of(2026, 6, 1),
-                new BigDecimal("1.0"),
-                null,
-                "Family matter",
-                null
-        );
+        return standardRequestBuilder().build();
     }
 
     private LeaveRequestResponse standardResponse(String status) {

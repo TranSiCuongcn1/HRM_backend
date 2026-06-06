@@ -7,7 +7,7 @@ import java.time.LocalTime;
 /**
  * Request body cho Admin khi sửa lỗi chấm công
  */
-@Builder(toBuilder = true)
+@Builder
 public record AttendanceRequest(
     Integer employeeId,
     LocalDate date,

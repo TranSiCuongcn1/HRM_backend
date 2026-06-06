@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 
-@Builder(toBuilder = true)
+@Builder
 public record EmployeeRequest(
     String code,
 

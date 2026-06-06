@@ -4,7 +4,7 @@ import lombok.Builder;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-@Builder(toBuilder = true)
+@Builder
 public record ChangePasswordRequest(
     @NotBlank(message = "Mật khẩu hiện tại không được để trống")
     String currentPassword,
