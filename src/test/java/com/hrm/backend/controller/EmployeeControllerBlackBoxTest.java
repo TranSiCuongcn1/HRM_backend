@@ -90,12 +90,13 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Valid payload should create employee")
     void createEmployee_ValidPayload_ReturnsCreated() throws Exception {
-        EmployeeResponse created = standardResponse();
-        created.setGeneratedAccount(EmployeeResponse.AccountInfo.builder()
-                .username("EMP0001")
-                .defaultPassword("Hrm@123456")
-                .role("EMPLOYEE")
-                .build());
+        EmployeeResponse created = standardResponse().toBuilder()
+                .generatedAccount(EmployeeResponse.AccountInfo.builder()
+                        .username("EMP0001")
+                        .defaultPassword("Hrm@123456")
+                        .role("EMPLOYEE")
+                        .build())
+                .build();
         when(employeeService.createEmployee(any(EmployeeRequest.class))).thenReturn(created);
 
         mockMvc.perform(post("/api/v1/employees")
@@ -109,8 +110,9 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Invalid email should return validation errors")
     void createEmployee_InvalidEmail_ReturnsBadRequest() throws Exception {
-        EmployeeRequest request = standardRequest();
-        request.setEmail("invalid-email");
+        EmployeeRequest request = standardRequest().toBuilder()
+                .email("invalid-email")
+                .build();
 
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,10 +125,11 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Missing required fields should return validation errors")
     void createEmployee_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        EmployeeRequest request = standardRequest();
-        request.setName("");
-        request.setEmail("");
-        request.setJoinDate(null);
+        EmployeeRequest request = standardRequest().toBuilder()
+                .name("")
+                .email("")
+                .joinDate(null)
+                .build();
 
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -141,12 +144,14 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/employees/{id} - Valid payload should update employee")
     void updateEmployee_ValidPayload_ReturnsOk() throws Exception {
-        EmployeeResponse updated = standardResponse();
-        updated.setName("Nguyen Van B");
+        EmployeeResponse updated = standardResponse().toBuilder()
+                .name("Nguyen Van B")
+                .build();
         when(employeeService.updateEmployee(eq(1), any(EmployeeRequest.class))).thenReturn(updated);
 
-        EmployeeRequest request = standardRequest();
-        request.setName("Nguyen Van B");
+        EmployeeRequest request = standardRequest().toBuilder()
+                .name("Nguyen Van B")
+                .build();
 
         mockMvc.perform(put("/api/v1/employees/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -208,15 +213,15 @@ class EmployeeControllerBlackBoxTest {
     }
 
     private EmployeeRequest standardRequest() {
-        EmployeeRequest request = new EmployeeRequest();
-        request.setCode("EMP0001");
-        request.setName("Nguyen Van A");
-        request.setEmail("employee@hrm.com");
-        request.setPhone("0900000000");
-        request.setJoinDate(LocalDate.of(2026, 1, 1));
-        request.setDepartmentId(1);
-        request.setDependentCount(0);
-        return request;
+        return EmployeeRequest.builder()
+                .code("EMP0001")
+                .name("Nguyen Van A")
+                .email("employee@hrm.com")
+                .phone("0900000000")
+                .joinDate(LocalDate.of(2026, 1, 1))
+                .departmentId(1)
+                .dependentCount(0)
+                .build();
     }
 
     private EmployeeResponse standardResponse() {

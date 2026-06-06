@@ -113,7 +113,7 @@ class AttendanceControllerBlackBoxTest {
         mockMvc.perform(post("/api/v1/attendance/check-in")
                         .principal(authentication)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new CheckInRequest())))
+                        .content(objectMapper.writeValueAsString(CheckInRequest.builder().build())))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.message").value("Already checked in today"));
@@ -167,8 +167,9 @@ class AttendanceControllerBlackBoxTest {
                 "LATE",
                 "Manual correction"
         );
-        AttendanceResponse response = standardResponse("LATE");
-        response.setLateMinutes(15);
+        AttendanceResponse response = standardResponse("LATE").toBuilder()
+                .lateMinutes(15)
+                .build();
         when(attendanceService.adminUpdateRecord(eq(1), any(AttendanceRequest.class))).thenReturn(response);
 
         mockMvc.perform(put("/api/v1/attendance/{id}", 1)
@@ -183,8 +184,9 @@ class AttendanceControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/attendance/mark-absent - Admin should mark employee absent")
     void markAbsent_ReturnsOk() throws Exception {
-        AttendanceResponse response = standardResponse("ABSENT");
-        response.setNote("No show");
+        AttendanceResponse response = standardResponse("ABSENT").toBuilder()
+                .note("No show")
+                .build();
         when(attendanceService.markAbsent(1, LocalDate.of(2026, 6, 3), "No show"))
                 .thenReturn(response);
 

@@ -92,9 +92,10 @@ class DepartmentControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/departments - Missing code and name should return validation errors")
     void createDepartment_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        DepartmentRequest request = standardRequest();
-        request.setCode("");
-        request.setName("");
+        DepartmentRequest request = standardRequest().toBuilder()
+                .code("")
+                .name("")
+                .build();
 
         mockMvc.perform(post("/api/v1/departments")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -122,12 +123,14 @@ class DepartmentControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/departments/{id} - Valid payload should update department")
     void updateDepartment_ValidPayload_ReturnsOk() throws Exception {
-        DepartmentResponse updated = standardResponse();
-        updated.setName("Engineering");
+        DepartmentResponse updated = standardResponse().toBuilder()
+                .name("Engineering")
+                .build();
         when(departmentService.updateDepartment(eq(1), any(DepartmentRequest.class))).thenReturn(updated);
 
-        DepartmentRequest request = standardRequest();
-        request.setName("Engineering");
+        DepartmentRequest request = standardRequest().toBuilder()
+                .name("Engineering")
+                .build();
 
         mockMvc.perform(put("/api/v1/departments/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -175,11 +178,11 @@ class DepartmentControllerBlackBoxTest {
     }
 
     private DepartmentRequest standardRequest() {
-        DepartmentRequest request = new DepartmentRequest();
-        request.setCode("IT");
-        request.setName("Information Technology");
-        request.setDescription("IT Department");
-        return request;
+        return DepartmentRequest.builder()
+                .code("IT")
+                .name("Information Technology")
+                .description("IT Department")
+                .build();
     }
 
     private DepartmentResponse standardResponse() {

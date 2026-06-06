@@ -78,12 +78,13 @@ class LeaveRequestControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/leave-requests - Missing required fields should return validation errors")
     void submitRequest_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        LeaveRequestDTO request = standardRequest();
-        request.setLeaveTypeId(null);
-        request.setStartDate(null);
-        request.setEndDate(null);
-        request.setDays(null);
-        request.setReason("");
+        LeaveRequestDTO request = standardRequest().toBuilder()
+                .leaveTypeId(null)
+                .startDate(null)
+                .endDate(null)
+                .days(null)
+                .reason("")
+                .build();
 
         mockMvc.perform(post("/api/v1/leave-requests")
                         .principal(authentication)
@@ -101,8 +102,9 @@ class LeaveRequestControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/leave-requests - Non-positive days should return validation error")
     void submitRequest_NonPositiveDays_ReturnsBadRequest() throws Exception {
-        LeaveRequestDTO request = standardRequest();
-        request.setDays(BigDecimal.ZERO);
+        LeaveRequestDTO request = standardRequest().toBuilder()
+                .days(BigDecimal.ZERO)
+                .build();
 
         mockMvc.perform(post("/api/v1/leave-requests")
                         .principal(authentication)
@@ -203,8 +205,9 @@ class LeaveRequestControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/leave-requests/{id}/reject - Should reject request with reason")
     void rejectRequest_ReturnsOk() throws Exception {
-        LeaveRequestResponse rejected = standardResponse("REJECTED");
-        rejected.setRejectionReason("Invalid evidence");
+        LeaveRequestResponse rejected = standardResponse("REJECTED").toBuilder()
+                .rejectionReason("Invalid evidence")
+                .build();
         when(authentication.getName()).thenReturn("admin");
         when(leaveRequestService.rejectRequest("admin", 1, "Invalid evidence")).thenReturn(rejected);
 

@@ -95,8 +95,9 @@ class ShiftControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/shifts/{id} - Valid payload should update shift")
     void update_ValidPayload_ReturnsOk() throws Exception {
-        ShiftDto updated = standardShift();
-        updated.setName("Office Shift Updated");
+        ShiftDto updated = standardShift().toBuilder()
+                .name("Office Shift Updated")
+                .build();
         when(shiftService.updateShift(eq(1), any(ShiftDto.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/shifts/{id}", 1)
@@ -130,16 +131,16 @@ class ShiftControllerBlackBoxTest {
     }
 
     private ShiftDto standardShift() {
-        ShiftDto dto = new ShiftDto();
-        dto.setId(1);
-        dto.setCode("OFFICE");
-        dto.setName("Office Shift");
-        dto.setStartTime(LocalTime.of(8, 0));
-        dto.setEndTime(LocalTime.of(17, 0));
-        dto.setBreakStartTime(LocalTime.of(12, 0));
-        dto.setBreakEndTime(LocalTime.of(13, 0));
-        dto.setIsDefault(true);
-        dto.setIsActive(true);
-        return dto;
+        return ShiftDto.builder()
+                .id(1)
+                .code("OFFICE")
+                .name("Office Shift")
+                .startTime(LocalTime.of(8, 0))
+                .endTime(LocalTime.of(17, 0))
+                .breakStartTime(LocalTime.of(12, 0))
+                .breakEndTime(LocalTime.of(13, 0))
+                .isDefault(true)
+                .isActive(true)
+                .build();
     }
 }

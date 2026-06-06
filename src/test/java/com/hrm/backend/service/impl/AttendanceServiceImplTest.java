@@ -102,10 +102,10 @@ class AttendanceServiceImplTest {
                 new BigDecimal("106.784944"),
                 "127.0.0.1");
 
-        assertThat(response.getStatus()).isEqualTo("ON_TIME");
-        assertThat(response.getCheckInGpsValid()).isTrue();
-        assertThat(response.getCheckInIpValid()).isTrue();
-        assertThat(response.getEmployeeCode()).isEqualTo("EMP0001");
+        assertThat(response.status()).isEqualTo("ON_TIME");
+        assertThat(response.checkInGpsValid()).isTrue();
+        assertThat(response.checkInIpValid()).isTrue();
+        assertThat(response.employeeCode()).isEqualTo("EMP0001");
 
         ArgumentCaptor<AttendanceRecord> captor = ArgumentCaptor.forClass(AttendanceRecord.class);
         verify(attendanceRepository).save(captor.capture());
@@ -179,8 +179,8 @@ class AttendanceServiceImplTest {
                 new BigDecimal("106.784944"),
                 "127.0.0.1");
 
-        assertThat(response.getStatus()).isEqualTo("LATE");
-        assertThat(response.getLateMinutes()).isGreaterThan(0);
+        assertThat(response.status()).isEqualTo("LATE");
+        assertThat(response.lateMinutes()).isGreaterThan(0);
     }
 
     @Test
@@ -202,9 +202,9 @@ class AttendanceServiceImplTest {
                 new BigDecimal("106.784944"),
                 "127.0.0.1");
 
-        assertThat(response.getStatus()).isEqualTo("ON_TIME");
-        assertThat(response.getLateMinutes()).isZero();
-        assertThat(response.getNote()).contains("National Day");
+        assertThat(response.status()).isEqualTo("ON_TIME");
+        assertThat(response.lateMinutes()).isZero();
+        assertThat(response.note()).contains("National Day");
     }
 
     @Test
@@ -225,10 +225,10 @@ class AttendanceServiceImplTest {
                 new BigDecimal("106.784944"),
                 "127.0.0.1");
 
-        assertThat(response.getStatus()).isEqualTo("EARLY_LEAVE");
-        assertThat(response.getEarlyLeaveMinutes()).isGreaterThan(0);
-        assertThat(response.getCheckOutGpsValid()).isTrue();
-        assertThat(response.getCheckOutIpValid()).isTrue();
+        assertThat(response.status()).isEqualTo("EARLY_LEAVE");
+        assertThat(response.earlyLeaveMinutes()).isGreaterThan(0);
+        assertThat(response.checkOutGpsValid()).isTrue();
+        assertThat(response.checkOutIpValid()).isTrue();
     }
 
     @Test
@@ -256,8 +256,8 @@ class AttendanceServiceImplTest {
                 new BigDecimal("106.784944"),
                 "127.0.0.1");
 
-        assertThat(response.getWorkHours()).isEqualByComparingTo(new BigDecimal("10.00"));
-        assertThat(response.getOvertimeHours()).isEqualByComparingTo(new BigDecimal("1.50"));
+        assertThat(response.workHours()).isEqualByComparingTo(new BigDecimal("10.00"));
+        assertThat(response.overtimeHours()).isEqualByComparingTo(new BigDecimal("1.50"));
     }
 
     @Test
@@ -281,9 +281,9 @@ class AttendanceServiceImplTest {
 
         AttendanceResponse response = attendanceService.adminUpdateRecord(1, request);
 
-        assertThat(response.getWorkHours()).isEqualByComparingTo(new BigDecimal("8.00"));
-        assertThat(response.getOvertimeHours()).isEqualByComparingTo(BigDecimal.ZERO);
-        assertThat(response.getNote()).isEqualTo("Manual fix");
+        assertThat(response.workHours()).isEqualByComparingTo(new BigDecimal("8.00"));
+        assertThat(response.overtimeHours()).isEqualByComparingTo(BigDecimal.ZERO);
+        assertThat(response.note()).isEqualTo("Manual fix");
     }
 
     private AttendanceRecord checkedInRecord(LocalDate date, LocalTime checkIn, String status) {

@@ -72,7 +72,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional
     public EmployeeResponse createEmployee(EmployeeRequest request) {
-        String code = request.getCode();
+        String code = request.code();
         if (code == null || code.trim().isEmpty()) {
             long count = employeeRepository.count();
             code = String.format("EMP%04d", count + 1);
@@ -88,30 +88,30 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
 
         // Kiểm tra trùng email
-        if (employeeRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email '" + request.getEmail() + "' đã được sử dụng");
+        if (employeeRepository.existsByEmail(request.email())) {
+            throw new IllegalArgumentException("Email '" + request.email() + "' đã được sử dụng");
         }
 
         // Tìm phòng ban
         Department department = null;
-        if (request.getDepartmentId() != null) {
-            department = departmentRepository.findById(request.getDepartmentId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng ban với ID: " + request.getDepartmentId()));
+        if (request.departmentId() != null) {
+            department = departmentRepository.findById(request.departmentId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng ban với ID: " + request.departmentId()));
         }
 
         // --- Bước 1: Tạo Employee ---
         Employee employee = Employee.builder()
                 .code(code)
-                .name(request.getName())
-                .avatar(request.getAvatar())
-                .email(request.getEmail())
-                .phone(request.getPhone())
-                .birthday(request.getBirthday())
-                .address(request.getAddress())
-                .joinDate(request.getJoinDate())
+                .name(request.name())
+                .avatar(request.avatar())
+                .email(request.email())
+                .phone(request.phone())
+                .birthday(request.birthday())
+                .address(request.address())
+                .joinDate(request.joinDate())
                 .department(department)
                 .status("ACTIVE")
-                .dependentCount(request.getDependentCount() != null ? request.getDependentCount() : 0)
+                .dependentCount(request.dependentCount() != null ? request.dependentCount() : 0)
                 .build();
 
         Employee savedEmployee = employeeRepository.save(employee);
@@ -134,14 +134,15 @@ public class EmployeeServiceImpl implements EmployeeService {
                 savedEmployee.getName(), username);
 
         // --- Bước 3: Trả về Response kèm thông tin tài khoản ---
-        EmployeeResponse response = mapToResponse(savedEmployee);
-        response.setGeneratedAccount(
-                EmployeeResponse.AccountInfo.builder()
-                        .username(username)
-                        .defaultPassword(DEFAULT_PASSWORD)
-                        .role("EMPLOYEE")
-                        .build()
-        );
+        EmployeeResponse response = mapToResponse(savedEmployee).toBuilder()
+                .generatedAccount(
+                        EmployeeResponse.AccountInfo.builder()
+                                .username(username)
+                                .defaultPassword(DEFAULT_PASSWORD)
+                                .role("EMPLOYEE")
+                                .build()
+                )
+                .build();
 
         return response;
     }
@@ -157,38 +158,38 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên với ID: " + id));
 
         // Kiểm tra nếu đổi email thì email mới không được trùng với người khác
-        if (!employee.getEmail().equals(request.getEmail())
-                && employeeRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email '" + request.getEmail() + "' đã được sử dụng bởi nhân viên khác");
+        if (!employee.getEmail().equals(request.email())
+                && employeeRepository.existsByEmail(request.email())) {
+            throw new IllegalArgumentException("Email '" + request.email() + "' đã được sử dụng bởi nhân viên khác");
         }
 
         // Tìm phòng ban mới
         Department department = null;
-        if (request.getDepartmentId() != null) {
-            department = departmentRepository.findById(request.getDepartmentId())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng ban với ID: " + request.getDepartmentId()));
+        if (request.departmentId() != null) {
+            department = departmentRepository.findById(request.departmentId())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy phòng ban với ID: " + request.departmentId()));
         }
 
         // Cập nhật thông tin Employee
-        employee.setName(request.getName());
-        employee.setAvatar(request.getAvatar());
-        employee.setPhone(request.getPhone());
-        employee.setBirthday(request.getBirthday());
-        employee.setAddress(request.getAddress());
-        employee.setJoinDate(request.getJoinDate());
-        employee.setDependentCount(request.getDependentCount() != null ? request.getDependentCount() : 0);
+        employee.setName(request.name());
+        employee.setAvatar(request.avatar());
+        employee.setPhone(request.phone());
+        employee.setBirthday(request.birthday());
+        employee.setAddress(request.address());
+        employee.setJoinDate(request.joinDate());
+        employee.setDependentCount(request.dependentCount() != null ? request.dependentCount() : 0);
         employee.setDepartment(department);
 
         // Nếu email thay đổi → cập nhật cả bên bảng User
-        if (!employee.getEmail().equals(request.getEmail())) {
+        if (!employee.getEmail().equals(request.email())) {
             String oldEmail = employee.getEmail();
-            employee.setEmail(request.getEmail());
+            employee.setEmail(request.email());
 
             userRepository.findByEmail(oldEmail).ifPresent(user -> {
-                user.setEmail(request.getEmail());
+                user.setEmail(request.email());
                 userRepository.save(user);
                 log.info("Đã đồng bộ email mới '{}' cho tài khoản user: {}",
-                        request.getEmail(), user.getUsername());
+                        request.email(), user.getUsername());
             });
         }
 

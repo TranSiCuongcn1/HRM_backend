@@ -97,11 +97,12 @@ class HrmEndToEndIntegrationTest {
                         .name("Integration Department")
                         .build()));
 
+        int currentYear = LocalDate.now().getYear();
         employee = employeeRepository.findByCode("E2E001").orElseGet(() -> employeeRepository.save(Employee.builder()
                 .code("E2E001")
                 .name("Integration Employee")
                 .email("integration.employee@hrm.test")
-                .joinDate(LocalDate.of(2026, 1, 1))
+                .joinDate(LocalDate.of(currentYear, 1, 1))
                 .department(department)
                 .status("ACTIVE")
                 .dependentCount(0)
@@ -121,11 +122,11 @@ class HrmEndToEndIntegrationTest {
                 .findFirst()
                 .orElseThrow();
 
-        if (leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(employee.getId(), annualLeave.getId(), 2026).isEmpty()) {
+        if (leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(employee.getId(), annualLeave.getId(), currentYear).isEmpty()) {
             leaveBalanceRepository.save(LeaveBalance.builder()
                     .employee(employee)
                     .leaveType(annualLeave)
-                    .year(2026)
+                    .year(currentYear)
                     .totalDays(new BigDecimal("12.0"))
                     .usedDays(BigDecimal.ZERO)
                     .carryOverDays(BigDecimal.ZERO)
@@ -136,8 +137,8 @@ class HrmEndToEndIntegrationTest {
             contractRepository.save(Contract.builder()
                     .employee(employee)
                     .contractType("DEFINITE_1YR")
-                    .startDate(LocalDate.of(2026, 1, 1))
-                    .endDate(LocalDate.of(2026, 12, 31))
+                    .startDate(LocalDate.of(currentYear, 1, 1))
+                    .endDate(LocalDate.of(currentYear, 12, 31))
                     .basicSalary(new BigDecimal("22000000"))
                     .status("ACTIVE")
                     .build());
@@ -160,13 +161,24 @@ class HrmEndToEndIntegrationTest {
     @Test
     @DisplayName("E2E - Employee attendance, leave, overtime and payroll flow should pass through security, services and DB")
     void employeeMonthlyHrmFlow_WithRealSecurityAndDatabase_Succeeds() throws Exception {
-        LocalDate today = LocalDate.of(2026, 5, 28);
+        LocalDate today = LocalDate.now();
+        LocalDate leaveDate = today;
+        if (leaveDate.getDayOfWeek().getValue() > 5) {
+            LocalDate prevFriday = leaveDate.minusDays(leaveDate.getDayOfWeek().getValue() - 5);
+            if (prevFriday.getMonth() == leaveDate.getMonth()) {
+                leaveDate = prevFriday;
+            } else {
+                leaveDate = leaveDate.plusDays(8 - leaveDate.getDayOfWeek().getValue());
+            }
+        }
         String adminToken = loginAndGetToken("admin", "admin123");
         String employeeToken = loginAndGetToken("e2e.employee", "employee123");
 
+        String monthParam = String.format("%d-%02d", today.getYear(), today.getMonthValue());
+
         mockMvc.perform(get("/api/v1/payrolls")
                         .header("Authorization", bearer(employeeToken))
-                        .param("month", "2026-05"))
+                        .param("month", monthParam))
                 .andExpect(status().isForbidden());
 
         String checkInJson = mockMvc.perform(post("/api/v1/attendance/check-in")
@@ -235,8 +247,8 @@ class HrmEndToEndIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(Map.of(
                                 "leaveTypeId", annualLeave.getId(),
-                                "startDate", today.toString(),
-                                "endDate", today.toString(),
+                                "startDate", leaveDate.toString(),
+                                "endDate", leaveDate.toString(),
                                 "days", new BigDecimal("1.0"),
                                 "reason", "Family matter"))))
                 .andExpect(status().isCreated())
@@ -252,14 +264,14 @@ class HrmEndToEndIntegrationTest {
                 .andExpect(jsonPath("$.data.status").value("APPROVED"));
 
         LeaveBalance balance = leaveBalanceRepository
-                .findByEmployeeIdAndLeaveTypeIdAndYear(employee.getId(), annualLeave.getId(), 2026)
+                .findByEmployeeIdAndLeaveTypeIdAndYear(employee.getId(), annualLeave.getId(), today.getYear())
                 .orElseThrow();
         assertThat(balance.getUsedDays()).isEqualByComparingTo(new BigDecimal("1.0"));
 
         String payrollJson = mockMvc.perform(post("/api/v1/payrolls/generate")
                         .header("Authorization", bearer(adminToken))
-                        .param("month", "5")
-                        .param("year", "2026")
+                        .param("month", String.valueOf(today.getMonthValue()))
+                        .param("year", String.valueOf(today.getYear()))
                         .param("workDays", "22"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true))
@@ -324,12 +336,14 @@ class HrmEndToEndIntegrationTest {
     }
 
     private void seedAdditionalAttendanceDays(LocalDate excludedDate) {
-        List<LocalDate> dates = LocalDate.of(2026, 5, 1)
-                .datesUntil(LocalDate.of(2026, 6, 1))
+        LocalDate startOfMonth = excludedDate.withDayOfMonth(1);
+        LocalDate startOfNextMonth = startOfMonth.plusMonths(1);
+        List<LocalDate> dates = startOfMonth
+                .datesUntil(startOfNextMonth)
                 .filter(date -> !date.equals(excludedDate))
                 .filter(date -> date.getDayOfWeek().getValue() <= 5)
                 .sorted(Comparator.naturalOrder())
-                .limit(21)
+                .limit(20)
                 .toList();
 
         for (LocalDate date : dates) {

@@ -63,9 +63,9 @@ class ContractServiceImplTest {
 
         ContractResponse response = contractService.createContract(standardRequest());
 
-        assertThat(response.getStatus()).isEqualTo("DRAFT");
-        assertThat(response.getEmployeeCode()).isEqualTo("EMP0001");
-        assertThat(response.getBasicSalary()).isEqualByComparingTo(new BigDecimal("22000000"));
+        assertThat(response.status()).isEqualTo("DRAFT");
+        assertThat(response.employeeCode()).isEqualTo("EMP0001");
+        assertThat(response.basicSalary()).isEqualByComparingTo(new BigDecimal("22000000"));
 
         ArgumentCaptor<Contract> captor = ArgumentCaptor.forClass(Contract.class);
         verify(contractRepository).save(captor.capture());
@@ -89,8 +89,7 @@ class ContractServiceImplTest {
     @Test
     @DisplayName("Unit createContract - Definite contract without end date should throw IllegalArgumentException")
     void createContract_DefiniteContractWithoutEndDate_ThrowsException() {
-        ContractRequest request = standardRequest();
-        request.setEndDate(null);
+        ContractRequest request = standardRequest().toBuilder().endDate(null).build();
         when(employeeRepository.findById(1)).thenReturn(Optional.of(employee));
 
         assertThatThrownBy(() -> contractService.createContract(request))
@@ -103,32 +102,34 @@ class ContractServiceImplTest {
     @Test
     @DisplayName("Unit createContract - INDEFINITE contract may omit end date")
     void createContract_IndefiniteWithoutEndDate_CreatesDraftContract() {
-        ContractRequest request = standardRequest();
-        request.setContractType("INDEFINITE");
-        request.setEndDate(null);
+        ContractRequest request = standardRequest().toBuilder()
+                .contractType("INDEFINITE")
+                .endDate(null)
+                .build();
         when(employeeRepository.findById(1)).thenReturn(Optional.of(employee));
         when(contractRepository.save(any(Contract.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         ContractResponse response = contractService.createContract(request);
 
-        assertThat(response.getContractType()).isEqualTo("INDEFINITE");
-        assertThat(response.getEndDate()).isNull();
-        assertThat(response.getStatus()).isEqualTo("DRAFT");
+        assertThat(response.contractType()).isEqualTo("INDEFINITE");
+        assertThat(response.endDate()).isNull();
+        assertThat(response.status()).isEqualTo("DRAFT");
     }
 
     @Test
     @DisplayName("Unit updateContract - Draft contract should update core fields")
     void updateContract_DraftContract_UpdatesFields() {
         Contract contract = draftContract();
-        ContractRequest request = standardRequest();
-        request.setBasicSalary(new BigDecimal("25000000"));
+        ContractRequest request = standardRequest().toBuilder()
+                .basicSalary(new BigDecimal("25000000"))
+                .build();
         when(contractRepository.findById(1)).thenReturn(Optional.of(contract));
         when(contractRepository.save(any(Contract.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         ContractResponse response = contractService.updateContract(1, request);
 
-        assertThat(response.getBasicSalary()).isEqualByComparingTo(new BigDecimal("25000000"));
-        assertThat(response.getStatus()).isEqualTo("DRAFT");
+        assertThat(response.basicSalary()).isEqualByComparingTo(new BigDecimal("25000000"));
+        assertThat(response.status()).isEqualTo("DRAFT");
     }
 
     @Test
@@ -156,7 +157,7 @@ class ContractServiceImplTest {
 
         ContractResponse response = contractService.activateContract(1);
 
-        assertThat(response.getStatus()).isEqualTo("ACTIVE");
+        assertThat(response.status()).isEqualTo("ACTIVE");
         assertThat(oldActive.getStatus()).isEqualTo("EXPIRED");
         verify(contractRepository).save(oldActive);
         verify(contractRepository).save(draft);
@@ -185,7 +186,7 @@ class ContractServiceImplTest {
 
         ContractResponse response = contractService.terminateContract(1);
 
-        assertThat(response.getStatus()).isEqualTo("TERMINATED");
+        assertThat(response.status()).isEqualTo("TERMINATED");
     }
 
     @Test
@@ -198,7 +199,7 @@ class ContractServiceImplTest {
         List<ContractResponse> responses = contractService.getContractsByEmployee(1);
 
         assertThat(responses).hasSize(2);
-        assertThat(responses).extracting(ContractResponse::getEmployeeCode).containsOnly("EMP0001");
+        assertThat(responses).extracting(ContractResponse::employeeCode).containsOnly("EMP0001");
     }
 
     @Test
@@ -209,7 +210,7 @@ class ContractServiceImplTest {
         Optional<ContractResponse> response = contractService.findActiveContract(1);
 
         assertThat(response).isPresent();
-        assertThat(response.get().getStatus()).isEqualTo("ACTIVE");
+        assertThat(response.get().status()).isEqualTo("ACTIVE");
     }
 
     @Test

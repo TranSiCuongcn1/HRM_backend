@@ -111,7 +111,7 @@ class LeaveRequestServiceImplTest {
         LeaveRequestDTO request = standardRequest();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.startDate(), request.endDate(), request.halfDaySession()))
                 .thenReturn(0L);
         when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(1, 1, 2026))
                 .thenReturn(Optional.of(balance(new BigDecimal("12.0"), BigDecimal.ZERO, BigDecimal.ZERO)));
@@ -123,9 +123,9 @@ class LeaveRequestServiceImplTest {
 
         LeaveRequestResponse response = leaveRequestService.submitRequest("employee", request);
 
-        assertThat(response.getStatus()).isEqualTo("PENDING");
-        assertThat(response.getDays()).isEqualByComparingTo(new BigDecimal("1.0"));
-        assertThat(response.getEmployeeCode()).isEqualTo("EMP0001");
+        assertThat(response.status()).isEqualTo("PENDING");
+        assertThat(response.days()).isEqualByComparingTo(new BigDecimal("1.0"));
+        assertThat(response.employeeCode()).isEqualTo("EMP0001");
 
         ArgumentCaptor<LeaveRequest> captor = ArgumentCaptor.forClass(LeaveRequest.class);
         verify(leaveRequestRepository).save(captor.capture());
@@ -136,9 +136,10 @@ class LeaveRequestServiceImplTest {
     @Test
     @DisplayName("Unit submitRequest - End date before start date should throw IllegalArgumentException")
     void submitRequest_EndDateBeforeStartDate_ThrowsException() {
-        LeaveRequestDTO request = standardRequest();
-        request.setStartDate(LocalDate.of(2026, 6, 5));
-        request.setEndDate(LocalDate.of(2026, 6, 4));
+        LeaveRequestDTO request = standardRequest().toBuilder()
+                .startDate(LocalDate.of(2026, 6, 5))
+                .endDate(LocalDate.of(2026, 6, 4))
+                .build();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
 
@@ -155,7 +156,7 @@ class LeaveRequestServiceImplTest {
         LeaveRequestDTO request = standardRequest();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.startDate(), request.endDate(), request.halfDaySession()))
                 .thenReturn(1L);
 
         assertThatThrownBy(() -> leaveRequestService.submitRequest("employee", request))
@@ -168,12 +169,13 @@ class LeaveRequestServiceImplTest {
     @Test
     @DisplayName("Unit submitRequest - Weekend single-day leave should throw IllegalArgumentException")
     void submitRequest_WeekendSingleDay_ThrowsException() {
-        LeaveRequestDTO request = standardRequest();
-        request.setStartDate(LocalDate.of(2026, 6, 6));
-        request.setEndDate(LocalDate.of(2026, 6, 6));
+        LeaveRequestDTO request = standardRequest().toBuilder()
+                .startDate(LocalDate.of(2026, 6, 6))
+                .endDate(LocalDate.of(2026, 6, 6))
+                .build();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.startDate(), request.endDate(), request.halfDaySession()))
                 .thenReturn(0L);
 
         assertThatThrownBy(() -> leaveRequestService.submitRequest("employee", request))
@@ -189,7 +191,7 @@ class LeaveRequestServiceImplTest {
         LeaveRequestDTO request = standardRequest();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.startDate(), request.endDate(), request.halfDaySession()))
                 .thenReturn(0L);
         when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(1, 1, 2026))
                 .thenReturn(Optional.of(balance(new BigDecimal("1.0"), new BigDecimal("1.0"), BigDecimal.ZERO)));
@@ -210,30 +212,30 @@ class LeaveRequestServiceImplTest {
                 .name("Unpaid Leave")
                 .isPaid(false)
                 .build();
-        LeaveRequestDTO request = standardRequest();
-        request.setLeaveTypeId(2);
+        LeaveRequestDTO request = standardRequest().toBuilder().leaveTypeId(2).build();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(2)).thenReturn(Optional.of(unpaid));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.startDate(), request.endDate(), request.halfDaySession()))
                 .thenReturn(0L);
         when(leaveRequestRepository.save(any(LeaveRequest.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         LeaveRequestResponse response = leaveRequestService.submitRequest("employee", request);
 
-        assertThat(response.getLeaveTypeCode()).isEqualTo("UNPAID");
-        assertThat(response.getStatus()).isEqualTo("PENDING");
+        assertThat(response.leaveTypeCode()).isEqualTo("UNPAID");
+        assertThat(response.status()).isEqualTo("PENDING");
         verify(leaveBalanceRepository, never()).findByEmployeeIdAndLeaveTypeIdAndYear(any(), any(), anyInt());
     }
 
     @Test
     @DisplayName("Unit submitRequest - Single-day holiday leave should throw IllegalArgumentException")
     void submitRequest_SingleDayHoliday_ThrowsException() {
-        LeaveRequestDTO request = standardRequest();
-        request.setStartDate(LocalDate.of(2026, 6, 1));
-        request.setEndDate(LocalDate.of(2026, 6, 1));
+        LeaveRequestDTO request = standardRequest().toBuilder()
+                .startDate(LocalDate.of(2026, 6, 1))
+                .endDate(LocalDate.of(2026, 6, 1))
+                .build();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.startDate(), request.endDate(), request.halfDaySession()))
                 .thenReturn(0L);
         Holiday holiday = Holiday.builder().name("National Day").date(LocalDate.of(2026, 6, 1)).isPaid(true).build();
         when(holidayRepository.findByDate(LocalDate.of(2026, 6, 1))).thenReturn(Optional.of(holiday));
@@ -259,7 +261,7 @@ class LeaveRequestServiceImplTest {
         );
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
         when(leaveTypeRepository.findById(1)).thenReturn(Optional.of(annualLeave));
-        when(leaveRequestRepository.countOverlappingRequests(1, request.getStartDate(), request.getEndDate(), request.getHalfDaySession()))
+        when(leaveRequestRepository.countOverlappingRequests(1, request.startDate(), request.endDate(), request.halfDaySession()))
                 .thenReturn(0L);
         when(leaveBalanceRepository.findByEmployeeIdAndLeaveTypeIdAndYear(1, 1, 2026))
                 .thenReturn(Optional.of(balance(new BigDecimal("12.0"), BigDecimal.ZERO, BigDecimal.ZERO)));
@@ -275,7 +277,7 @@ class LeaveRequestServiceImplTest {
         LeaveRequestResponse response = leaveRequestService.submitRequest("employee", request);
 
         // Expected days = 2.0 days (Wednesday and Friday, Thursday is excluded)
-        assertThat(response.getDays()).isEqualByComparingTo(new BigDecimal("2.0"));
+        assertThat(response.days()).isEqualByComparingTo(new BigDecimal("2.0"));
     }
 
     @Test
@@ -288,9 +290,9 @@ class LeaveRequestServiceImplTest {
 
         LeaveRequestResponse response = leaveRequestService.approveRequest("admin", 1);
 
-        assertThat(response.getStatus()).isEqualTo("APPROVED");
-        assertThat(response.getApprovedByName()).isEqualTo("Admin User");
-        assertThat(response.getApprovedAt()).isNotNull();
+        assertThat(response.status()).isEqualTo("APPROVED");
+        assertThat(response.approvedByName()).isEqualTo("Admin User");
+        assertThat(response.approvedAt()).isNotNull();
         verify(leaveBalanceService).deductBalance(1, 1, 2026, new BigDecimal("1.0"));
     }
 
@@ -320,8 +322,8 @@ class LeaveRequestServiceImplTest {
 
         LeaveRequestResponse response = leaveRequestService.rejectRequest("admin", 1, "Insufficient evidence");
 
-        assertThat(response.getStatus()).isEqualTo("REJECTED");
-        assertThat(response.getRejectionReason()).isEqualTo("Insufficient evidence");
+        assertThat(response.status()).isEqualTo("REJECTED");
+        assertThat(response.rejectionReason()).isEqualTo("Insufficient evidence");
         verify(leaveBalanceService, never()).deductBalance(any(), any(), any(Integer.class), any());
     }
 
@@ -335,7 +337,7 @@ class LeaveRequestServiceImplTest {
 
         LeaveRequestResponse response = leaveRequestService.cancelRequest("employee", 1);
 
-        assertThat(response.getStatus()).isEqualTo("CANCELLED");
+        assertThat(response.status()).isEqualTo("CANCELLED");
     }
 
     @Test

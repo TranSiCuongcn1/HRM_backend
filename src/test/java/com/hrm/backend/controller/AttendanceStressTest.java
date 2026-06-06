@@ -183,7 +183,7 @@ class AttendanceStressTest {
                     Authentication auth = mock(Authentication.class);
                     when(auth.getName()).thenReturn(empCode);
 
-                    CheckInRequest req = new CheckInRequest();
+                    CheckInRequest req = CheckInRequest.builder().build();
 
                     MvcResult result = mockMvc.perform(post("/api/v1/attendance/check-in")
                                     .principal(auth)

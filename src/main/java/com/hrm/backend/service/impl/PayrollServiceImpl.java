@@ -103,12 +103,12 @@ public class PayrollServiceImpl implements PayrollService {
                 skipped++;
                 continue;
             }
-            BigDecimal basicSalary = contractOpt.get().getBasicSalary();
+            BigDecimal basicSalary = contractOpt.get().basicSalary();
 
             // b. Lấy thống kê chấm công
             AttendanceResponse.MonthlyStats stats = attendanceService.getMonthlyStats(
                     employee.getId(), month, year);
-            BigDecimal actualWorkDays = BigDecimal.valueOf(stats.getTotalWorkDays());
+            BigDecimal actualWorkDays = BigDecimal.valueOf(stats.totalWorkDays());
 
             // c. Lấy ngày nghỉ có lương
             BigDecimal paidLeaveDays = leaveRequestService.getPaidLeaveDaysInMonth(
@@ -252,28 +252,28 @@ public class PayrollServiceImpl implements PayrollService {
         }
 
         // Cập nhật ngày công
-        if (request.getWorkDays() != null) {
-            payroll.setWorkDays(request.getWorkDays());
+        if (request.workDays() != null) {
+            payroll.setWorkDays(request.workDays());
         }
-        if (request.getActualDays() != null) {
-            payroll.setActualDays(request.getActualDays());
+        if (request.actualDays() != null) {
+            payroll.setActualDays(request.actualDays());
         }
 
         // Cập nhật phụ cấp
-        if (request.getAllowances() != null) {
-            payroll.setAllowances(toJson(request.getAllowances()));
-            payroll.setTotalAllowances(sumMap(request.getAllowances()));
+        if (request.allowances() != null) {
+            payroll.setAllowances(toJson(request.allowances()));
+            payroll.setTotalAllowances(sumMap(request.allowances()));
         }
 
         // Cập nhật khấu trừ
-        if (request.getDeductions() != null) {
-            payroll.setDeductions(toJson(request.getDeductions()));
-            payroll.setTotalDeductions(sumMap(request.getDeductions()));
+        if (request.deductions() != null) {
+            payroll.setDeductions(toJson(request.deductions()));
+            payroll.setTotalDeductions(sumMap(request.deductions()));
         }
 
         // Override OT
-        if (request.getOvertimePay() != null) {
-            payroll.setOvertimePay(request.getOvertimePay());
+        if (request.overtimePay() != null) {
+            payroll.setOvertimePay(request.overtimePay());
         }
 
         // Tính lại grossSalary và netSalary
@@ -294,7 +294,7 @@ public class PayrollServiceImpl implements PayrollService {
     public List<PayrollResponse> bulkUpdatePayroll(PayrollUpdateRequest.BulkUpdateRequest request) {
         List<PayrollResponse> results = new ArrayList<>();
 
-        for (Integer payrollId : request.getPayrollIds()) {
+        for (Integer payrollId : request.payrollIds()) {
             Payroll payroll = payrollRepository.findById(payrollId).orElse(null);
             if (payroll == null || !"DRAFT".equals(payroll.getStatus())) {
                 log.warn("Bỏ qua phiếu #{} (không tồn tại hoặc không phải DRAFT)", payrollId);
@@ -302,17 +302,17 @@ public class PayrollServiceImpl implements PayrollService {
             }
 
             // Merge phụ cấp mới vào phụ cấp hiện có
-            if (request.getAllowances() != null && !request.getAllowances().isEmpty()) {
+            if (request.allowances() != null && !request.allowances().isEmpty()) {
                 Map<String, BigDecimal> current = fromJson(payroll.getAllowances());
-                current.putAll(request.getAllowances()); // Merge (ghi đè nếu trùng key)
+                current.putAll(request.allowances()); // Merge (ghi đè nếu trùng key)
                 payroll.setAllowances(toJson(current));
                 payroll.setTotalAllowances(sumMap(current));
             }
 
             // Merge khấu trừ mới vào khấu trừ hiện có
-            if (request.getDeductions() != null && !request.getDeductions().isEmpty()) {
+            if (request.deductions() != null && !request.deductions().isEmpty()) {
                 Map<String, BigDecimal> current = fromJson(payroll.getDeductions());
-                current.putAll(request.getDeductions());
+                current.putAll(request.deductions());
                 payroll.setDeductions(toJson(current));
                 payroll.setTotalDeductions(sumMap(current));
             }

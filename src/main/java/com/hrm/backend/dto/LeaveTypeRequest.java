@@ -1,22 +1,17 @@
 package com.hrm.backend.dto;
 
+import lombok.Builder;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class LeaveTypeRequest {
-
+@Builder(toBuilder = true)
+public record LeaveTypeRequest(
     @NotBlank(message = "Mã loại phép không được để trống")
-    private String code; // ANNUAL, SICK, UNPAID...
+    String code, // ANNUAL, SICK, UNPAID...
 
     @NotBlank(message = "Tên loại phép không được để trống")
-    private String name; // Phép năm, Nghỉ bệnh...
+    String name, // Phép năm, Nghỉ bệnh...
 
-    private Boolean isPaid; // Default: true
+    Boolean isPaid, // Default: true
 
-    private String description;
-}
+    String description
+) {}

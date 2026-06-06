@@ -1,22 +1,15 @@
 package com.hrm.backend.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class LoginResponse {
-
-    private String accessToken;
-    private String tokenType;
-    private Integer userId;
-    private Integer employeeId;
-    private String username;
-    private String email;
-    private String role;
-    private String employeeName;
-}
+public record LoginResponse(
+    String accessToken,
+    String tokenType,
+    Integer userId,
+    Integer employeeId,
+    String username,
+    String email,
+    String role,
+    String employeeName
+) {}

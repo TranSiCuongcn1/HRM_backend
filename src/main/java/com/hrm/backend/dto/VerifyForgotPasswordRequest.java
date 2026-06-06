@@ -1,20 +1,15 @@
 package com.hrm.backend.dto;
 
+import lombok.Builder;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class VerifyForgotPasswordRequest {
-
+@Builder(toBuilder = true)
+public record VerifyForgotPasswordRequest(
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không đúng định dạng")
-    private String email;
+    String email,
 
     @NotBlank(message = "Mã OTP không được để trống")
-    private String otpCode;
-}
+    String otpCode
+) {}

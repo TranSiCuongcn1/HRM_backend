@@ -114,10 +114,11 @@ class LeaveBalanceControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/leave-balances/{id} - Should update total and carry-over days")
     void updateBalance_ReturnsUpdatedBalance() throws Exception {
-        LeaveBalanceResponse updated = standardResponse();
-        updated.setTotalDays(new BigDecimal("15.0"));
-        updated.setCarryOverDays(new BigDecimal("2.0"));
-        updated.setRemainingDays(new BigDecimal("15.0"));
+        LeaveBalanceResponse updated = standardResponse().toBuilder()
+                .totalDays(new BigDecimal("15.0"))
+                .carryOverDays(new BigDecimal("2.0"))
+                .remainingDays(new BigDecimal("15.0"))
+                .build();
 
         when(leaveBalanceService.updateBalance(eq(1), eq(new BigDecimal("15.0")), eq(new BigDecimal("2.0"))))
                 .thenReturn(updated);

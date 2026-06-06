@@ -1,62 +1,50 @@
 package com.hrm.backend.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class AttendanceResponse {
-
-    private Integer id;
-    private Integer employeeId;
-    private String employeeCode;
-    private String employeeName;
-    private LocalDate date;
-    private LocalTime checkIn;
-    private LocalTime checkOut;
-    private String status;
-    private BigDecimal overtimeHours;
-    private BigDecimal workHours;
-    private Integer lateMinutes;
-    private Integer earlyLeaveMinutes;
-    private String note;
-    private String checkInIp;
-    private BigDecimal checkInLat;
-    private BigDecimal checkInLng;
-    private String checkOutIp;
-    private BigDecimal checkOutLat;
-    private BigDecimal checkOutLng;
-    private Boolean checkInGpsValid;
-    private Boolean checkInIpValid;
-    private Boolean checkOutGpsValid;
-    private Boolean checkOutIpValid;
-    private LocalDateTime createdAt;
-
-
+@Builder(toBuilder = true)
+public record AttendanceResponse(
+    Integer id,
+    Integer employeeId,
+    String employeeCode,
+    String employeeName,
+    LocalDate date,
+    LocalTime checkIn,
+    LocalTime checkOut,
+    String status,
+    BigDecimal overtimeHours,
+    BigDecimal workHours,
+    Integer lateMinutes,
+    Integer earlyLeaveMinutes,
+    String note,
+    String checkInIp,
+    BigDecimal checkInLat,
+    BigDecimal checkInLng,
+    String checkOutIp,
+    BigDecimal checkOutLat,
+    BigDecimal checkOutLng,
+    Boolean checkInGpsValid,
+    Boolean checkInIpValid,
+    Boolean checkOutGpsValid,
+    Boolean checkOutIpValid,
+    LocalDateTime createdAt
+) {
     /**
      * DTO phụ: Thống kê chấm công theo tháng (cho Payroll sử dụng)
      */
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
     @Builder
-    public static class MonthlyStats {
-        private Integer employeeId;
-        private String employeeCode;
-        private String employeeName;
-        private int month;
-        private int year;
-        private long totalWorkDays;      // Số ngày có đi làm (không tính ABSENT)
-        private long lateCount;          // Số lần đi trễ
-        private BigDecimal totalOvertimeHours; // Tổng giờ OT trong tháng
-    }
+    public record MonthlyStats(
+        Integer employeeId,
+        String employeeCode,
+        String employeeName,
+        int month,
+        int year,
+        long totalWorkDays,      // Số ngày có đi làm (không tính ABSENT)
+        long lateCount,          // Số lần đi trễ
+        BigDecimal totalOvertimeHours // Tổng giờ OT trong tháng
+    ) {}
 }

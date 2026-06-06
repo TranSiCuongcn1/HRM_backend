@@ -40,10 +40,11 @@ class DepartmentServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        standardRequest = new DepartmentRequest();
-        standardRequest.setCode("IT");
-        standardRequest.setName("Information Technology");
-        standardRequest.setDescription("IT Department");
+        standardRequest = DepartmentRequest.builder()
+                .code("IT")
+                .name("Information Technology")
+                .description("IT Department")
+                .build();
 
         standardDepartment = Department.builder()
                 .id(1)
@@ -74,9 +75,9 @@ class DepartmentServiceImplTest {
         DepartmentResponse response = departmentService.createDepartment(standardRequest);
 
         assertThat(response).isNotNull();
-        assertThat(response.getId()).isEqualTo(1);
-        assertThat(response.getCode()).isEqualTo("IT");
-        assertThat(response.getName()).isEqualTo("Information Technology");
+        assertThat(response.id()).isEqualTo(1);
+        assertThat(response.code()).isEqualTo("IT");
+        assertThat(response.name()).isEqualTo("Information Technology");
 
         verify(departmentRepository).save(any(Department.class));
     }
@@ -94,10 +95,11 @@ class DepartmentServiceImplTest {
         when(departmentRepository.findById(1)).thenReturn(Optional.of(existingDept));
 
         // Attempting to set parent to itself (id = 1)
-        DepartmentRequest updateRequest = new DepartmentRequest();
-        updateRequest.setCode("IT");
-        updateRequest.setName("Information Tech Updated");
-        updateRequest.setParentId(1);
+        DepartmentRequest updateRequest = DepartmentRequest.builder()
+                .code("IT")
+                .name("Information Tech Updated")
+                .parentId(1)
+                .build();
 
         assertThatThrownBy(() -> departmentService.updateDepartment(1, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -120,10 +122,11 @@ class DepartmentServiceImplTest {
         // For isChildOf check: finds dept 3, potentialParent is dept3 (parent is dept2)
         when(departmentRepository.findById(3)).thenReturn(Optional.of(dept3));
 
-        DepartmentRequest updateRequest = new DepartmentRequest();
-        updateRequest.setCode("DEPT1");
-        updateRequest.setName("Dept 1 Updated");
-        updateRequest.setParentId(3);
+        DepartmentRequest updateRequest = DepartmentRequest.builder()
+                .code("DEPT1")
+                .name("Dept 1 Updated")
+                .parentId(3)
+                .build();
 
         assertThatThrownBy(() -> departmentService.updateDepartment(1, updateRequest))
                 .isInstanceOf(IllegalArgumentException.class)

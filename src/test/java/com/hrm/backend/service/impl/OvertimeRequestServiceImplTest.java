@@ -85,9 +85,9 @@ class OvertimeRequestServiceImplTest {
 
         OvertimeRequestResponse response = overtimeRequestService.createRequest("employee", standardRequest());
 
-        assertThat(response.getStatus()).isEqualTo("PENDING");
-        assertThat(response.getHours()).isEqualByComparingTo(new BigDecimal("2.50"));
-        assertThat(response.getEmployeeCode()).isEqualTo("EMP0001");
+        assertThat(response.status()).isEqualTo("PENDING");
+        assertThat(response.hours()).isEqualByComparingTo(new BigDecimal("2.50"));
+        assertThat(response.employeeCode()).isEqualTo("EMP0001");
 
         ArgumentCaptor<OvertimeRequest> captor = ArgumentCaptor.forClass(OvertimeRequest.class);
         verify(overtimeRequestRepository).save(captor.capture());
@@ -98,9 +98,10 @@ class OvertimeRequestServiceImplTest {
     @Test
     @DisplayName("Unit createRequest - End time before start time should throw IllegalArgumentException")
     void createRequest_EndBeforeStart_ThrowsException() {
-        OvertimeRequestRequest request = standardRequest();
-        request.setStartTime(LocalTime.of(20, 30));
-        request.setEndTime(LocalTime.of(18, 0));
+        OvertimeRequestRequest request = standardRequest().toBuilder()
+                .startTime(LocalTime.of(20, 30))
+                .endTime(LocalTime.of(18, 0))
+                .build();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
 
         assertThatThrownBy(() -> overtimeRequestService.createRequest("employee", request))
@@ -115,7 +116,7 @@ class OvertimeRequestServiceImplTest {
     void createRequest_OverlappingTimeRange_ThrowsException() {
         OvertimeRequestRequest request = standardRequest();
         when(userRepository.findByUsername("employee")).thenReturn(Optional.of(employeeUser));
-        when(overtimeRequestRepository.countOverlappingRequests(1, request.getDate(), request.getStartTime(), request.getEndTime()))
+        when(overtimeRequestRepository.countOverlappingRequests(1, request.date(), request.startTime(), request.endTime()))
                 .thenReturn(1L);
 
         assertThatThrownBy(() -> overtimeRequestService.createRequest("employee", request))
@@ -135,9 +136,9 @@ class OvertimeRequestServiceImplTest {
 
         OvertimeRequestResponse response = overtimeRequestService.approveRequest(1, "admin");
 
-        assertThat(response.getStatus()).isEqualTo("APPROVED");
-        assertThat(response.getApprovedByName()).isEqualTo("Admin User");
-        assertThat(response.getApprovedAt()).isNotNull();
+        assertThat(response.status()).isEqualTo("APPROVED");
+        assertThat(response.approvedByName()).isEqualTo("Admin User");
+        assertThat(response.approvedAt()).isNotNull();
     }
 
     @Test
@@ -165,9 +166,9 @@ class OvertimeRequestServiceImplTest {
 
         OvertimeRequestResponse response = overtimeRequestService.rejectRequest(1, "admin", "Too late");
 
-        assertThat(response.getStatus()).isEqualTo("REJECTED");
-        assertThat(response.getRejectionReason()).isEqualTo("Too late");
-        assertThat(response.getApprovedByName()).isEqualTo("Admin User");
+        assertThat(response.status()).isEqualTo("REJECTED");
+        assertThat(response.rejectionReason()).isEqualTo("Too late");
+        assertThat(response.approvedByName()).isEqualTo("Admin User");
     }
 
     @Test

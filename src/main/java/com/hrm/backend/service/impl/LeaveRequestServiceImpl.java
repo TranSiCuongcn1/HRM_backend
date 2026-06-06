@@ -43,31 +43,31 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         Employee employee = getEmployeeByUsername(username);
 
         // Validate loại phép
-        LeaveType leaveType = leaveTypeRepository.findById(request.getLeaveTypeId())
+        LeaveType leaveType = leaveTypeRepository.findById(request.leaveTypeId())
                 .orElseThrow(() -> new RuntimeException(
-                        "Không tìm thấy loại phép ID: " + request.getLeaveTypeId()));
+                        "Không tìm thấy loại phép ID: " + request.leaveTypeId()));
 
         // Validate ngày tháng
-        if (request.getEndDate().isBefore(request.getStartDate())) {
+        if (request.endDate().isBefore(request.startDate())) {
             throw new IllegalArgumentException("Ngày kết thúc phải sau hoặc bằng ngày bắt đầu");
         }
 
         // Kiểm tra trùng lặp đơn nghỉ phép
         long overlappingCount = leaveRequestRepository.countOverlappingRequests(
-                employee.getId(), request.getStartDate(), request.getEndDate(), request.getHalfDaySession());
+                employee.getId(), request.startDate(), request.endDate(), request.halfDaySession());
         if (overlappingCount > 0) {
             throw new IllegalArgumentException("Bạn đã có đơn xin nghỉ phép (PENDING/APPROVED) trong khoảng thời gian này");
         }
 
         // Tính ngày làm việc thực tế (trừ T7, CN và Ngày lễ)
-        BigDecimal finalDays = request.getDays();
-        if (request.getStartDate().isEqual(request.getEndDate())) {
+        BigDecimal finalDays = request.days();
+        if (request.startDate().isEqual(request.endDate())) {
             // Trong cùng 1 ngày
-            java.time.DayOfWeek dayOfWeek = request.getStartDate().getDayOfWeek();
+            java.time.DayOfWeek dayOfWeek = request.startDate().getDayOfWeek();
             if (dayOfWeek == java.time.DayOfWeek.SATURDAY || dayOfWeek == java.time.DayOfWeek.SUNDAY) {
                  throw new IllegalArgumentException("Không thể tạo đơn nghỉ phép vào ngày nghỉ cuối tuần");
             }
-            boolean isHoliday = holidayRepository.findByDate(request.getStartDate())
+            boolean isHoliday = holidayRepository.findByDate(request.startDate())
                     .map(Holiday::getIsPaid)
                     .orElse(false);
             if (isHoliday) {
@@ -76,8 +76,8 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
             // Trust frontend for days (e.g. 0.5 or 1.0)
         } else {
             long businessDays = 0;
-            LocalDate date = request.getStartDate();
-            while (!date.isAfter(request.getEndDate())) {
+            LocalDate date = request.startDate();
+            while (!date.isAfter(request.endDate())) {
                 java.time.DayOfWeek dayOfWeek = date.getDayOfWeek();
                 if (dayOfWeek != java.time.DayOfWeek.SATURDAY && dayOfWeek != java.time.DayOfWeek.SUNDAY) {
                     boolean isHoliday = holidayRepository.findByDate(date)
@@ -97,7 +97,7 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
 
         // Validate số dư phép (chỉ check cho phép có giới hạn, UNPAID không cần check)
         if (!"UNPAID".equals(leaveType.getCode())) {
-            int year = request.getStartDate().getYear();
+            int year = request.startDate().getYear();
             LeaveBalance balance = leaveBalanceRepository
                     .findByEmployeeIdAndLeaveTypeIdAndYear(employee.getId(), leaveType.getId(), year)
                     .orElseThrow(() -> new RuntimeException(
@@ -119,19 +119,19 @@ public class LeaveRequestServiceImpl implements LeaveRequestService {
         LeaveRequest leaveRequest = LeaveRequest.builder()
                 .employee(employee)
                 .leaveType(leaveType)
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .startDate(request.startDate())
+                .endDate(request.endDate())
                 .days(finalDays)
-                .halfDaySession(request.getHalfDaySession())
-                .reason(request.getReason())
-                .attachmentUrl(request.getAttachmentUrl())
+                .halfDaySession(request.halfDaySession())
+                .reason(request.reason())
+                .attachmentUrl(request.attachmentUrl())
                 .status("PENDING")
                 .build();
 
         LeaveRequest saved = leaveRequestRepository.save(leaveRequest);
         log.info("NV {} gửi đơn xin {} {} ngày ({} → {})",
-                employee.getCode(), leaveType.getName(), request.getDays(),
-                request.getStartDate(), request.getEndDate());
+                employee.getCode(), leaveType.getName(), request.days(),
+                request.startDate(), request.endDate());
 
         return mapToResponse(saved);
     }
