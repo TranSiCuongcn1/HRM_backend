@@ -36,7 +36,6 @@ class ContractServiceImplTest {
     @Mock
     private EmployeeRepository employeeRepository;
 
-    @InjectMocks
     private ContractServiceImpl contractService;
 
     private Employee employee;
@@ -49,6 +48,20 @@ class ContractServiceImplTest {
                 .name("Nguyen Van A")
                 .status("ACTIVE")
                 .build();
+
+        var probationValidator = new com.hrm.backend.service.contract.validator.impl.ProbationContractValidator(contractRepository);
+        var definiteValidator = new com.hrm.backend.service.contract.validator.impl.DefiniteContractValidator(contractRepository);
+        var indefiniteValidator = new com.hrm.backend.service.contract.validator.impl.IndefiniteContractValidator(contractRepository);
+
+        var probationCreator = new com.hrm.backend.service.contract.validator.creator.ProbationValidatorCreator(probationValidator);
+        var definiteCreator = new com.hrm.backend.service.contract.validator.creator.DefiniteValidatorCreator(definiteValidator);
+        var indefiniteCreator = new com.hrm.backend.service.contract.validator.creator.IndefiniteValidatorCreator(indefiniteValidator);
+
+        contractService = new ContractServiceImpl(
+                contractRepository,
+                employeeRepository,
+                List.of(probationCreator, definiteCreator, indefiniteCreator)
+        );
     }
 
     @Test
