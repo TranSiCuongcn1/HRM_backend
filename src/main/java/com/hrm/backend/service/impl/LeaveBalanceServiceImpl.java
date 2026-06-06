@@ -8,27 +8,38 @@ import com.hrm.backend.repository.EmployeeRepository;
 import com.hrm.backend.repository.LeaveBalanceRepository;
 import com.hrm.backend.repository.LeaveTypeRepository;
 import com.hrm.backend.service.LeaveBalanceService;
-import lombok.RequiredArgsConstructor;
+import com.hrm.backend.service.leave.strategy.LeaveBalanceInitStrategy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class LeaveBalanceServiceImpl implements LeaveBalanceService {
 
     private final LeaveBalanceRepository leaveBalanceRepository;
     private final EmployeeRepository employeeRepository;
     private final LeaveTypeRepository leaveTypeRepository;
+    private final Map<String, LeaveBalanceInitStrategy> balanceStrategies;
 
-    // Số ngày phép năm mặc định theo Luật Lao Động VN
-    private static final BigDecimal DEFAULT_ANNUAL_DAYS = new BigDecimal("12.0");
-    private static final BigDecimal DEFAULT_SICK_DAYS = new BigDecimal("30.0");
+    public LeaveBalanceServiceImpl(
+            LeaveBalanceRepository leaveBalanceRepository,
+            EmployeeRepository employeeRepository,
+            LeaveTypeRepository leaveTypeRepository,
+            List<LeaveBalanceInitStrategy> strategies) {
+        this.leaveBalanceRepository = leaveBalanceRepository;
+        this.employeeRepository = employeeRepository;
+        this.leaveTypeRepository = leaveTypeRepository;
+        this.balanceStrategies = strategies.stream()
+                .collect(Collectors.toMap(LeaveBalanceInitStrategy::getLeaveTypeCode, Function.identity()));
+    }
 
     // ========================================
     // 1. CẤP PHÉP ĐẦU NĂM CHO NHÂN VIÊN
@@ -48,17 +59,10 @@ public class LeaveBalanceServiceImpl implements LeaveBalanceService {
                 continue;
             }
 
-            BigDecimal totalDays = BigDecimal.ZERO;
-            // Cấp số ngày mặc định theo loại phép
-            if ("ANNUAL".equals(type.getCode())) {
-                totalDays = DEFAULT_ANNUAL_DAYS;
-            } else if ("SICK".equals(type.getCode())) {
-                totalDays = DEFAULT_SICK_DAYS;
-            } else if ("WEDDING".equals(type.getCode())) {
-                totalDays = new BigDecimal("3.0");
-            } else if ("BEREAVEMENT".equals(type.getCode())) {
-                totalDays = new BigDecimal("3.0");
-            }
+            // Lookup default days from strategy map
+            BigDecimal totalDays = Optional.ofNullable(balanceStrategies.get(type.getCode()))
+                    .map(LeaveBalanceInitStrategy::getDefaultDays)
+                    .orElse(BigDecimal.ZERO);
             // UNPAID và MATERNITY: totalDays = 0 (không giới hạn hoặc theo quy định riêng)
 
             LeaveBalance balance = LeaveBalance.builder()

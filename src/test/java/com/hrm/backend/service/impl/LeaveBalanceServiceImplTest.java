@@ -12,9 +12,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import com.hrm.backend.service.leave.strategy.LeaveBalanceInitStrategy;
+import com.hrm.backend.service.leave.strategy.impl.AnnualLeaveInitStrategy;
+import com.hrm.backend.service.leave.strategy.impl.SickLeaveInitStrategy;
+import com.hrm.backend.service.leave.strategy.impl.WeddingLeaveInitStrategy;
+import com.hrm.backend.service.leave.strategy.impl.BereavementLeaveInitStrategy;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,7 +43,6 @@ class LeaveBalanceServiceImplTest {
     @Mock
     private LeaveTypeRepository leaveTypeRepository;
 
-    @InjectMocks
     private LeaveBalanceServiceImpl leaveBalanceService;
 
     private Employee employee;
@@ -57,6 +60,19 @@ class LeaveBalanceServiceImplTest {
         annual = leaveType(1, "ANNUAL", "Annual Leave");
         sick = leaveType(2, "SICK", "Sick Leave");
         unpaid = leaveType(3, "UNPAID", "Unpaid Leave");
+
+        List<LeaveBalanceInitStrategy> strategies = List.of(
+                new AnnualLeaveInitStrategy(),
+                new SickLeaveInitStrategy(),
+                new WeddingLeaveInitStrategy(),
+                new BereavementLeaveInitStrategy()
+        );
+        leaveBalanceService = new LeaveBalanceServiceImpl(
+                leaveBalanceRepository,
+                employeeRepository,
+                leaveTypeRepository,
+                strategies
+        );
     }
 
     @Test
