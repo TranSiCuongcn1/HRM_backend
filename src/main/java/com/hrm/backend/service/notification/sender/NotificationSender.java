@@ -153,72 +153,29 @@ public abstract class NotificationSender {
         NotificationChannel channel = createNotificationChannel();
         String title = "[" + COMPANY_NAME + "] Phiếu lương tháng " + monthStr;
 
-        String formattedBasic = formatVND(basicSalary);
-        String formattedAllowances = formatVND(allowances);
-        String formattedDeductions = formatVND(deductions);
-        String formattedNet = formatVND(netSalary);
-
-        StringBuilder htmlContent = new StringBuilder();
-        htmlContent.append("<!DOCTYPE html><html><head><meta charset='UTF-8'></head>")
-                .append("<body style='margin:0;padding:0;background-color:#f8fafc;font-family:\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif;'>")
-                .append("<div style='max-width:650px;margin:30px auto;background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #e2e8f0;'>")
-                // Header
-                .append("<div style='background-color:").append(BRAND_COLOR).append(";padding:28px;text-align:center;'>")
-                .append("<h2 style='color:#ffffff;margin:0;font-size:24px;letter-spacing:1px;font-weight:700;'>").append(COMPANY_NAME.toUpperCase()).append("</h2>")
-                .append("<p style='color:#cbd5e1;margin:6px 0 0 0;font-size:14px;font-weight:500;'>PHIẾU BÁO LƯƠNG CHI TIẾT - THÁNG ").append(monthStr).append("</p>")
-                .append("</div>")
-                // Content
-                .append("<div style='padding:32px;color:#334155;line-height:1.6;'>")
-                .append("<p style='font-size:16px;margin-top:0;'>Kính gửi anh/chị <strong>").append(employeeName).append("</strong>,</p>")
-                .append("<p style='font-size:15px;'>Ban Nhân Sự xin gửi bảng báo lương chi tiết của anh/chị trong tháng <strong>").append(monthStr).append("</strong> như sau:</p>")
-                
-                // Main Net Salary Panel
-                .append("<div style='background-color:#e6f4ea;border-left:5px solid #137333;border-radius:8px;padding:18px 24px;margin:24px 0;display:flex;justify-content:between;align-items:center;'>")
-                .append("<div>")
-                .append("<span style='color:#137333;font-size:14px;font-weight:700;text-transform:uppercase;'>Thực Nhận (Net Salary)</span><br/>")
-                .append("<span style='color:#137333;font-size:28px;font-weight:800;'>").append(formattedNet).append("</span>")
-                .append("</div>")
-                .append("</div>")
-
-                // Salary breakdown table
-                .append("<h3 style='font-size:16px;color:#1e293b;border-bottom:2px solid #f1f5f9;padding-bottom:8px;margin-bottom:12px;font-weight:700;'>KHOẢN THU NHẬP & PHỤ CẤP</h3>")
-                .append("<table style='width:100%;border-collapse:collapse;margin-bottom:24px;'>")
-                .append("<tr style='border-bottom:1px solid #f1f5f9;'><td style='padding:10px 0;color:#64748b;font-size:14px;'>Lương cơ bản (Contract Salary)</td><td style='padding:10px 0;text-align:right;font-weight:700;color:#1e293b;font-size:14px;'>").append(formattedBasic).append("</td></tr>")
-                .append("<tr style='border-bottom:1px solid #f1f5f9;'><td style='padding:10px 0;color:#64748b;font-size:14px;'>Tổng các khoản phụ cấp nhận thêm</td><td style='padding:10px 0;text-align:right;font-weight:700;color:#137333;font-size:14px;'>+ ").append(formattedAllowances).append("</td></tr>")
-                .append("</table>");
-
-        // Deductions breakdown table
-        htmlContent.append("<h3 style='font-size:16px;color:#1e293b;border-bottom:2px solid #f1f5f9;padding-bottom:8px;margin-bottom:12px;font-weight:700;'>KHOẢN KHẤU TRỪ / NGHĨA VỤ</h3>")
-                .append("<table style='width:100%;border-collapse:collapse;margin-bottom:24px;'>");
-
-        if (detailsMap != null && !detailsMap.isEmpty()) {
-            for (Map.Entry<String, BigDecimal> entry : detailsMap.entrySet()) {
-                if (entry.getValue() != null && entry.getValue().compareTo(BigDecimal.ZERO) > 0) {
-                    htmlContent.append("<tr style='border-bottom:1px solid #f1f5f9;'>")
-                            .append("<td style='padding:10px 0;color:#64748b;font-size:14px;'>").append(entry.getKey()).append("</td>")
-                            .append("<td style='padding:10px 0;text-align:right;font-weight:700;color:#c5221f;font-size:14px;'>- ").append(formatVND(entry.getValue())).append("</td>")
-                            .append("</tr>");
-                }
-            }
-        } else {
-            htmlContent.append("<tr style='border-bottom:1px solid #f1f5f9;'><td style='padding:10px 0;color:#64748b;font-size:14px;'>Tổng các khoản khấu trừ</td><td style='padding:10px 0;text-align:right;font-weight:700;color:#c5221f;font-size:14px;'>- ").append(formattedDeductions).append("</td></tr>");
+        java.util.Map<String, java.math.BigDecimal> allowancesMap = new java.util.LinkedHashMap<>();
+        if (allowances != null && allowances.compareTo(java.math.BigDecimal.ZERO) > 0) {
+            allowancesMap.put("Tổng phụ cấp", allowances);
         }
-        
-        htmlContent.append("</table>")
-                .append("<p style='font-size:14px;color:#64748b;font-style:italic;background-color:#f8fafc;padding:12px 16px;border-radius:8px;border:1px solid #f1f5f9;'>")
-                .append("(*) Ghi chú: Số liệu chi tiết trên dựa trên ngày công chấm công và hợp đồng lao động đã ký kết. Mọi thắc mắc về số liệu vui lòng liên hệ phòng Kế toán/Nhân sự trước ngày 05 hàng tháng.")
-                .append("</p>")
-                .append("<p style='font-size:15px;margin-top:24px;'>Trân trọng,</p>")
-                .append("<p style='font-size:15px;color:").append(BRAND_COLOR).append(";font-weight:700;margin-top:4px;'>Ban Quản Trị Nhân Sự & Tài Chính</p>")
-                .append("</div>")
-                // Footer
-                .append("<div style='background-color:#f8fafc;padding:20px;text-align:center;border-top:1px solid #e2e8f0;color:#94a3b8;font-size:12px;'>")
-                .append("<p style='margin:0;'>Đây là email tự động gửi từ ").append(COMPANY_NAME).append(".</p>")
-                .append("<p style='margin:4px 0 0 0;'>Bảo mật thông tin: Nội dung email này chứa thông tin cá nhân bảo mật, vui lòng không chia sẻ ra ngoài.</p>")
-                .append("</div>")
-                .append("</div></body></html>");
 
-        channel.send(toEmail, title, htmlContent.toString());
+        com.hrm.backend.dto.PayrollResponse payroll = com.hrm.backend.dto.PayrollResponse.builder()
+                .employeeName(employeeName)
+                .month(monthStr)
+                .basicSalary(basicSalary)
+                .overtimePay(BigDecimal.ZERO)
+                .allowances(allowancesMap)
+                .grossSalary(basicSalary.add(allowances != null ? allowances : BigDecimal.ZERO))
+                .deductions(detailsMap)
+                .totalAllowances(allowances)
+                .totalDeductions(deductions)
+                .netSalary(netSalary)
+                .build();
+
+        com.hrm.backend.service.payroll.export.PayslipReportBuilder builder = new com.hrm.backend.service.payroll.export.HtmlPayslipReportBuilder();
+        com.hrm.backend.service.payroll.export.PayslipReportDirector director = new com.hrm.backend.service.payroll.export.PayslipReportDirector(builder);
+        com.hrm.backend.service.payroll.export.PayslipReport report = director.construct(COMPANY_NAME, payroll, "Bảo mật thông tin: Nội dung email này chứa thông tin cá nhân bảo mật, vui lòng không chia sẻ ra ngoài.");
+
+        channel.send(toEmail, title, report.getContent());
     }
 
     public void sendForgotPasswordOtp(String toEmail, String employeeName, String otpCode) {
