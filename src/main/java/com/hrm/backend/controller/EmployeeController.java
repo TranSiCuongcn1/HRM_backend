@@ -3,7 +3,7 @@ package com.hrm.backend.controller;
 import com.hrm.backend.dto.ApiResponse;
 import com.hrm.backend.dto.EmployeeRequest;
 import com.hrm.backend.dto.EmployeeResponse;
-import com.hrm.backend.service.EmployeeService;
+import com.hrm.backend.service.facade.EmployeeFacade;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Employee Management", description = "API quản lý hồ sơ nhân sự")
 public class EmployeeController {
 
-    private final EmployeeService employeeService;
+    private final EmployeeFacade employeeFacade;
 
     /**
      * Lấy danh sách nhân viên (phân trang + tìm kiếm + lọc)
@@ -47,7 +47,7 @@ public class EmployeeController {
 
         Pageable pageable = PageRequest.of(page, size, sort);
 
-        Page<EmployeeResponse> employees = employeeService.getAllEmployees(keyword, status, departmentId, pageable);
+        Page<EmployeeResponse> employees = employeeFacade.getAllEmployees(keyword, status, departmentId, pageable);
 
         return ResponseEntity.ok(
                 ApiResponse.success("Lấy danh sách nhân viên thành công", employees)
@@ -61,7 +61,7 @@ public class EmployeeController {
     @GetMapping("/{id}")
     @Operation(summary = "Chi tiết nhân viên", description = "Xem thông tin chi tiết hồ sơ một nhân viên theo ID")
     public ResponseEntity<ApiResponse<EmployeeResponse>> getEmployeeById(@PathVariable Integer id) {
-        EmployeeResponse employee = employeeService.getEmployeeById(id);
+        EmployeeResponse employee = employeeFacade.getEmployeeById(id);
         return ResponseEntity.ok(
                 ApiResponse.success("Lấy thông tin nhân viên thành công", employee)
         );
@@ -77,7 +77,7 @@ public class EmployeeController {
     public ResponseEntity<ApiResponse<EmployeeResponse>> createEmployee(
             @Valid @RequestBody EmployeeRequest request) {
 
-        EmployeeResponse created = employeeService.createEmployee(request);
+        EmployeeResponse created = employeeFacade.onboardEmployee(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponse.success("Thêm nhân viên thành công. Tài khoản đăng nhập đã được tạo tự động.", created)
         );
@@ -94,7 +94,7 @@ public class EmployeeController {
             @PathVariable Integer id,
             @Valid @RequestBody EmployeeRequest request) {
 
-        EmployeeResponse updated = employeeService.updateEmployee(id, request);
+        EmployeeResponse updated = employeeFacade.updateEmployee(id, request);
         return ResponseEntity.ok(
                 ApiResponse.success("Cập nhật thông tin nhân viên thành công", updated)
         );
@@ -111,7 +111,7 @@ public class EmployeeController {
             @PathVariable Integer id,
             @RequestParam(required = false) java.time.LocalDate resignationDate) {
             
-        employeeService.resignEmployee(id, resignationDate);
+        employeeFacade.resignEmployee(id, resignationDate);
         return ResponseEntity.ok(
                 ApiResponse.success("Đã hoàn tất thủ tục nghỉ việc và khóa tài khoản cho nhân viên")
         );
@@ -125,7 +125,7 @@ public class EmployeeController {
         @PreAuthorize("hasRole('ADMIN')")
         @Operation(summary = "Xóa nhân viên", description = "Xóa hồ sơ nhân viên khi chưa phát sinh dữ liệu chấm công/nghỉ phép")
         public ResponseEntity<ApiResponse<Void>> deleteEmployee(@PathVariable Integer id) {
-                employeeService.deleteEmployee(id);
+                employeeFacade.deleteEmployee(id);
                 return ResponseEntity.ok(
                                 ApiResponse.success("Xóa nhân viên thành công")
                 );

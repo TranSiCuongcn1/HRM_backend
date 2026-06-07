@@ -38,7 +38,7 @@ public class OvertimeRequestServiceImpl implements OvertimeRequestService {
         Employee employee = getEmployeeByUsername(username);
 
         // Calculate hours from startTime and endTime
-        Duration duration = Duration.between(request.getStartTime(), request.getEndTime());
+        Duration duration = Duration.between(request.startTime(), request.endTime());
         BigDecimal hours = BigDecimal.valueOf(duration.toMinutes())
                 .divide(BigDecimal.valueOf(60), 2, RoundingMode.HALF_UP);
 
@@ -48,24 +48,24 @@ public class OvertimeRequestServiceImpl implements OvertimeRequestService {
 
         // Kiểm tra trùng lặp thời gian đăng ký tăng ca
         long overlappingCount = overtimeRequestRepository.countOverlappingRequests(
-                employee.getId(), request.getDate(), request.getStartTime(), request.getEndTime());
+                employee.getId(), request.date(), request.startTime(), request.endTime());
         if (overlappingCount > 0) {
             throw new IllegalArgumentException("Bạn đã có đơn đăng ký tăng ca (PENDING/APPROVED) trùng khoảng thời gian này");
         }
 
         OvertimeRequest orq = OvertimeRequest.builder()
                 .employee(employee)
-                .date(request.getDate())
-                .startTime(request.getStartTime())
-                .endTime(request.getEndTime())
+                .date(request.date())
+                .startTime(request.startTime())
+                .endTime(request.endTime())
                 .hours(hours)
-                .reason(request.getReason())
+                .reason(request.reason())
                 .status("PENDING")
                 .build();
 
         OvertimeRequest saved = overtimeRequestRepository.save(orq);
         log.info("NV {} đã gửi đơn đăng ký tăng ca ngày {} ({} - {})",
-                employee.getCode(), request.getDate(), request.getStartTime(), request.getEndTime());
+                employee.getCode(), request.date(), request.startTime(), request.endTime());
 
         return mapToResponse(saved);
     }

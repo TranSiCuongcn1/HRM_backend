@@ -43,8 +43,8 @@ public class AttendanceController {
         java.math.BigDecimal lat = null;
         java.math.BigDecimal lng = null;
         if (checkInRequest != null) {
-            lat = checkInRequest.getLatitude();
-            lng = checkInRequest.getLongitude();
+            lat = checkInRequest.latitude();
+            lng = checkInRequest.longitude();
         }
 
         String ipAddress = httpRequest.getHeader("X-Forwarded-For");
@@ -77,8 +77,8 @@ public class AttendanceController {
         java.math.BigDecimal lat = null;
         java.math.BigDecimal lng = null;
         if (checkInRequest != null) {
-            lat = checkInRequest.getLatitude();
-            lng = checkInRequest.getLongitude();
+            lat = checkInRequest.latitude();
+            lng = checkInRequest.longitude();
         }
 
         String ipAddress = httpRequest.getHeader("X-Forwarded-For");

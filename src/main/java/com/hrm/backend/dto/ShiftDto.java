@@ -1,17 +1,17 @@
 package com.hrm.backend.dto;
 
-import lombok.Data;
+import lombok.Builder;
 import java.time.LocalTime;
 
-@Data
-public class ShiftDto {
-    private Integer id;
-    private String code;
-    private String name;
-    private LocalTime startTime;
-    private LocalTime endTime;
-    private LocalTime breakStartTime;
-    private LocalTime breakEndTime;
-    private Boolean isDefault;
-    private Boolean isActive;
-}
+@Builder(toBuilder = true)
+public record ShiftDto(
+    Integer id,
+    String code,
+    String name,
+    LocalTime startTime,
+    LocalTime endTime,
+    LocalTime breakStartTime,
+    LocalTime breakEndTime,
+    Boolean isDefault,
+    Boolean isActive
+) {}

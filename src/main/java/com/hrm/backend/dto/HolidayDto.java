@@ -1,12 +1,12 @@
 package com.hrm.backend.dto;
 
-import lombok.Data;
+import lombok.Builder;
 import java.time.LocalDate;
 
-@Data
-public class HolidayDto {
-    private Integer id;
-    private String name;
-    private LocalDate date;
-    private Boolean isPaid;
-}
+@Builder(toBuilder = true)
+public record HolidayDto(
+    Integer id,
+    String name,
+    LocalDate date,
+    Boolean isPaid
+) {}

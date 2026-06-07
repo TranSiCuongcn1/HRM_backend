@@ -1,5 +1,6 @@
 package com.hrm.backend.entity;
 
+import com.hrm.backend.config.prototype.Prototype;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class LeaveType {
+public class LeaveType implements Prototype<LeaveType> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +29,15 @@ public class LeaveType {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Override
+    public LeaveType clonePrototype() {
+        return LeaveType.builder()
+                .id(this.id)
+                .code(this.code)
+                .name(this.name)
+                .isPaid(this.isPaid)
+                .description(this.description)
+                .build();
+    }
 }

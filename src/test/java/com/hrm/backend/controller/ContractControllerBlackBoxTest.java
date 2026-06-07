@@ -67,11 +67,12 @@ class ContractControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/contracts - Missing required fields should return validation errors")
     void createContract_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        ContractRequest request = standardRequest();
-        request.setEmployeeId(null);
-        request.setContractType("");
-        request.setStartDate(null);
-        request.setBasicSalary(null);
+        ContractRequest request = ContractRequest.builder()
+                .employeeId(null)
+                .contractType("")
+                .startDate(null)
+                .basicSalary(null)
+                .build();
 
         mockMvc.perform(post("/api/v1/contracts")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -87,8 +88,9 @@ class ContractControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/contracts - Non-positive salary should return validation error")
     void createContract_NonPositiveSalary_ReturnsBadRequest() throws Exception {
-        ContractRequest request = standardRequest();
-        request.setBasicSalary(BigDecimal.ZERO);
+        ContractRequest request = standardRequestBuilder()
+                .basicSalary(BigDecimal.ZERO)
+                .build();
 
         mockMvc.perform(post("/api/v1/contracts")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -115,12 +117,14 @@ class ContractControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/contracts/{id} - Valid payload should update contract")
     void updateContract_ValidPayload_ReturnsOk() throws Exception {
-        ContractResponse updated = standardResponse("DRAFT");
-        updated.setBasicSalary(new BigDecimal("22000000"));
+        ContractResponse updated = standardResponse("DRAFT").toBuilder()
+                .basicSalary(new BigDecimal("22000000"))
+                .build();
         when(contractService.updateContract(eq(1), any(ContractRequest.class))).thenReturn(updated);
 
-        ContractRequest request = standardRequest();
-        request.setBasicSalary(new BigDecimal("22000000"));
+        ContractRequest request = standardRequestBuilder()
+                .basicSalary(new BigDecimal("22000000"))
+                .build();
 
         mockMvc.perform(put("/api/v1/contracts/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -197,14 +201,17 @@ class ContractControllerBlackBoxTest {
                 .andExpect(jsonPath("$.data[0].status").value("ACTIVE"));
     }
 
+    private ContractRequest.ContractRequestBuilder standardRequestBuilder() {
+        return ContractRequest.builder()
+                .employeeId(1)
+                .contractType("DEFINITE_1YR")
+                .startDate(LocalDate.of(2026, 1, 1))
+                .endDate(LocalDate.of(2026, 12, 31))
+                .basicSalary(new BigDecimal("20000000"));
+    }
+
     private ContractRequest standardRequest() {
-        return new ContractRequest(
-                1,
-                "DEFINITE_1YR",
-                LocalDate.of(2026, 1, 1),
-                LocalDate.of(2026, 12, 31),
-                new BigDecimal("20000000")
-        );
+        return standardRequestBuilder().build();
     }
 
     private ContractResponse standardResponse(String status) {

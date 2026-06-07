@@ -146,8 +146,9 @@ class OvertimeRequestControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/overtime-requests/{id}/reject - Should reject overtime request with reason")
     void rejectRequest_ReturnsOk() throws Exception {
-        OvertimeRequestResponse rejected = standardResponse("REJECTED");
-        rejected.setRejectionReason("Insufficient justification");
+        OvertimeRequestResponse rejected = standardResponse("REJECTED").toBuilder()
+                .rejectionReason("Insufficient justification")
+                .build();
         when(authentication.getName()).thenReturn("admin");
         when(overtimeRequestService.rejectRequest(1, "admin", "Insufficient justification"))
                 .thenReturn(rejected);

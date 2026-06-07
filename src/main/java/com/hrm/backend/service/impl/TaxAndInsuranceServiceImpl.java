@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 
 @Service
 public class TaxAndInsuranceServiceImpl implements TaxAndInsuranceService {
@@ -32,6 +33,26 @@ public class TaxAndInsuranceServiceImpl implements TaxAndInsuranceService {
 
     // Giảm trừ người phụ thuộc (4.4 triệu/người)
     private static final BigDecimal DEPENDENT_DEDUCTION = new BigDecimal("4400000");
+
+    private record TaxBracket(double maxLimit, double rate, double subtraction) {
+        public boolean matches(double income) {
+            return income <= maxLimit;
+        }
+
+        public double calculate(double income) {
+            return income * rate - subtraction;
+        }
+    }
+
+    private static final List<TaxBracket> TAX_BRACKETS = List.of(
+            new TaxBracket(5_000_000, 0.05, 0),
+            new TaxBracket(10_000_000, 0.10, 250_000),
+            new TaxBracket(18_000_000, 0.15, 750_000),
+            new TaxBracket(32_000_000, 0.20, 1_650_000),
+            new TaxBracket(52_000_000, 0.25, 3_250_000),
+            new TaxBracket(80_000_000, 0.30, 5_850_000),
+            new TaxBracket(Double.MAX_VALUE, 0.35, 9_850_000)
+    );
 
     @Override
     public BigDecimal calculateInsurance(BigDecimal basicSalary) {
@@ -77,23 +98,11 @@ public class TaxAndInsuranceServiceImpl implements TaxAndInsuranceService {
 
     private BigDecimal calculateProgressiveTax(BigDecimal taxableIncome) {
         double income = taxableIncome.doubleValue();
-        double tax = 0;
-
-        if (income <= 5_000_000) {
-            tax = income * 0.05;
-        } else if (income <= 10_000_000) {
-            tax = income * 0.10 - 250_000;
-        } else if (income <= 18_000_000) {
-            tax = income * 0.15 - 750_000;
-        } else if (income <= 32_000_000) {
-            tax = income * 0.20 - 1_650_000;
-        } else if (income <= 52_000_000) {
-            tax = income * 0.25 - 3_250_000;
-        } else if (income <= 80_000_000) {
-            tax = income * 0.30 - 5_850_000;
-        } else {
-            tax = income * 0.35 - 9_850_000;
-        }
+        double tax = TAX_BRACKETS.stream()
+                .filter(bracket -> bracket.matches(income))
+                .findFirst()
+                .map(bracket -> bracket.calculate(income))
+                .orElse(0.0);
 
         return BigDecimal.valueOf(tax);
     }

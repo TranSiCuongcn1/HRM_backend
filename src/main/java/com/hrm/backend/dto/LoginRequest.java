@@ -1,18 +1,13 @@
 package com.hrm.backend.dto;
 
+import lombok.Builder;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class LoginRequest {
-
+@Builder
+public record LoginRequest(
     @NotBlank(message = "Tên đăng nhập không được để trống")
-    private String username;
+    String username,
 
     @NotBlank(message = "Mật khẩu không được để trống")
-    private String password;
-}
+    String password
+) {}

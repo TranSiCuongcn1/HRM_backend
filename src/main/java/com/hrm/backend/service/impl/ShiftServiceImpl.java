@@ -16,28 +16,29 @@ import java.util.stream.Collectors;
 public class ShiftServiceImpl implements ShiftService {
 
     private final ShiftRepository shiftRepository;
+    private final com.hrm.backend.config.prototype.ShiftPrototypeRegistry shiftPrototypeRegistry;
 
     @Override
     @Transactional(readOnly = true)
     public List<ShiftDto> getAllShifts() {
-        return shiftRepository.findAll().stream().map(this::mapToDto).collect(Collectors.toList());
+        return shiftPrototypeRegistry.getAllCloned().stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public ShiftDto getShiftById(Integer id) {
-        Shift shift = shiftRepository.findById(id).orElseThrow(() -> new RuntimeException("Shift not found"));
+        Shift shift = shiftPrototypeRegistry.getByIdCloned(id).orElseThrow(() -> new RuntimeException("Shift not found"));
         return mapToDto(shift);
     }
 
     @Override
     @Transactional
     public ShiftDto createShift(ShiftDto dto) {
-        if (shiftRepository.existsByCode(dto.getCode())) {
+        if (shiftRepository.existsByCode(dto.code())) {
             throw new RuntimeException("Code already exists");
         }
         
-        if (Boolean.TRUE.equals(dto.getIsDefault())) {
+        if (Boolean.TRUE.equals(dto.isDefault())) {
             shiftRepository.findByIsDefaultTrue().ifPresent(s -> {
                 s.setIsDefault(false);
                 shiftRepository.save(s);
@@ -45,16 +46,18 @@ public class ShiftServiceImpl implements ShiftService {
         }
         
         Shift shift = Shift.builder()
-                .code(dto.getCode())
-                .name(dto.getName())
-                .startTime(dto.getStartTime())
-                .endTime(dto.getEndTime())
-                .breakStartTime(dto.getBreakStartTime())
-                .breakEndTime(dto.getBreakEndTime())
-                .isDefault(dto.getIsDefault() != null ? dto.getIsDefault() : false)
-                .isActive(dto.getIsActive() != null ? dto.getIsActive() : true)
+                .code(dto.code())
+                .name(dto.name())
+                .startTime(dto.startTime())
+                .endTime(dto.endTime())
+                .breakStartTime(dto.breakStartTime())
+                .breakEndTime(dto.breakEndTime())
+                .isDefault(dto.isDefault() != null ? dto.isDefault() : false)
+                .isActive(dto.isActive() != null ? dto.isActive() : true)
                 .build();
-        return mapToDto(shiftRepository.save(shift));
+        Shift saved = shiftRepository.save(shift);
+        shiftPrototypeRegistry.refreshCache(); // Làm mới registry sau khi thêm
+        return mapToDto(saved);
     }
 
     @Override
@@ -62,50 +65,53 @@ public class ShiftServiceImpl implements ShiftService {
     public ShiftDto updateShift(Integer id, ShiftDto dto) {
         Shift shift = shiftRepository.findById(id).orElseThrow(() -> new RuntimeException("Shift not found"));
         
-        if (Boolean.TRUE.equals(dto.getIsDefault()) && !Boolean.TRUE.equals(shift.getIsDefault())) {
+        if (Boolean.TRUE.equals(dto.isDefault()) && !Boolean.TRUE.equals(shift.getIsDefault())) {
             shiftRepository.findByIsDefaultTrue().ifPresent(s -> {
                 s.setIsDefault(false);
                 shiftRepository.save(s);
             });
         }
         
-        shift.setCode(dto.getCode());
-        shift.setName(dto.getName());
-        shift.setStartTime(dto.getStartTime());
-        shift.setEndTime(dto.getEndTime());
-        shift.setBreakStartTime(dto.getBreakStartTime());
-        shift.setBreakEndTime(dto.getBreakEndTime());
-        shift.setIsDefault(dto.getIsDefault() != null ? dto.getIsDefault() : false);
-        shift.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
+        shift.setCode(dto.code());
+        shift.setName(dto.name());
+        shift.setStartTime(dto.startTime());
+        shift.setEndTime(dto.endTime());
+        shift.setBreakStartTime(dto.breakStartTime());
+        shift.setBreakEndTime(dto.breakEndTime());
+        shift.setIsDefault(dto.isDefault() != null ? dto.isDefault() : false);
+        shift.setIsActive(dto.isActive() != null ? dto.isActive() : true);
         
-        return mapToDto(shiftRepository.save(shift));
+        Shift saved = shiftRepository.save(shift);
+        shiftPrototypeRegistry.refreshCache(); // Làm mới registry sau khi cập nhật
+        return mapToDto(saved);
     }
 
     @Override
     @Transactional
     public void deleteShift(Integer id) {
         shiftRepository.deleteById(id);
+        shiftPrototypeRegistry.refreshCache(); // Làm mới registry sau khi xóa
     }
 
     @Override
     @Transactional(readOnly = true)
     public ShiftDto getDefaultShift() {
-        return shiftRepository.findByIsDefaultTrue()
+        return shiftPrototypeRegistry.getDefaultShiftCloned()
                 .map(this::mapToDto)
                 .orElse(null);
     }
 
     private ShiftDto mapToDto(Shift shift) {
-        ShiftDto dto = new ShiftDto();
-        dto.setId(shift.getId());
-        dto.setCode(shift.getCode());
-        dto.setName(shift.getName());
-        dto.setStartTime(shift.getStartTime());
-        dto.setEndTime(shift.getEndTime());
-        dto.setBreakStartTime(shift.getBreakStartTime());
-        dto.setBreakEndTime(shift.getBreakEndTime());
-        dto.setIsDefault(shift.getIsDefault());
-        dto.setIsActive(shift.getIsActive());
-        return dto;
+        return ShiftDto.builder()
+                .id(shift.getId())
+                .code(shift.getCode())
+                .name(shift.getName())
+                .startTime(shift.getStartTime())
+                .endTime(shift.getEndTime())
+                .breakStartTime(shift.getBreakStartTime())
+                .breakEndTime(shift.getBreakEndTime())
+                .isDefault(shift.getIsDefault())
+                .isActive(shift.getIsActive())
+                .build();
     }
 }

@@ -108,8 +108,9 @@ class HolidayControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/holidays/{id} - Valid payload should update holiday")
     void update_ValidPayload_ReturnsOk() throws Exception {
-        HolidayDto updated = standardHoliday();
-        updated.setName("Tet Holiday Updated");
+        HolidayDto updated = standardHoliday().toBuilder()
+                .name("Tet Holiday Updated")
+                .build();
         when(holidayService.updateHoliday(eq(1), any(HolidayDto.class))).thenReturn(updated);
 
         mockMvc.perform(put("/api/v1/holidays/{id}", 1)
@@ -143,11 +144,11 @@ class HolidayControllerBlackBoxTest {
     }
 
     private HolidayDto standardHoliday() {
-        HolidayDto dto = new HolidayDto();
-        dto.setId(1);
-        dto.setName("Tet Holiday");
-        dto.setDate(LocalDate.of(2026, 2, 17));
-        dto.setIsPaid(true);
-        return dto;
+        return HolidayDto.builder()
+                .id(1)
+                .name("Tet Holiday")
+                .date(LocalDate.of(2026, 2, 17))
+                .isPaid(true)
+                .build();
     }
 }

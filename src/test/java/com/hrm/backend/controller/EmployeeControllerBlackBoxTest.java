@@ -5,7 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.hrm.backend.dto.EmployeeRequest;
 import com.hrm.backend.dto.EmployeeResponse;
 import com.hrm.backend.exception.GlobalExceptionHandler;
-import com.hrm.backend.service.EmployeeService;
+import com.hrm.backend.service.facade.EmployeeFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class EmployeeControllerBlackBoxTest {
     private ObjectMapper objectMapper;
 
     @Mock
-    private EmployeeService employeeService;
+    private EmployeeFacade employeeFacade;
 
     @InjectMocks
     private EmployeeController employeeController;
@@ -61,7 +61,7 @@ class EmployeeControllerBlackBoxTest {
     @DisplayName("Black-box GET /api/v1/employees - Returns paged employees in ApiResponse")
     void getAllEmployees_ReturnsPagedEmployees() throws Exception {
         EmployeeResponse employee = standardResponse();
-        when(employeeService.getAllEmployees(eq("EMP"), eq("ACTIVE"), eq(1), any(Pageable.class)))
+        when(employeeFacade.getAllEmployees(eq("EMP"), eq("ACTIVE"), eq(1), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(employee), PageRequest.of(0, 10), 1));
 
         mockMvc.perform(get("/api/v1/employees")
@@ -78,7 +78,7 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box GET /api/v1/employees/{id} - Returns employee detail")
     void getEmployeeById_ReturnsEmployeeDetail() throws Exception {
-        when(employeeService.getEmployeeById(1)).thenReturn(standardResponse());
+        when(employeeFacade.getEmployeeById(1)).thenReturn(standardResponse());
 
         mockMvc.perform(get("/api/v1/employees/{id}", 1))
                 .andExpect(status().isOk())
@@ -90,13 +90,14 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Valid payload should create employee")
     void createEmployee_ValidPayload_ReturnsCreated() throws Exception {
-        EmployeeResponse created = standardResponse();
-        created.setGeneratedAccount(EmployeeResponse.AccountInfo.builder()
-                .username("EMP0001")
-                .defaultPassword("Hrm@123456")
-                .role("EMPLOYEE")
-                .build());
-        when(employeeService.createEmployee(any(EmployeeRequest.class))).thenReturn(created);
+        EmployeeResponse created = standardResponse().toBuilder()
+                .generatedAccount(EmployeeResponse.AccountInfo.builder()
+                        .username("EMP0001")
+                        .defaultPassword("Hrm@123456")
+                        .role("EMPLOYEE")
+                        .build())
+                .build();
+        when(employeeFacade.onboardEmployee(any(EmployeeRequest.class))).thenReturn(created);
 
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -109,8 +110,9 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Invalid email should return validation errors")
     void createEmployee_InvalidEmail_ReturnsBadRequest() throws Exception {
-        EmployeeRequest request = standardRequest();
-        request.setEmail("invalid-email");
+        EmployeeRequest request = standardRequestBuilder()
+                .email("invalid-email")
+                .build();
 
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,10 +125,11 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Missing required fields should return validation errors")
     void createEmployee_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        EmployeeRequest request = standardRequest();
-        request.setName("");
-        request.setEmail("");
-        request.setJoinDate(null);
+        EmployeeRequest request = standardRequestBuilder()
+                .name("")
+                .email("")
+                .joinDate(null)
+                .build();
 
         mockMvc.perform(post("/api/v1/employees")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -141,12 +144,14 @@ class EmployeeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/employees/{id} - Valid payload should update employee")
     void updateEmployee_ValidPayload_ReturnsOk() throws Exception {
-        EmployeeResponse updated = standardResponse();
-        updated.setName("Nguyen Van B");
-        when(employeeService.updateEmployee(eq(1), any(EmployeeRequest.class))).thenReturn(updated);
+        EmployeeResponse updated = standardResponse().toBuilder()
+                .name("Nguyen Van B")
+                .build();
+        when(employeeFacade.updateEmployee(eq(1), any(EmployeeRequest.class))).thenReturn(updated);
 
-        EmployeeRequest request = standardRequest();
-        request.setName("Nguyen Van B");
+        EmployeeRequest request = standardRequestBuilder()
+                .name("Nguyen Van B")
+                .build();
 
         mockMvc.perform(put("/api/v1/employees/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -160,32 +165,32 @@ class EmployeeControllerBlackBoxTest {
     @DisplayName("Black-box PUT /api/v1/employees/{id}/resign - Should call resign service")
     void resignEmployee_ReturnsOk() throws Exception {
         LocalDate resignationDate = LocalDate.of(2026, 5, 28);
-        doNothing().when(employeeService).resignEmployee(1, resignationDate);
+        doNothing().when(employeeFacade).resignEmployee(1, resignationDate);
 
         mockMvc.perform(put("/api/v1/employees/{id}/resign", 1)
                         .param("resignationDate", "2026-05-28"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(employeeService).resignEmployee(1, resignationDate);
+        verify(employeeFacade).resignEmployee(1, resignationDate);
     }
 
     @Test
     @DisplayName("Black-box DELETE /api/v1/employees/{id} - Should call delete service")
     void deleteEmployee_ReturnsOk() throws Exception {
-        doNothing().when(employeeService).deleteEmployee(1);
+        doNothing().when(employeeFacade).deleteEmployee(1);
 
         mockMvc.perform(delete("/api/v1/employees/{id}", 1))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
 
-        verify(employeeService).deleteEmployee(1);
+        verify(employeeFacade).deleteEmployee(1);
     }
 
     @Test
     @DisplayName("Black-box POST /api/v1/employees - Duplicate email should return 400 Bad Request")
     void createEmployee_DuplicateEmail_ReturnsBadRequest() throws Exception {
-        when(employeeService.createEmployee(any(EmployeeRequest.class)))
+        when(employeeFacade.onboardEmployee(any(EmployeeRequest.class)))
                 .thenThrow(new IllegalArgumentException("Email already exists"));
 
         mockMvc.perform(post("/api/v1/employees")
@@ -200,23 +205,26 @@ class EmployeeControllerBlackBoxTest {
     @DisplayName("Black-box DELETE /api/v1/employees/{id} - Business conflict currently maps to 500 fallback")
     void deleteEmployee_BusinessConflict_ReturnsInternalServerError() throws Exception {
         doThrow(new IllegalStateException("Employee has business data"))
-                .when(employeeService).deleteEmployee(1);
+                .when(employeeFacade).deleteEmployee(1);
 
         mockMvc.perform(delete("/api/v1/employees/{id}", 1))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false));
     }
 
+    private EmployeeRequest.EmployeeRequestBuilder standardRequestBuilder() {
+        return EmployeeRequest.builder()
+                .code("EMP0001")
+                .name("Nguyen Van A")
+                .email("employee@hrm.com")
+                .phone("0900000000")
+                .joinDate(LocalDate.of(2026, 1, 1))
+                .departmentId(1)
+                .dependentCount(0);
+    }
+
     private EmployeeRequest standardRequest() {
-        EmployeeRequest request = new EmployeeRequest();
-        request.setCode("EMP0001");
-        request.setName("Nguyen Van A");
-        request.setEmail("employee@hrm.com");
-        request.setPhone("0900000000");
-        request.setJoinDate(LocalDate.of(2026, 1, 1));
-        request.setDepartmentId(1);
-        request.setDependentCount(0);
-        return request;
+        return standardRequestBuilder().build();
     }
 
     private EmployeeResponse standardResponse() {

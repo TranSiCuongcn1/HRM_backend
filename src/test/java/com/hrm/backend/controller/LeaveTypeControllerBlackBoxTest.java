@@ -76,9 +76,10 @@ class LeaveTypeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/leave-types - Missing code and name should return validation errors")
     void createLeaveType_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        LeaveTypeRequest request = standardRequest();
-        request.setCode("");
-        request.setName("");
+        LeaveTypeRequest request = standardRequestBuilder()
+                .code("")
+                .name("")
+                .build();
 
         mockMvc.perform(post("/api/v1/leave-types")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -110,8 +111,9 @@ class LeaveTypeControllerBlackBoxTest {
         updated.setName("Annual Paid Leave");
         when(leaveTypeService.updateLeaveType(eq(1), any(LeaveTypeRequest.class))).thenReturn(updated);
 
-        LeaveTypeRequest request = standardRequest();
-        request.setName("Annual Paid Leave");
+        LeaveTypeRequest request = standardRequestBuilder()
+                .name("Annual Paid Leave")
+                .build();
 
         mockMvc.perform(put("/api/v1/leave-types/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -124,8 +126,9 @@ class LeaveTypeControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/leave-types/{id} - Missing name should return validation error")
     void updateLeaveType_MissingName_ReturnsBadRequest() throws Exception {
-        LeaveTypeRequest request = standardRequest();
-        request.setName("");
+        LeaveTypeRequest request = standardRequestBuilder()
+                .name("")
+                .build();
 
         mockMvc.perform(put("/api/v1/leave-types/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -135,8 +138,16 @@ class LeaveTypeControllerBlackBoxTest {
                 .andExpect(jsonPath("$.data.name").exists());
     }
 
+    private LeaveTypeRequest.LeaveTypeRequestBuilder standardRequestBuilder() {
+        return LeaveTypeRequest.builder()
+                .code("ANNUAL")
+                .name("Annual Leave")
+                .isPaid(true)
+                .description("Paid annual leave");
+    }
+
     private LeaveTypeRequest standardRequest() {
-        return new LeaveTypeRequest("ANNUAL", "Annual Leave", true, "Paid annual leave");
+        return standardRequestBuilder().build();
     }
 
     private LeaveType standardLeaveType() {

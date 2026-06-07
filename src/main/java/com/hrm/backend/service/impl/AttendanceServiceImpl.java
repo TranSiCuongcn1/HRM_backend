@@ -349,17 +349,17 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bản ghi chấm công ID: " + recordId));
 
         // Cập nhật các trường Admin gửi lên
-        if (request.getCheckIn() != null) {
-            record.setCheckIn(request.getCheckIn());
+        if (request.checkIn() != null) {
+            record.setCheckIn(request.checkIn());
         }
-        if (request.getCheckOut() != null) {
-            record.setCheckOut(request.getCheckOut());
+        if (request.checkOut() != null) {
+            record.setCheckOut(request.checkOut());
         }
-        if (request.getStatus() != null) {
-            record.setStatus(request.getStatus());
+        if (request.status() != null) {
+            record.setStatus(request.status());
         }
-        if (request.getNote() != null) {
-            record.setNote(request.getNote());
+        if (request.note() != null) {
+            record.setNote(request.note());
         }
 
         // Tính lại workHours và overtimeHours nếu có đủ giờ vào/ra
@@ -370,7 +370,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
         AttendanceRecord updated = attendanceRepository.save(record);
         log.info("Admin đã sửa bản ghi chấm công #{} - NV: {}, Ngày: {}, Note: {}",
-                recordId, record.getEmployee().getCode(), record.getDate(), request.getNote());
+                recordId, record.getEmployee().getCode(), record.getDate(), request.note());
 
         return mapToResponse(updated);
     }

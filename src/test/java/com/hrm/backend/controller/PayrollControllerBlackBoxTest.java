@@ -116,8 +116,9 @@ class PayrollControllerBlackBoxTest {
                 Map.of("Advance", new BigDecimal("100000")),
                 new BigDecimal("750000")
         );
-        PayrollResponse response = standardResponse("DRAFT");
-        response.setOvertimePay(new BigDecimal("750000"));
+        PayrollResponse response = standardResponse("DRAFT").toBuilder()
+                .overtimePay(new BigDecimal("750000"))
+                .build();
         when(payrollService.updatePayroll(eq(1), any(PayrollUpdateRequest.class))).thenReturn(response);
 
         mockMvc.perform(put("/api/v1/payrolls/{id}", 1)

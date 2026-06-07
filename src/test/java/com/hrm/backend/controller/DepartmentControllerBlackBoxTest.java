@@ -92,9 +92,10 @@ class DepartmentControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box POST /api/v1/departments - Missing code and name should return validation errors")
     void createDepartment_MissingRequiredFields_ReturnsBadRequest() throws Exception {
-        DepartmentRequest request = standardRequest();
-        request.setCode("");
-        request.setName("");
+        DepartmentRequest request = standardRequestBuilder()
+                .code("")
+                .name("")
+                .build();
 
         mockMvc.perform(post("/api/v1/departments")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -122,12 +123,14 @@ class DepartmentControllerBlackBoxTest {
     @Test
     @DisplayName("Black-box PUT /api/v1/departments/{id} - Valid payload should update department")
     void updateDepartment_ValidPayload_ReturnsOk() throws Exception {
-        DepartmentResponse updated = standardResponse();
-        updated.setName("Engineering");
+        DepartmentResponse updated = standardResponse().toBuilder()
+                .name("Engineering")
+                .build();
         when(departmentService.updateDepartment(eq(1), any(DepartmentRequest.class))).thenReturn(updated);
 
-        DepartmentRequest request = standardRequest();
-        request.setName("Engineering");
+        DepartmentRequest request = standardRequestBuilder()
+                .name("Engineering")
+                .build();
 
         mockMvc.perform(put("/api/v1/departments/{id}", 1)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -174,12 +177,15 @@ class DepartmentControllerBlackBoxTest {
                 .andExpect(jsonPath("$.success").value(false));
     }
 
+    private DepartmentRequest.DepartmentRequestBuilder standardRequestBuilder() {
+        return DepartmentRequest.builder()
+                .code("IT")
+                .name("Information Technology")
+                .description("IT Department");
+    }
+
     private DepartmentRequest standardRequest() {
-        DepartmentRequest request = new DepartmentRequest();
-        request.setCode("IT");
-        request.setName("Information Technology");
-        request.setDescription("IT Department");
-        return request;
+        return standardRequestBuilder().build();
     }
 
     private DepartmentResponse standardResponse() {

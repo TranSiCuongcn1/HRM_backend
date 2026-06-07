@@ -135,11 +135,11 @@ class PayrollServiceImplTest {
 
         assertThat(responses).hasSize(1);
         PayrollResponse response = responses.get(0);
-        assertThat(response.getStatus()).isEqualTo("DRAFT");
-        assertThat(response.getActualDays()).isEqualByComparingTo(new BigDecimal("23"));
-        assertThat(response.getDeductions()).containsEntry("Advance", new BigDecimal("100000"));
-        assertThat(response.getDeductions()).containsEntry("BHXH_BHYT_BHTN (10.5%)", new BigDecimal("2310000"));
-        assertThat(response.getDeductions()).containsEntry("Thuế TNCN (PIT)", new BigDecimal("500000"));
+        assertThat(response.status()).isEqualTo("DRAFT");
+        assertThat(response.actualDays()).isEqualByComparingTo(new BigDecimal("23"));
+        assertThat(response.deductions()).containsEntry("Advance", new BigDecimal("100000"));
+        assertThat(response.deductions()).containsEntry("BHXH_BHYT_BHTN (10.5%)", new BigDecimal("2310000"));
+        assertThat(response.deductions()).containsEntry("Thuế TNCN (PIT)", new BigDecimal("500000"));
 
         ArgumentCaptor<Payroll> captor = ArgumentCaptor.forClass(Payroll.class);
         verify(payrollRepository).save(captor.capture());
@@ -196,10 +196,10 @@ class PayrollServiceImplTest {
 
         PayrollResponse response = payrollService.updatePayroll(1, request);
 
-        assertThat(response.getGrossSalary()).isEqualByComparingTo(new BigDecimal("20800000.00"));
-        assertThat(response.getNetSalary()).isEqualByComparingTo(new BigDecimal("20700000.00"));
-        assertThat(response.getAllowances()).containsEntry("Meal", new BigDecimal("500000"));
-        assertThat(response.getDeductions()).containsEntry("Advance", new BigDecimal("100000"));
+        assertThat(response.grossSalary()).isEqualByComparingTo(new BigDecimal("20800000.00"));
+        assertThat(response.netSalary()).isEqualByComparingTo(new BigDecimal("20700000.00"));
+        assertThat(response.allowances()).containsEntry("Meal", new BigDecimal("500000"));
+        assertThat(response.deductions()).containsEntry("Advance", new BigDecimal("100000"));
     }
 
     @Test
@@ -209,7 +209,7 @@ class PayrollServiceImplTest {
         payroll.setStatus("CALCULATED");
         when(payrollRepository.findById(1)).thenReturn(Optional.of(payroll));
 
-        assertThatThrownBy(() -> payrollService.updatePayroll(1, new PayrollUpdateRequest()))
+        assertThatThrownBy(() -> payrollService.updatePayroll(1, PayrollUpdateRequest.builder().build()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("DRAFT");
 
@@ -237,12 +237,12 @@ class PayrollServiceImplTest {
 
         assertThat(responses).hasSize(1);
         PayrollResponse response = responses.get(0);
-        assertThat(response.getAllowances()).containsEntry("Meal", new BigDecimal("500000"));
-        assertThat(response.getAllowances()).containsEntry("Phone", new BigDecimal("300000"));
-        assertThat(response.getDeductions()).containsEntry("Advance", new BigDecimal("100000"));
-        assertThat(response.getDeductions()).containsEntry("Union", new BigDecimal("50000"));
-        assertThat(response.getGrossSalary()).isEqualByComparingTo(new BigDecimal("22800000.00"));
-        assertThat(response.getNetSalary()).isEqualByComparingTo(new BigDecimal("22650000.00"));
+        assertThat(response.allowances()).containsEntry("Meal", new BigDecimal("500000"));
+        assertThat(response.allowances()).containsEntry("Phone", new BigDecimal("300000"));
+        assertThat(response.deductions()).containsEntry("Advance", new BigDecimal("100000"));
+        assertThat(response.deductions()).containsEntry("Union", new BigDecimal("50000"));
+        assertThat(response.grossSalary()).isEqualByComparingTo(new BigDecimal("22800000.00"));
+        assertThat(response.netSalary()).isEqualByComparingTo(new BigDecimal("22650000.00"));
     }
 
     @Test
@@ -265,9 +265,9 @@ class PayrollServiceImplTest {
         List<PayrollResponse> responses = payrollService.generatePayroll(6, 2026, new BigDecimal("22"), null, null);
 
         assertThat(responses).hasSize(1);
-        assertThat(responses.get(0).getActualDays()).isEqualByComparingTo(new BigDecimal("22"));
-        assertThat(responses.get(0).getGrossSalary()).isEqualByComparingTo(new BigDecimal("22000000.00"));
-        assertThat(responses.get(0).getNetSalary()).isEqualByComparingTo(new BigDecimal("22000000.00"));
+        assertThat(responses.get(0).actualDays()).isEqualByComparingTo(new BigDecimal("22"));
+        assertThat(responses.get(0).grossSalary()).isEqualByComparingTo(new BigDecimal("22000000.00"));
+        assertThat(responses.get(0).netSalary()).isEqualByComparingTo(new BigDecimal("22000000.00"));
     }
 
     @Test
@@ -290,9 +290,9 @@ class PayrollServiceImplTest {
         List<PayrollResponse> responses = payrollService.generatePayroll(6, 2026, new BigDecimal("22"), null, null);
 
         assertThat(responses).hasSize(1);
-        assertThat(responses.get(0).getActualDays()).isEqualByComparingTo(new BigDecimal("22"));
-        assertThat(responses.get(0).getOvertimePay()).isEqualByComparingTo(new BigDecimal("3000000.00"));
-        assertThat(responses.get(0).getGrossSalary()).isEqualByComparingTo(new BigDecimal("25000000.00"));
+        assertThat(responses.get(0).actualDays()).isEqualByComparingTo(new BigDecimal("22"));
+        assertThat(responses.get(0).overtimePay()).isEqualByComparingTo(new BigDecimal("3000000.00"));
+        assertThat(responses.get(0).grossSalary()).isEqualByComparingTo(new BigDecimal("25000000.00"));
     }
 
     @Test
@@ -304,7 +304,7 @@ class PayrollServiceImplTest {
 
         PayrollResponse response = payrollService.submitPayroll(1);
 
-        assertThat(response.getStatus()).isEqualTo("CALCULATED");
+        assertThat(response.status()).isEqualTo("CALCULATED");
     }
 
     @Test
@@ -335,9 +335,9 @@ class PayrollServiceImplTest {
 
         PayrollResponse response = payrollService.approvePayroll("admin", 1);
 
-        assertThat(response.getStatus()).isEqualTo("APPROVED");
-        assertThat(response.getApprovedByName()).isEqualTo("Admin User");
-        assertThat(response.getApprovedAt()).isNotNull();
+        assertThat(response.status()).isEqualTo("APPROVED");
+        assertThat(response.approvedByName()).isEqualTo("Admin User");
+        assertThat(response.approvedAt()).isNotNull();
     }
 
     @Test
@@ -367,8 +367,8 @@ class PayrollServiceImplTest {
 
         PayrollResponse response = payrollService.markAsPaid(1);
 
-        assertThat(response.getStatus()).isEqualTo("PAID");
-        assertThat(response.getPaidAt()).isNotNull();
+        assertThat(response.status()).isEqualTo("PAID");
+        assertThat(response.paidAt()).isNotNull();
     }
 
     @Test

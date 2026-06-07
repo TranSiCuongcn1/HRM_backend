@@ -27,13 +27,13 @@ public class HolidayServiceImpl implements HolidayService {
     @Override
     @Transactional
     public HolidayDto createHoliday(HolidayDto dto) {
-        if (holidayRepository.existsByDate(dto.getDate())) {
+        if (holidayRepository.existsByDate(dto.date())) {
             throw new RuntimeException("Date already exists");
         }
         Holiday holiday = Holiday.builder()
-                .name(dto.getName())
-                .date(dto.getDate())
-                .isPaid(dto.getIsPaid() != null ? dto.getIsPaid() : true)
+                .name(dto.name())
+                .date(dto.date())
+                .isPaid(dto.isPaid() != null ? dto.isPaid() : true)
                 .build();
         return mapToDto(holidayRepository.save(holiday));
     }
@@ -43,11 +43,11 @@ public class HolidayServiceImpl implements HolidayService {
     public List<HolidayDto> createHolidays(List<HolidayDto> dtos) {
         List<Holiday> holidaysToSave = new ArrayList<>();
         for (HolidayDto dto : dtos) {
-            if (!holidayRepository.existsByDate(dto.getDate())) {
+            if (!holidayRepository.existsByDate(dto.date())) {
                 holidaysToSave.add(Holiday.builder()
-                        .name(dto.getName())
-                        .date(dto.getDate())
-                        .isPaid(dto.getIsPaid() != null ? dto.getIsPaid() : true)
+                        .name(dto.name())
+                        .date(dto.date())
+                        .isPaid(dto.isPaid() != null ? dto.isPaid() : true)
                         .build());
             }
         }
@@ -58,9 +58,9 @@ public class HolidayServiceImpl implements HolidayService {
     @Transactional
     public HolidayDto updateHoliday(Integer id, HolidayDto dto) {
         Holiday holiday = holidayRepository.findById(id).orElseThrow(() -> new RuntimeException("Holiday not found"));
-        holiday.setName(dto.getName());
-        holiday.setDate(dto.getDate());
-        holiday.setIsPaid(dto.getIsPaid() != null ? dto.getIsPaid() : true);
+        holiday.setName(dto.name());
+        holiday.setDate(dto.date());
+        holiday.setIsPaid(dto.isPaid() != null ? dto.isPaid() : true);
         return mapToDto(holidayRepository.save(holiday));
     }
 
@@ -71,11 +71,11 @@ public class HolidayServiceImpl implements HolidayService {
     }
 
     private HolidayDto mapToDto(Holiday holiday) {
-        HolidayDto dto = new HolidayDto();
-        dto.setId(holiday.getId());
-        dto.setName(holiday.getName());
-        dto.setDate(holiday.getDate());
-        dto.setIsPaid(holiday.getIsPaid());
-        return dto;
+        return HolidayDto.builder()
+                .id(holiday.getId())
+                .name(holiday.getName())
+                .date(holiday.getDate())
+                .isPaid(holiday.getIsPaid())
+                .build();
     }
 }

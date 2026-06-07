@@ -1,24 +1,17 @@
 package com.hrm.backend.dto;
 
+import lombok.Builder;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class DepartmentRequest {
-
+@Builder
+public record DepartmentRequest(
     @NotBlank(message = "Mã phòng ban không được để trống")
-    private String code;
+    String code,
 
     @NotBlank(message = "Tên phòng ban không được để trống")
-    private String name;
+    String name,
 
-    private String description;
-
-    private Integer managerId; // ID của trưởng phòng
-
-    private Integer parentId; // ID của phòng ban cha
-}
+    String description,
+    Integer managerId, // ID của trưởng phòng
+    Integer parentId  // ID của phòng ban cha
+) {}

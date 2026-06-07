@@ -60,8 +60,8 @@ public class AuthServiceImpl implements AuthService {
         // Spring Security xác thực qua AuthenticationManager
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
+                        loginRequest.username(),
+                        loginRequest.password()
                 )
         );
 
@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtTokenProvider.generateToken(authentication);
 
         // Lấy thông tin User từ DB để trả về response
-        User user = userRepository.findByUsername(loginRequest.getUsername())
+        User user = userRepository.findByUsername(loginRequest.username())
                 .orElseThrow(() -> new BadCredentialsException("Người dùng không tồn tại"));
 
         return LoginResponse.builder()
@@ -96,35 +96,35 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
 
         // Kiểm tra mật khẩu hiện tại có đúng không
-        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+        if (!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())) {
             throw new BadCredentialsException("Mật khẩu hiện tại không đúng");
         }
 
         // Kiểm tra mật khẩu mới và xác nhận có trùng khớp không
-        if (!request.getNewPassword().equals(request.getConfirmPassword())) {
+        if (!request.newPassword().equals(request.confirmPassword())) {
             throw new IllegalArgumentException("Mật khẩu mới và xác nhận mật khẩu không khớp");
         }
 
         // Kiểm tra mật khẩu mới không trùng mật khẩu cũ
-        if (passwordEncoder.matches(request.getNewPassword(), user.getPasswordHash())) {
+        if (passwordEncoder.matches(request.newPassword(), user.getPasswordHash())) {
             throw new IllegalArgumentException("Mật khẩu mới không được trùng với mật khẩu hiện tại");
         }
 
         // Cập nhật mật khẩu mới (được mã hoá BCrypt)
-        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        user.setPasswordHash(passwordEncoder.encode(request.newPassword()));
         userRepository.save(user);
     }
 
     @Override
     @Transactional
     public void initiateForgotPassword(ForgotPasswordRequest request) {
-        String email = request.getEmail().trim().toLowerCase();
+        String email = request.email().trim().toLowerCase();
         User user = userRepository.findByEmailIgnoreCase(email)
                 .orElseThrow(() -> new IllegalArgumentException("Email không tồn tại trong hệ thống"));
 
         // Sinh mã OTP 6 chữ số ngẫu nhiên
         String otpCode = String.format("%06d", new Random().nextInt(1000000));
-        String newPasswordHash = passwordEncoder.encode(request.getNewPassword());
+        String newPasswordHash = passwordEncoder.encode(request.newPassword());
         LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5);
 
         // Lưu vào cache (sử dụng email đã được chuyển thành chữ thường làm key)
@@ -138,7 +138,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public void verifyForgotPassword(VerifyForgotPasswordRequest request) {
-        String email = request.getEmail().trim().toLowerCase();
+        String email = request.email().trim().toLowerCase();
         TempResetData resetData = resetCache.get(email);
 
         if (resetData == null) {
@@ -150,7 +150,7 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Mã OTP đã hết hạn. Vui lòng gửi lại yêu cầu.");
         }
 
-        if (!resetData.getOtpCode().equals(request.getOtpCode().trim())) {
+        if (!resetData.getOtpCode().equals(request.otpCode().trim())) {
             throw new IllegalArgumentException("Mã OTP xác thực không chính xác");
         }
 

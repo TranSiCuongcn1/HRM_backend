@@ -1,40 +1,31 @@
 package com.hrm.backend.dto;
 
+import lombok.Builder;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class EmployeeRequest {
-
-    private String code;
+@Builder
+public record EmployeeRequest(
+    String code,
 
     @NotBlank(message = "Tên nhân viên không được để trống")
-    private String name;
+    String name,
 
-    private String avatar;
+    String avatar,
 
     @NotBlank(message = "Email không được để trống")
     @Email(message = "Email không đúng định dạng")
-    private String email;
+    String email,
 
-    private String phone;
-
-    private LocalDate birthday;
-
-    private String address;
+    String phone,
+    LocalDate birthday,
+    String address,
 
     @NotNull(message = "Ngày vào làm không được để trống")
-    private LocalDate joinDate;
+    LocalDate joinDate,
 
-    private Integer departmentId;
-
-    private Integer dependentCount;
-}
+    Integer departmentId,
+    Integer dependentCount
+) {}
