@@ -13,6 +13,8 @@ import com.hrm.backend.repository.UserRepository;
 import com.hrm.backend.repository.OvertimeRequestRepository;
 import com.hrm.backend.entity.OvertimeRequest;
 import com.hrm.backend.entity.Holiday;
+import com.hrm.backend.entity.Contract;
+import com.hrm.backend.repository.ContractRepository;
 import com.hrm.backend.repository.HolidayRepository;
 import com.hrm.backend.service.AttendanceService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +44,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final ShiftRepository shiftRepository;
     private final OvertimeRequestRepository overtimeRequestRepository;
     private final HolidayRepository holidayRepository;
+    @org.springframework.beans.factory.annotation.Autowired
+    private ContractRepository contractRepository;
 
     @org.springframework.beans.factory.annotation.Value("${app.attendance.office-latitude:21.028511}")
     private double officeLatitude;
@@ -176,6 +180,19 @@ public class AttendanceServiceImpl implements AttendanceService {
     public AttendanceResponse checkIn(String username, java.math.BigDecimal latitude, java.math.BigDecimal longitude, String ipAddress) {
         Employee employee = getEmployeeByUsername(username);
         LocalDate today = LocalDate.now();
+
+        // Kiểm tra hợp đồng lao động đang kích hoạt (ACTIVE) và còn hạn (nếu có repository)
+        if (contractRepository != null) {
+            Contract activeContract = contractRepository.findByEmployeeIdAndStatus(employee.getId(), "ACTIVE")
+                    .orElseThrow(() -> new IllegalArgumentException("Bạn không có hợp đồng lao động đang kích hoạt (ACTIVE). Vui lòng liên hệ Admin."));
+
+            if (activeContract.getStartDate().isAfter(today)) {
+                throw new IllegalArgumentException("Hợp đồng lao động của bạn chưa đến ngày bắt đầu hiệu lực (Ngày bắt đầu: " + activeContract.getStartDate() + ")");
+            }
+            if (activeContract.getEndDate() != null && activeContract.getEndDate().isBefore(today)) {
+                throw new IllegalArgumentException("Hợp đồng lao động của bạn đã hết hạn (Ngày kết thúc: " + activeContract.getEndDate() + ")");
+            }
+        }
 
         // Kiểm tra đã check-in hôm nay chưa
         if (attendanceRepository.existsByEmployeeIdAndDate(employee.getId(), today)) {
