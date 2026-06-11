@@ -103,7 +103,9 @@ public class PayrollServiceImpl implements PayrollService {
                 skipped++;
                 continue;
             }
-            BigDecimal basicSalary = contractOpt.get().basicSalary();
+            BigDecimal basicSalary = contractOpt.get().effectiveSalary() != null 
+                    ? contractOpt.get().effectiveSalary() 
+                    : contractOpt.get().basicSalary();
 
             // b. Lấy thống kê chấm công
             AttendanceResponse.MonthlyStats stats = attendanceService.getMonthlyStats(

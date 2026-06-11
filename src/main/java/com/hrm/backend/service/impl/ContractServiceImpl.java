@@ -7,8 +7,8 @@ import com.hrm.backend.entity.Employee;
 import com.hrm.backend.repository.ContractRepository;
 import com.hrm.backend.repository.EmployeeRepository;
 import com.hrm.backend.service.ContractService;
+import com.hrm.backend.service.contract.ContractProcessingFactory;
 import com.hrm.backend.service.contract.validator.ContractValidator;
-import com.hrm.backend.service.contract.validator.creator.ContractValidatorCreator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,16 +26,16 @@ public class ContractServiceImpl implements ContractService {
 
     private final ContractRepository contractRepository;
     private final EmployeeRepository employeeRepository;
-    private final Map<String, ContractValidatorCreator> validatorCreators;
+    private final Map<String, ContractProcessingFactory> contractFactories;
 
     public ContractServiceImpl(
             ContractRepository contractRepository,
             EmployeeRepository employeeRepository,
-            List<ContractValidatorCreator> creators) {
+            List<ContractProcessingFactory> factories) {
         this.contractRepository = contractRepository;
         this.employeeRepository = employeeRepository;
-        this.validatorCreators = creators.stream()
-                .collect(Collectors.toMap(ContractValidatorCreator::getSupportedType, Function.identity()));
+        this.contractFactories = factories.stream()
+                .collect(Collectors.toMap(ContractProcessingFactory::getSupportedType, Function.identity()));
     }
 
     // ========================================
@@ -236,11 +236,11 @@ public class ContractServiceImpl implements ContractService {
     // ========================================
 
     private void validateDates(ContractRequest request, Integer contractId) {
-        ContractValidatorCreator creator = validatorCreators.get(request.contractType());
-        if (creator == null) {
+        ContractProcessingFactory factory = contractFactories.get(request.contractType());
+        if (factory == null) {
             throw new IllegalArgumentException("Không hỗ trợ loại hợp đồng: " + request.contractType());
         }
-        ContractValidator validator = creator.createValidator();
+        ContractValidator validator = factory.createValidator();
         validator.validate(request, contractId);
     }
 
@@ -249,6 +249,25 @@ public class ContractServiceImpl implements ContractService {
     // ========================================
 
     private ContractResponse mapToResponse(Contract contract) {
+        ContractProcessingFactory factory = contractFactories.get(contract.getContractType());
+        java.math.BigDecimal effectiveSalary = null;
+        java.math.BigDecimal salaryCoefficient = null;
+        String contractSummary = null;
+
+        if (factory != null) {
+            var calculator = factory.createSalaryCalculator();
+            var docGen = factory.createDocumentGenerator();
+            effectiveSalary = calculator.calculateEffectiveSalary(contract.getBasicSalary());
+            salaryCoefficient = calculator.getSalaryCoefficient();
+            contractSummary = docGen.generateSummary(
+                    contract.getEmployee().getName(),
+                    contract.getContractType(),
+                    contract.getStartDate(),
+                    contract.getEndDate(),
+                    contract.getBasicSalary()
+            );
+        }
+
         return ContractResponse.builder()
                 .id(contract.getId())
                 .employeeId(contract.getEmployee().getId())
@@ -258,6 +277,9 @@ public class ContractServiceImpl implements ContractService {
                 .startDate(contract.getStartDate())
                 .endDate(contract.getEndDate())
                 .basicSalary(contract.getBasicSalary())
+                .effectiveSalary(effectiveSalary)
+                .salaryCoefficient(salaryCoefficient)
+                .contractSummary(contractSummary)
                 .status(contract.getStatus())
                 .createdAt(contract.getCreatedAt())
                 .updatedAt(contract.getUpdatedAt())
