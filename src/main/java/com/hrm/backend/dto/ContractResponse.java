@@ -15,6 +15,9 @@ public record ContractResponse(
     LocalDate startDate,
     LocalDate endDate,
     BigDecimal basicSalary,
+    BigDecimal effectiveSalary,
+    BigDecimal salaryCoefficient,
+    String contractSummary,
     String status,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
